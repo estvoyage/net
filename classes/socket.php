@@ -38,4 +38,36 @@ class socket
 
 		return $this;
 	}
+
+	function shutdown()
+	{
+		$socket = clone $this;
+		$socket->driver = $this->driver->shutdown();
+
+		return $socket;
+	}
+
+	function shutdownOnlyReading()
+	{
+		$socket = clone $this;
+		$socket->driver = $this->driver->shutdownOnlyReading();
+
+		return $socket;
+	}
+
+	function shutdownOnlyWriting()
+	{
+		$socket = clone $this;
+		$socket->driver = $this->driver->shutdownOnlyWriting();
+
+		return $socket;
+	}
+
+	function disconnect()
+	{
+		$socket = clone $this;
+		$socket->driver = $this->driver->disconnect();
+
+		return $socket;
+	}
 }

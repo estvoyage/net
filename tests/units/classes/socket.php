@@ -52,4 +52,64 @@ class socket extends units\test
 				->mock($driver)->call('connectTo')->withIdenticalArguments($host, $port)->once
 		;
 	}
+
+	function testShutdown()
+	{
+		$this
+			->given(
+				$this->calling($driver = new net\socket\driver)->shutdown = $driverAfterShutdown = new net\socket\driver
+			)
+			->if(
+				$this->newTestedInstance($driver)
+			)
+			->then
+				->object($this->testedInstance->shutdown())->isEqualTo($this->newTestedInstance($driverAfterShutdown))
+				->mock($driver)->call('shutdown')->once
+		;
+	}
+
+	function testShutdownOnlyReading()
+	{
+		$this
+			->given(
+				$this->calling($driver = new net\socket\driver)->shutdownOnlyReading = $driverAfterShutdown = new net\socket\driver
+			)
+			->if(
+				$this->newTestedInstance($driver)
+			)
+			->then
+				->object($this->testedInstance->shutdownOnlyReading())->isEqualTo($this->newTestedInstance($driverAfterShutdown))
+				->mock($driver)->call('shutdownOnlyReading')->once
+		;
+	}
+
+	function testShutdownOnlyWriting()
+	{
+		$this
+			->given(
+				$this->calling($driver = new net\socket\driver)->shutdownOnlyWriting = $driverAfterShutdown = new net\socket\driver
+			)
+			->if(
+				$this->newTestedInstance($driver)
+			)
+			->then
+				->object($this->testedInstance->shutdownOnlyWriting())->isEqualTo($this->newTestedInstance($driverAfterShutdown))
+				->mock($driver)->call('shutdownOnlyWriting')->once
+		;
+	}
+
+	function testDisconnect()
+	{
+		$this
+			->given(
+				$this->calling($driver = new net\socket\driver)->disconnect = $driverDisconnected = new net\socket\driver
+			)
+			->if(
+				$this->newTestedInstance($driver)
+			)
+			->then
+				->object($this->testedInstance->disconnect())->isEqualTo($this->newTestedInstance($driverDisconnected))
+				->mock($driver)->call('disconnect')->once
+		;
+	}
 }
