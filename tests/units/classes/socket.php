@@ -12,6 +12,13 @@ use
 
 class socket extends units\test
 {
+	function testClass()
+	{
+		$this->testedClass
+			->implements('estvoyage\net\world\socket')
+		;
+	}
+
 	function testWrite()
 	{
 		$this

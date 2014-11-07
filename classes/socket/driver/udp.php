@@ -33,7 +33,6 @@ class udp implements socket\driver
 		$this->init();
 	}
 
-
 	function connectTo($host, $port)
 	{
 		$driver = $this;

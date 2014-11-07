@@ -6,7 +6,7 @@ use
 	estvoyage\net\world as net
 ;
 
-class socket
+class socket implements net\socket
 {
 	private
 		$driver
