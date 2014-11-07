@@ -23,8 +23,8 @@ class host implements net\host
 		$this->host = $host;
 	}
 
-	function openSocket(net\socket $socket, net\port $port)
+	function connectSocket(net\socket $socket, net\port $port)
 	{
-		return $port->openSocket($socket, $this->host);
+		return $port->connectSocket($socket, $this->host);
 	}
 }

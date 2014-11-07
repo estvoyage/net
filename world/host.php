@@ -4,5 +4,5 @@ namespace estvoyage\net\world;
 
 interface host
 {
-	function openSocket(socket $socket, port $port);
+	function connectSocket(socket $socket, port $port);
 }

@@ -39,7 +39,7 @@ class port extends units\test
 		;
 	}
 
-	function testOpenSocket()
+	function testconnectSocket()
 	{
 		$this
 			->given(
@@ -47,11 +47,11 @@ class port extends units\test
 				$host = uniqid()
 			)
 			->if(
-				$this->calling($socket)->connectTo = $openedSocket = new net\socket,
+				$this->calling($socket)->connectTo = $connectedSocket = new net\socket,
 				$this->newTestedInstance($port = rand(0, 65535))
 			)
 			->then
-				->object($this->testedInstance->openSocket($socket, $host))->isIdenticalTo($openedSocket)
+				->object($this->testedInstance->connectSocket($socket, $host))->isIdenticalTo($connectedSocket)
 				->mock($socket)->call('connectTo')->withIdenticalArguments($host, $port)->once
 		;
 	}

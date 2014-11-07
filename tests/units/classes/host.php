@@ -47,7 +47,7 @@ class host extends units\test
 		;
 	}
 
-	function testOpenSocket()
+	function testconnectSocket()
 	{
 		$this
 			->given(
@@ -55,12 +55,12 @@ class host extends units\test
 				$port = new net\port
 			)
 			->if(
-				$this->calling($port)->openSocket = $openedSocket = new net\socket,
+				$this->calling($port)->connectSocket = $connectedSocket = new net\socket,
 				$this->newTestedInstance('foo.bar')
 			)
 			->then
-				->object($this->testedInstance->openSocket($socket, $port))->isIdenticalTo($openedSocket)
-				->mock($port)->call('openSocket')->withIdenticalArguments($socket, 'foo.bar')->once
+				->object($this->testedInstance->connectSocket($socket, $port))->isIdenticalTo($connectedSocket)
+				->mock($port)->call('connectSocket')->withIdenticalArguments($socket, 'foo.bar')->once
 		;
 	}
 }
