@@ -47,7 +47,7 @@ class udp implements socket\driver
 		return $driver;
 	}
 
-	function write($data)
+	function write(socket\data $data)
 	{
 		$bytesWritten = socket_sendto($this->resource, $data, strlen($data), 0, $this->host, $this->port);
 
@@ -56,7 +56,7 @@ class udp implements socket\driver
 			throw new driver\exception(socket_strerror(socket_last_error($this->resource)));
 		}
 
-		return $bytesWritten;
+		return $data->remove($bytesWritten);
 	}
 
 	function shutdown()

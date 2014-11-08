@@ -5,7 +5,8 @@ namespace estvoyage\net\tests\units\socket\driver;
 require __DIR__ . '/../../../runner.php';
 
 use
-	estvoyage\net\tests\units
+	estvoyage\net\tests\units,
+	mock\estvoyage\net\world\socket
 ;
 
 class udp extends units\test
@@ -104,7 +105,11 @@ class udp extends units\test
 			->given(
 				$host = uniqid(),
 				$port = uniqid(),
-				$data = uniqid(),
+
+				$data = new socket\data,
+				$this->calling($data)->__toString = $dataContents = uniqid(),
+				$this->calling($data)->remove = $dataWithRemovedBytes = new socket\data,
+
 				$this->function->socket_create = $resource = uniqid(),
 				$this->function->socket_sendto = function($resource, $data) { return strlen($data); },
 				$this->function->socket_close->doesNothing,
@@ -115,15 +120,17 @@ class udp extends units\test
 				$this->newTestedInstance($host, $port)
 			)
 			->then
-				->integer($this->testedInstance->write($data))->isEqualTo(strlen($data))
-				->function('socket_sendto')->wasCalledWithArguments($resource, $data, strlen($data), 0, $host, $port)->once
+				->object($this->testedInstance->write($data))->isIdenticalTo($dataWithRemovedBytes)
+				->function('socket_sendto')->wasCalledWithArguments($resource, $dataContents, strlen($dataContents), 0, $host, $port)->once
+				->mock($data)->call('remove')->withIdenticalArguments(strlen($dataContents))->once
 
 			->if(
 				$this->function->socket_sendto[2] = 2
 			)
 			->then
-				->integer($this->testedInstance->write($data))->isEqualTo(2)
+				->object($this->testedInstance->write($data))->isIdenticalTo($dataWithRemovedBytes)
 				->function('socket_sendto')->wasCalledWithArguments($resource, $data, strlen($data), 0, $host, $port)->twice
+				->mock($data)->call('remove')->withIdenticalArguments(2)->once
 
 			->if(
 				$this->function->socket_sendto = false
