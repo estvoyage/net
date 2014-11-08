@@ -2,14 +2,10 @@
 
 namespace estvoyage\net\world;
 
-use
-	estvoyage\net\world as net
-;
-
 interface socket
 {
-	function connectTo($host, $port);
-	function write($data);
+	function connectTo(host $host, port $port);
+	function write(socket\data $data);
 	function shutdown();
 	function shutdownOnlyReading();
 	function shutdownOnlyWriting();

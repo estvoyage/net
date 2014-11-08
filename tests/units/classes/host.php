@@ -47,20 +47,17 @@ class host extends units\test
 		;
 	}
 
-	function testconnectSocket()
+	function test__toString()
 	{
 		$this
 			->given(
-				$socket = new net\socket,
-				$port = new net\port
+				$host = 'foo.bar'
 			)
 			->if(
-				$this->calling($port)->connectSocket = $connectedSocket = new net\socket,
-				$this->newTestedInstance('foo.bar')
+				$this->newTestedInstance($host)
 			)
 			->then
-				->object($this->testedInstance->connectSocket($socket, $port))->isIdenticalTo($connectedSocket)
-				->mock($port)->call('connectSocket')->withIdenticalArguments($socket, 'foo.bar')->once
+				->castToString($this->testedInstance)->isEqualTo($host)
 		;
 	}
 }

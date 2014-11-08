@@ -3,6 +3,7 @@
 namespace estvoyage\net\socket\driver;
 
 use
+	estvoyage\net\world as net,
 	estvoyage\net\world\socket,
 	estvoyage\net\socket\driver
 ;
@@ -15,7 +16,7 @@ class udp implements socket\driver
 		$port
 	;
 
-	function __construct($host, $port)
+	function __construct(net\host $host, net\port $port)
 	{
 		$this->init();
 
@@ -33,11 +34,11 @@ class udp implements socket\driver
 		$this->init();
 	}
 
-	function connectTo($host, $port)
+	function connectTo(net\host $host, net\port $port)
 	{
 		$driver = $this;
 
-		if ($host != $this->host || $port != $this->port)
+		if ((string) $host != (string) $this->host || (string) $port != (string) $this->port)
 		{
 			$driver = clone $this;
 			$driver->host = $host;

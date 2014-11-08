@@ -21,6 +21,6 @@ class address implements net\address
 
 	function connectSocket(net\socket $socket)
 	{
-		return $this->host->connectSocket($socket, $this->port);
+		return $socket->connectTo($this->host, $this->port);
 	}
 }

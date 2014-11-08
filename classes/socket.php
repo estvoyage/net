@@ -17,7 +17,7 @@ class socket implements net\socket
 		$this->driver = $driver;
 	}
 
-	function connectTo($host, $port)
+	function connectTo(net\host $host, net\port $port)
 	{
 		$socket = clone $this;
 		$socket->driver = $this->driver->connectTo($host, $port);
@@ -25,11 +25,11 @@ class socket implements net\socket
 		return $socket;
 	}
 
-	function write($data)
+	function write(net\socket\data $data)
 	{
 		try
 		{
-			$this->driver->write(new socket\data($data));
+			$this->driver->write($data);
 		}
 		catch (\exception $exception)
 		{

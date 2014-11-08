@@ -6,7 +6,8 @@ require __DIR__ . '/../../../runner.php';
 
 use
 	estvoyage\net\tests\units,
-	mock\estvoyage\net\world\socket
+	mock\estvoyage\net\world\socket,
+	mock\estvoyage\net\world as net
 ;
 
 class udp extends units\test
@@ -22,15 +23,13 @@ class udp extends units\test
 	{
 		$this
 			->given(
-				$host = uniqid(),
-				$port = uniqid(),
 				$this->function->socket_create = uniqid(),
 				$this->function->socket_last_error = $errorCode = uniqid(),
 				$this->function->socket_strerror = $errorString = uniqid(),
 				$this->function->socket_close->doesNothing
 			)
 			->if(
-				$this->newTestedInstance($host, $port)
+				$this->newTestedInstance(new net\host, new net\port)
 			)
 			->then
 				->function('socket_create')->wasCalledWithArguments(AF_INET, SOCK_DGRAM, SOL_UDP)->once
@@ -39,7 +38,7 @@ class udp extends units\test
 				$this->function->socket_create = false
 			)
 			->then
-				->exception(function() { $this->newTestedInstance(uniqid(), uniqid()); })
+				->exception(function() { $this->newTestedInstance(new net\host, new net\port); })
 					->isInstanceOf('estvoyage\net\socket\driver\exception')
 					->hasMessage($errorString)
 				->function('socket_last_error')->wasCalledWithArguments(null)->once
@@ -55,7 +54,7 @@ class udp extends units\test
 				$this->function->socket_close->doesNothing
 			)
 			->if(
-				$this->newTestedInstance(uniqid(), uniqid())->__destruct()
+				$this->newTestedInstance(new net\host, new net\port)->__destruct()
 			)
 			->then
 				->function('socket_close')->wasCalledWithArguments($resource)->once
@@ -71,7 +70,7 @@ class udp extends units\test
 				$this->function->socket_close->doesNothing
 			)
 			->if(
-				$this->newTestedInstance(uniqid(), uniqid())
+				$this->newTestedInstance(new net\host, new net\port)
 			)
 			->when(function() { clone $this->testedInstance; })
 			->then
@@ -84,18 +83,31 @@ class udp extends units\test
 	{
 		$this
 			->given(
-				$host = uniqid(),
-				$port = uniqid(),
+				$this->calling($host1 = new net\host)->__toString = $host1Value = uniqid(),
+				$this->calling($port1 = new net\port)->__toString = $port1Value = uniqid(),
+
+				$this->calling($host2 = new net\host)->__toString = $host2Value = uniqid(),
+				$this->calling($port2 = new net\port)->__toString = $port2Value = uniqid(),
+
 				$this->function->socket_create = uniqid(),
 				$this->function->socket_close->doesNothing
 			)
 
 			->if(
-				$this->newTestedInstance(uniqid(), uniqid())
+				$this->newTestedInstance($host1, $port1)
 			)
 			->then
-				->object($this->testedInstance->connectTo($host, $port))->isEqualTo($this->newTestedInstance($host, $port))
+				->object($this->testedInstance->connectTo($host1, $port1))->isTestedInstance
+				->function('socket_create')->wasCalledWithArguments(AF_INET, SOCK_DGRAM, SOL_UDP)->once
+
+				->object($this->testedInstance->connectTo($host2, $port1))->isEqualTo($this->newTestedInstance($host2, $port1))
 				->function('socket_create')->wasCalledWithArguments(AF_INET, SOCK_DGRAM, SOL_UDP)->thrice
+
+				->object($this->testedInstance->connectTo($host1, $port2))->isEqualTo($this->newTestedInstance($host1, $port2))
+				->function('socket_create')->wasCalledWithArguments(AF_INET, SOCK_DGRAM, SOL_UDP)->{5}
+
+				->object($this->testedInstance->connectTo($host2, $port2))->isEqualTo($this->newTestedInstance($host2, $port2))
+				->function('socket_create')->wasCalledWithArguments(AF_INET, SOCK_DGRAM, SOL_UDP)->{7}
 		;
 	}
 
@@ -103,8 +115,8 @@ class udp extends units\test
 	{
 		$this
 			->given(
-				$host = uniqid(),
-				$port = uniqid(),
+				$this->calling($host = new net\host)->__toString = $hostValue = uniqid(),
+				$this->calling($port = new net\port)->__toString = $portValue = uniqid(),
 
 				$data = new socket\data,
 				$this->calling($data)->__toString = $dataContents = uniqid(),
@@ -148,7 +160,7 @@ class udp extends units\test
 	{
 		$this
 			->if(
-				$this->newTestedInstance(uniqid(), uniqid())
+				$this->newTestedInstance(new net\host, new net\port)
 			)
 			->then
 				->object($this->testedInstance->shutdown())->isTestedInstance
@@ -159,7 +171,7 @@ class udp extends units\test
 	{
 		$this
 			->if(
-				$this->newTestedInstance(uniqid(), uniqid())
+				$this->newTestedInstance(new net\host, new net\port)
 			)
 			->then
 				->object($this->testedInstance->shutdownOnlyReading())->isTestedInstance
@@ -170,7 +182,7 @@ class udp extends units\test
 	{
 		$this
 			->if(
-				$this->newTestedInstance(uniqid(), uniqid())
+				$this->newTestedInstance(new net\host, new net\port)
 			)
 			->then
 				->object($this->testedInstance->shutdownOnlyWriting())->isTestedInstance
@@ -181,7 +193,7 @@ class udp extends units\test
 	{
 		$this
 			->if(
-				$this->newTestedInstance(uniqid(), uniqid())
+				$this->newTestedInstance(new net\host, new net\port)
 			)
 			->then
 				->object($this->testedInstance->disconnect())->isTestedInstance

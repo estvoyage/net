@@ -23,7 +23,7 @@ class socket extends units\test
 	{
 		$this
 			->given(
-				$data = uniqid(),
+				$data = new net\socket\data,
 				$driver = new net\socket\driver
 			)
 			->if(
@@ -31,13 +31,13 @@ class socket extends units\test
 			)
 			->then
 				->object($this->testedInstance->write($data))->isTestedInstance
-				->mock($driver)->call('write')->withArguments(new data($data))->once
+				->mock($driver)->call('write')->withIdenticalArguments($data)->once
 
 			->if(
 				$this->calling($driver)->write->throw = new \exception($message = uniqid())
 			)
 			->then
-				->exception(function() { $this->testedInstance->write(uniqid()); })
+				->exception(function() use ($data) { $this->testedInstance->write($data); })
 					->isInstanceOf('estvoyage\net\socket\exception')
 					->hasMessage($message)
 		;
@@ -47,8 +47,8 @@ class socket extends units\test
 	{
 		$this
 			->given(
-				$host = uniqid(),
-				$port = uniqid(),
+				$host = new net\host,
+				$port = new net\port,
 				$this->calling($driver = new net\socket\driver)->connectTo = $driverUpdated = new net\socket\driver
 			)
 			->if(

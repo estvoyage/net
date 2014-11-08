@@ -28,12 +28,12 @@ class address extends units\test
 			)
 
 			->if(
-				$this->calling($host)->connectSocket = $connectedSocket = new net\socket,
+				$this->calling($socket)->connectTo = $connectedSocket = new net\socket,
 				$this->newTestedInstance($host, $port)
 			)
 			->then
 				->object($this->testedInstance->connectSocket($socket))->isIdenticalTo($connectedSocket)
-				->mock($host)->call('connectSocket')->withIdenticalArguments($socket, $port)->once
+				->mock($socket)->call('connectTo')->withIdenticalArguments($host, $port)->once
 		;
 	}
 }
