@@ -59,6 +59,7 @@ class host extends units\test
 			)
 			->then
 				->object($this->testedInstance->connectTo($endpoint))->isIdenticalTo($endpointConnectedToHost)
+				->mock($endpoint)->call('connectHost')->withIdenticalArguments($host)->once
 		;
 	}
 }
