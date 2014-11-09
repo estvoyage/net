@@ -52,6 +52,30 @@ class socket extends units\test
 		;
 	}
 
+	function testWriteData()
+	{
+		$this
+			->given(
+				$data = uniqid(),
+				$this->calling($driver = new net\socket\driver)->writeData = function($data, $callback) { $callback(''); },
+				$callback = function($data) use (& $dataRemaining) { $dataRemaining = $data; }
+			)
+			->if(
+				$this->newTestedInstance($driver)
+			)
+			->then
+				->object($this->testedInstance->writeData($data, $callback))->isTestedInstance
+				->mock($driver)->call('writeData')->withIdenticalArguments($data, $callback)->once
+				->string($dataRemaining)->isEmpty
+			->if(
+				$this->calling($driver)->writeData = function($data, $callback) { $callback(substr($data, 2)); }
+			)
+			->then
+				->object($this->testedInstance->writeData($data, $callback))->isTestedInstance
+				->string($dataRemaining)->isEqualTo(substr($data, 2))
+		;
+	}
+
 	function testWrite()
 	{
 		$this

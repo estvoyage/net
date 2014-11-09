@@ -6,6 +6,7 @@ interface socket extends endpoint
 {
 	function connectHost($host);
 	function connectPort($port);
+	function writeData($data, callable $dataRemaining);
 	function write(socket\data $data);
 	function shutdown();
 	function shutdownOnlyReading();

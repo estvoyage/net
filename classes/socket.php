@@ -33,6 +33,13 @@ class socket implements net\socket
 		return $this;
 	}
 
+	function writeData($data, callable $dataRemaining)
+	{
+		$this->driver->writeData($data, $dataRemaining);
+
+		return $this;
+	}
+
 	function write(net\socket\data $data)
 	{
 		try
