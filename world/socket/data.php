@@ -8,7 +8,5 @@ use
 
 interface data
 {
-	function __toString();
-	function remove($bytes);
 	function writeOn(net\socket\driver $driver);
 }

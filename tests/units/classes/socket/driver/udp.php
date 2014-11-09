@@ -6,7 +6,6 @@ require __DIR__ . '/../../../runner.php';
 
 use
 	estvoyage\net\tests\units,
-	mock\estvoyage\net\world\socket,
 	mock\estvoyage\net\world as net
 ;
 
@@ -29,7 +28,7 @@ class udp extends units\test
 				$this->function->socket_close->doesNothing
 			)
 			->if(
-				$this->newTestedInstance(new net\host, new net\port)
+				$this->newTestedInstance(uniqid(), uniqid())
 			)
 			->then
 				->function('socket_create')->wasCalledWithArguments(AF_INET, SOCK_DGRAM, SOL_UDP)->once
@@ -38,7 +37,7 @@ class udp extends units\test
 				$this->function->socket_create = false
 			)
 			->then
-				->exception(function() { $this->newTestedInstance(new net\host, new net\port); })
+				->exception(function() { $this->newTestedInstance(uniqid(), uniqid()); })
 					->isInstanceOf('estvoyage\net\socket\driver\exception')
 					->hasMessage($errorString)
 				->function('socket_last_error')->wasCalledWithArguments(null)->once
@@ -54,7 +53,7 @@ class udp extends units\test
 				$this->function->socket_close->doesNothing
 			)
 			->if(
-				$this->newTestedInstance(new net\host, new net\port)->__destruct()
+				$this->newTestedInstance(uniqid(), uniqid())->__destruct()
 			)
 			->then
 				->function('socket_close')->wasCalledWithArguments($resource)->once
@@ -70,7 +69,7 @@ class udp extends units\test
 				$this->function->socket_close->doesNothing
 			)
 			->if(
-				$this->newTestedInstance(new net\host, new net\port)
+				$this->newTestedInstance(uniqid(), uniqid())
 			)
 			->when(function() { clone $this->testedInstance; })
 			->then
@@ -83,12 +82,10 @@ class udp extends units\test
 	{
 		$this
 			->given(
-				$this->calling($host1 = new net\host)->__toString = $host1Value = uniqid(),
-				$this->calling($port1 = new net\port)->__toString = $port1Value = uniqid(),
-
-				$this->calling($host2 = new net\host)->__toString = $host2Value = uniqid(),
-				$this->calling($port2 = new net\port)->__toString = $port2Value = uniqid(),
-
+				$host1 = uniqid(),
+				$port1 = uniqid(),
+				$host2 = uniqid(),
+				$port2 = uniqid(),
 				$this->function->socket_create = uniqid(),
 				$this->function->socket_close->doesNothing
 			)
@@ -111,17 +108,14 @@ class udp extends units\test
 		;
 	}
 
-	function testWrite()
+	function testWriteData()
 	{
 		$this
 			->given(
-				$this->calling($host = new net\host)->__toString = $hostValue = uniqid(),
-				$this->calling($port = new net\port)->__toString = $portValue = uniqid(),
-
-				$data = new socket\data,
-				$this->calling($data)->__toString = $dataContents = uniqid(),
-				$this->calling($data)->remove = $dataWithRemovedBytes = new socket\data,
-
+				$host = uniqid(),
+				$port = uniqid(),
+				$data = uniqid(),
+				$callback = function($data) use (& $dataRemaining) { $dataRemaining = $data; },
 				$this->function->socket_create = $resource = uniqid(),
 				$this->function->socket_sendto = function($resource, $data) { return strlen($data); },
 				$this->function->socket_close->doesNothing,
@@ -132,23 +126,22 @@ class udp extends units\test
 				$this->newTestedInstance($host, $port)
 			)
 			->then
-				->object($this->testedInstance->write($data))->isIdenticalTo($dataWithRemovedBytes)
-				->function('socket_sendto')->wasCalledWithArguments($resource, $dataContents, strlen($dataContents), 0, $host, $port)->once
-				->mock($data)->call('remove')->withIdenticalArguments(strlen($dataContents))->once
+				->object($this->testedInstance->writeData($data, $callback))->isTestedInstance
+				->function('socket_sendto')->wasCalledWithArguments($resource, $data, strlen($data), 0, $host, $port)->once
+				->string($dataRemaining)->isEmpty
 
 			->if(
 				$this->function->socket_sendto[2] = 2
 			)
 			->then
-				->object($this->testedInstance->write($data))->isIdenticalTo($dataWithRemovedBytes)
-				->function('socket_sendto')->wasCalledWithArguments($resource, $data, strlen($data), 0, $host, $port)->twice
-				->mock($data)->call('remove')->withIdenticalArguments(2)->once
+				->object($this->testedInstance->writeData($data, $callback))->isTestedInstance
+				->string($dataRemaining)->isEqualTo(substr($data, 2))
 
 			->if(
 				$this->function->socket_sendto = false
 			)
 			->then
-				->exception(function() use ($data) { $this->testedInstance->write($data); })
+				->exception(function() use ($data) { $this->testedInstance->writeData($data, function() {}); })
 					->isInstanceOf('estvoyage\net\socket\driver\exception')
 					->hasMessage($errorString)
 				->function('socket_last_error')->wasCalledWithArguments($resource)->once
@@ -156,11 +149,27 @@ class udp extends units\test
 		;
 	}
 
+	function testWrite()
+	{
+		$this
+			->given(
+				$this->calling($data = new net\socket\data)->writeOn = $dataRemaining = new net\socket\data
+			)
+			->if(
+				$this->newTestedInstance(uniqid(), uniqid())
+			)
+			->then
+				->object($this->testedInstance->write($data))->isIdenticalTo($dataRemaining)
+				->mock($data)->call('writeOn')->withIdenticalArguments($this->testedInstance)->once
+
+		;
+	}
+
 	function testShutdown()
 	{
 		$this
 			->if(
-				$this->newTestedInstance(new net\host, new net\port)
+				$this->newTestedInstance(uniqid(), uniqid())
 			)
 			->then
 				->object($this->testedInstance->shutdown())->isTestedInstance
@@ -171,7 +180,7 @@ class udp extends units\test
 	{
 		$this
 			->if(
-				$this->newTestedInstance(new net\host, new net\port)
+				$this->newTestedInstance(uniqid(), uniqid())
 			)
 			->then
 				->object($this->testedInstance->shutdownOnlyReading())->isTestedInstance
@@ -182,7 +191,7 @@ class udp extends units\test
 	{
 		$this
 			->if(
-				$this->newTestedInstance(new net\host, new net\port)
+				$this->newTestedInstance(uniqid(), uniqid())
 			)
 			->then
 				->object($this->testedInstance->shutdownOnlyWriting())->isTestedInstance
@@ -193,7 +202,7 @@ class udp extends units\test
 	{
 		$this
 			->if(
-				$this->newTestedInstance(new net\host, new net\port)
+				$this->newTestedInstance(uniqid(), uniqid())
 			)
 			->then
 				->object($this->testedInstance->disconnect())->isTestedInstance

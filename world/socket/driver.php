@@ -8,7 +8,8 @@ use
 
 interface driver
 {
-	function connectTo(net\host $host, net\port $port);
+	function connectTo($host, $port);
+	function writeData($data, callable $dataRemaining);
 	function write(data $data);
 	function shutdown();
 	function shutdownOnlyReading();

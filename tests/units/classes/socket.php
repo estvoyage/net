@@ -19,36 +19,12 @@ class socket extends units\test
 		;
 	}
 
-	function testWrite()
-	{
-		$this
-			->given(
-				$data = new net\socket\data,
-				$driver = new net\socket\driver
-			)
-			->if(
-				$this->newTestedInstance($driver)
-			)
-			->then
-				->object($this->testedInstance->write($data))->isTestedInstance
-				->mock($driver)->call('write')->withIdenticalArguments($data)->once
-
-			->if(
-				$this->calling($driver)->write->throw = new \exception($message = uniqid())
-			)
-			->then
-				->exception(function() use ($data) { $this->testedInstance->write($data); })
-					->isInstanceOf('estvoyage\net\socket\exception')
-					->hasMessage($message)
-		;
-	}
-
 	function testConnectTo()
 	{
 		$this
 			->given(
-				$host = new net\host,
-				$port = new net\port,
+				$host = uniqid(),
+				$port = uniqid(),
 				$this->calling($driver = new net\socket\driver)->connectTo = $driverUpdated = new net\socket\driver
 			)
 			->if(
@@ -57,6 +33,30 @@ class socket extends units\test
 			->then
 				->object($this->testedInstance->connectTo($host, $port))->isEqualTo($this->newTestedInstance($driverUpdated))
 				->mock($driver)->call('connectTo')->withIdenticalArguments($host, $port)->once
+		;
+	}
+
+	function testWrite()
+	{
+		$this
+			->given(
+				$data = uniqid(),
+				$driver = new net\socket\driver
+			)
+			->if(
+				$this->newTestedInstance($driver)
+			)
+			->then
+				->object($this->testedInstance->write($data))->isTestedInstance
+				->mock($driver)->call('write')->withArguments(new data($data))->once
+
+			->if(
+				$this->calling($driver)->write->throw = new \exception($message = uniqid())
+			)
+			->then
+				->exception(function() use ($data) { $this->testedInstance->write($data); })
+					->isInstanceOf('estvoyage\net\socket\exception')
+					->hasMessage($message)
 		;
 	}
 

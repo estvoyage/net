@@ -17,41 +17,20 @@ class data implements net\socket\data
 		$this->data = $data;
 	}
 
-	function __toString()
-	{
-		return $this->data;
-	}
-
-	function remove($bytes)
-	{
-		$data = $this;
-
-		if ($data->data)
-		{
-			$data = clone $this;
-			$data->data = substr($data->data, $bytes) ?: '';
-		}
-
-		return $data;
-	}
-
 	function writeOn(net\socket\driver $driver)
 	{
-		if ($this->data)
-		{
-			try
-			{
-				$data = $driver->write($this);
+		$data = $this->data;
 
-				while ($data->data)
-				{
-					$data = $driver->write($data);
-				}
-			}
-			catch (\exception $exception)
+		try
+		{
+			while ($data)
 			{
-				throw new data\exception($exception->getMessage());
+				$driver->writeData($data, function($dataRemaining) use (& $data) { $data = $dataRemaining; });
 			}
+		}
+		catch (\exception $exception)
+		{
+			throw new data\exception($exception->getMessage());
 		}
 
 		return $this;

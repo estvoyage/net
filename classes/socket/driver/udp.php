@@ -16,7 +16,7 @@ class udp implements socket\driver
 		$port
 	;
 
-	function __construct(net\host $host, net\port $port)
+	function __construct($host, $port)
 	{
 		$this->init();
 
@@ -34,11 +34,11 @@ class udp implements socket\driver
 		$this->init();
 	}
 
-	function connectTo(net\host $host, net\port $port)
+	function connectTo($host, $port)
 	{
 		$driver = $this;
 
-		if ((string) $host != (string) $this->host || (string) $port != (string) $this->port)
+		if ($host != $this->host || $port != $this->port)
 		{
 			$driver = clone $this;
 			$driver->host = $host;
@@ -48,7 +48,7 @@ class udp implements socket\driver
 		return $driver;
 	}
 
-	function write(socket\data $data)
+	function writeData($data, callable $dataRemaining)
 	{
 		$bytesWritten = socket_sendto($this->resource, $data, strlen($data), 0, $this->host, $this->port);
 
@@ -57,7 +57,14 @@ class udp implements socket\driver
 			throw new driver\exception(socket_strerror(socket_last_error($this->resource)));
 		}
 
-		return $data->remove($bytesWritten);
+		$dataRemaining(substr($data, $bytesWritten) ?: '');
+
+		return $this;
+	}
+
+	function write(socket\data $data)
+	{
+		return $data->writeOn($this);
 	}
 
 	function shutdown()

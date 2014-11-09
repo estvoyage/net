@@ -18,59 +18,6 @@ class data extends units\test
 		;
 	}
 
-	function test__toString()
-	{
-		$this
-			->given(
-				$data = uniqid()
-			)
-			->if(
-				$this->newTestedInstance
-			)
-			->then
-				->castToString($this->testedInstance)->isEmpty
-
-			->if(
-				$this->newTestedInstance($data)
-			)
-			->then
-				->castToString($this->testedInstance)->isEqualTo($data)
-		;
-	}
-
-	function testRemove()
-	{
-		$this
-			->given(
-				$data = 'abcdefgh'
-			)
-			->if(
-				$this->newTestedInstance
-			)
-			->then
-				->object($this->testedInstance->remove(0))->isTestedInstance
-				->object($this->testedInstance->remove(rand(1, PHP_INT_MAX)))->isTestedInstance
-				->object($this->testedInstance->remove(- rand(1, PHP_INT_MAX)))->isTestedInstance
-
-			->if(
-				$this->newTestedInstance($data)
-			)
-			->then
-				->object($this->testedInstance->remove(0))
-					->isNotTestedInstance
-					->isEqualTo($this->newTestedInstance($data))
-				->object($this->testedInstance->remove(1))
-					->isNotTestedInstance
-					->isEqualTo($this->newTestedInstance('bcdefgh'))
-				->object($this->testedInstance->remove(-1))
-					->isNotTestedInstance
-					->isEqualTo($this->newTestedInstance('h'))
-				->object($this->testedInstance->remove(8))
-					->isNotTestedInstance
-					->isEqualTo($this->newTestedInstance)
-		;
-	}
-
 	function testWriteOn()
 	{
 		$this
@@ -83,30 +30,29 @@ class data extends units\test
 			)
 			->then
 				->object($this->testedInstance->writeOn($driver))->isTestedInstance
-				->mock($driver)->call('write')->never
+				->mock($driver)->call('writeData')->never
 
 			->if(
-				$this->calling($driver)->write = $this->newTestedInstance,
+				$this->calling($driver)->writeData = function($data, $dataRemaining) { $dataRemaining(''); },
 				$this->newTestedInstance($data)
 			)
 			->then
 				->object($this->testedInstance->writeOn($driver))->isTestedInstance
-				->mock($driver)->call('write')->withIdenticalArguments($this->testedInstance)->once
+				->mock($driver)->call('writeData')->withIdenticalArguments($data)->once
 
 			->if(
-				$this->calling($driver)->write[2] = $dataMinus2Bytes = $this->testedInstance->remove(2),
-				$this->calling($driver)->write[3] = $this->testedInstance->remove(strlen($data - 2)),
+				$this->calling($driver)->writeData[2] = function($data, $dataRemaining) { $dataRemaining(substr($data, 2)); },
 				$this->newTestedInstance($data)
 			)
 			->then
 				->object($this->testedInstance->writeOn($driver))->isTestedInstance
 				->mock($driver)
-					->call('write')
-						->withIdenticalArguments($this->testedInstance)->once
-						->withIdenticalArguments($dataMinus2Bytes)->once
+					->call('writeData')
+						->withIdenticalArguments($data)->twice
+						->withIdenticalArguments(substr($data, 2))->once
 
 			->if(
-				$this->calling($driver)->write->throw = new \exception($message = uniqid())
+				$this->calling($driver)->writeData->throw = new \exception($message = uniqid())
 			)
 			->then
 				->exception(function() use ($driver) { $this->testedInstance->writeOn($driver); })
