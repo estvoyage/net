@@ -8,5 +8,5 @@ use
 
 interface address
 {
-	function connectSocket(net\socket $socket);
+	function connectTo(net\endpoint $endpoint);
 }

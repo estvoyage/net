@@ -47,17 +47,18 @@ class host extends units\test
 		;
 	}
 
-	function test__toString()
+	function testConnectTo()
 	{
 		$this
 			->given(
-				$host = 'foo.bar'
+				$host = 'foo.bar',
+				$this->calling($endpoint = new net\endpoint)->connectHost = $endpointConnectedToHost = new net\endpoint
 			)
 			->if(
 				$this->newTestedInstance($host)
 			)
 			->then
-				->castToString($this->testedInstance)->isEqualTo($host)
+				->object($this->testedInstance->connectTo($endpoint))->isIdenticalTo($endpointConnectedToHost)
 		;
 	}
 }

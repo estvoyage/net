@@ -26,8 +26,8 @@ class port implements net\port
 		$this->port = $port;
 	}
 
-	function __toString()
+	function connectTo(net\endpoint $endpoint)
 	{
-		return (string) $this->port;
+		return $endpoint->connectPort($this->port);
 	}
 }

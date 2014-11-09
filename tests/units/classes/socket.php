@@ -15,24 +15,40 @@ class socket extends units\test
 	function testClass()
 	{
 		$this->testedClass
+			->implements('estvoyage\net\world\endpoint')
 			->implements('estvoyage\net\world\socket')
 		;
 	}
 
-	function testConnectTo()
+	function testConnectHost()
 	{
 		$this
 			->given(
 				$host = uniqid(),
-				$port = uniqid(),
-				$this->calling($driver = new net\socket\driver)->connectTo = $driverUpdated = new net\socket\driver
+				$this->calling($driver = new net\socket\driver)->connectHost = $driverConnectedToHost = new net\socket\driver
 			)
 			->if(
 				$this->newTestedInstance($driver)
 			)
 			->then
-				->object($this->testedInstance->connectTo($host, $port))->isEqualTo($this->newTestedInstance($driverUpdated))
-				->mock($driver)->call('connectTo')->withIdenticalArguments($host, $port)->once
+				->object($this->testedInstance->connectHost($host))->isEqualTo($this->newTestedInstance($driverConnectedToHost))
+				->mock($driver)->call('connectHost')->withIdenticalArguments($host)->once
+		;
+	}
+
+	function testConnectPort()
+	{
+		$this
+			->given(
+				$port = uniqid(),
+				$this->calling($driver = new net\socket\driver)->connectPort = $driverConnectedToPort = new net\socket\driver
+			)
+			->if(
+				$this->newTestedInstance($driver)
+			)
+			->then
+				->object($this->testedInstance->connectPort($port))->isEqualTo($this->newTestedInstance($driverConnectedToPort))
+				->mock($driver)->call('connectPort')->withIdenticalArguments($port)->once
 		;
 	}
 
@@ -40,7 +56,7 @@ class socket extends units\test
 	{
 		$this
 			->given(
-				$data = uniqid(),
+				$data = new net\socket\data,
 				$driver = new net\socket\driver
 			)
 			->if(
@@ -48,10 +64,10 @@ class socket extends units\test
 			)
 			->then
 				->object($this->testedInstance->write($data))->isTestedInstance
-				->mock($driver)->call('write')->withArguments(new data($data))->once
+				->mock($data)->call('writeOn')->withIdenticalArguments($driver)->once
 
 			->if(
-				$this->calling($driver)->write->throw = new \exception($message = uniqid())
+				$this->calling($data)->writeOn->throw = new \exception($message = uniqid())
 			)
 			->then
 				->exception(function() use ($data) { $this->testedInstance->write($data); })

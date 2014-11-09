@@ -34,14 +34,26 @@ class udp implements socket\driver
 		$this->init();
 	}
 
-	function connectTo($host, $port)
+	function connectHost($host)
 	{
 		$driver = $this;
 
-		if ($host != $this->host || $port != $this->port)
+		if ($host != $this->host)
 		{
 			$driver = clone $this;
 			$driver->host = $host;
+		}
+
+		return $driver;
+	}
+
+	function connectPort($port)
+	{
+		$driver = $this;
+
+		if ($port != $this->port)
+		{
+			$driver = clone $this;
 			$driver->port = $port;
 		}
 

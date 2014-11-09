@@ -18,22 +18,22 @@ class address extends units\test
 		;
 	}
 
-	function testconnectSocket()
+	function testConnectTo()
 	{
 		$this
 			->given(
-				$host = new net\host,
-				$port = new net\port,
-				$socket = new net\socket
+				$this->calling($host = new net\host)->connectTo = $endpointConnectedToHost = new net\endpoint,
+				$this->calling($port = new net\port)->connectTo = $endpointConnectedToPort = new net\endpoint,
+				$endpoint = new net\endpoint
 			)
 
 			->if(
-				$this->calling($socket)->connectTo = $connectedSocket = new net\socket,
 				$this->newTestedInstance($host, $port)
 			)
 			->then
-				->object($this->testedInstance->connectSocket($socket))->isIdenticalTo($connectedSocket)
-				->mock($socket)->call('connectTo')->withIdenticalArguments($host, $port)->once
+				->object($this->testedInstance->connectTo($endpoint))->isIdenticalTo($endpointConnectedToPort)
+				->mock($host)->call('connectTo')->withIdenticalArguments($endpoint)->once
+				->mock($port)->call('connectTo')->withIdenticalArguments($endpointConnectedToHost)->once
 		;
 	}
 }

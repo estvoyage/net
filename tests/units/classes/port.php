@@ -39,17 +39,18 @@ class port extends units\test
 		;
 	}
 
-	function test__toString()
+	function testConnectTo()
 	{
 		$this
 			->given(
-				$port = rand(0, 65535)
+				$port = rand(0, 65535),
+				$this->calling($endpoint = new net\endpoint)->connectport = $endpointConnectedToPort = new net\endpoint
 			)
 			->if(
 				$this->newTestedInstance($port)
 			)
 			->then
-				->castToString($this->testedInstance)->isEqualTo($port)
+				->object($this->testedInstance->connectTo($endpoint))->isIdenticalTo($endpointConnectedToPort)
 		;
 	}
 }

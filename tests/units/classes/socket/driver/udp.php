@@ -78,33 +78,49 @@ class udp extends units\test
 		;
 	}
 
-	function testConnectTo()
+	function testConnectHost()
 	{
 		$this
 			->given(
 				$host1 = uniqid(),
-				$port1 = uniqid(),
 				$host2 = uniqid(),
+				$port = uniqid(),
+				$this->function->socket_create = uniqid(),
+				$this->function->socket_close->doesNothing
+			)
+
+			->if(
+				$this->newTestedInstance($host1, $port)
+			)
+			->then
+				->object($this->testedInstance->connectHost($host1))->isTestedInstance
+				->function('socket_create')->wasCalledWithArguments(AF_INET, SOCK_DGRAM, SOL_UDP)->once
+
+				->object($this->testedInstance->connectHost($host2))->isEqualTo($this->newTestedInstance($host2, $port))
+				->function('socket_create')->wasCalledWithArguments(AF_INET, SOCK_DGRAM, SOL_UDP)->thrice
+		;
+	}
+
+	function testConnectPort()
+	{
+		$this
+			->given(
+				$host = uniqid(),
+				$port1 = uniqid(),
 				$port2 = uniqid(),
 				$this->function->socket_create = uniqid(),
 				$this->function->socket_close->doesNothing
 			)
 
 			->if(
-				$this->newTestedInstance($host1, $port1)
+				$this->newTestedInstance($host, $port1)
 			)
 			->then
-				->object($this->testedInstance->connectTo($host1, $port1))->isTestedInstance
+				->object($this->testedInstance->connectPort($port1))->isTestedInstance
 				->function('socket_create')->wasCalledWithArguments(AF_INET, SOCK_DGRAM, SOL_UDP)->once
 
-				->object($this->testedInstance->connectTo($host2, $port1))->isEqualTo($this->newTestedInstance($host2, $port1))
+				->object($this->testedInstance->connectPort($port2))->isEqualTo($this->newTestedInstance($host, $port2))
 				->function('socket_create')->wasCalledWithArguments(AF_INET, SOCK_DGRAM, SOL_UDP)->thrice
-
-				->object($this->testedInstance->connectTo($host1, $port2))->isEqualTo($this->newTestedInstance($host1, $port2))
-				->function('socket_create')->wasCalledWithArguments(AF_INET, SOCK_DGRAM, SOL_UDP)->{5}
-
-				->object($this->testedInstance->connectTo($host2, $port2))->isEqualTo($this->newTestedInstance($host2, $port2))
-				->function('socket_create')->wasCalledWithArguments(AF_INET, SOCK_DGRAM, SOL_UDP)->{7}
 		;
 	}
 

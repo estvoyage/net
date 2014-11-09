@@ -4,5 +4,5 @@ namespace estvoyage\net\world;
 
 interface host
 {
-	function __toString();
+	function connectTo(endpoint $endpoint);
 }

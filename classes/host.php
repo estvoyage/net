@@ -23,8 +23,8 @@ class host implements net\host
 		$this->host = $host;
 	}
 
-	function __toString()
+	function connectTo(net\endpoint $endpoint)
 	{
-		return $this->host;
+		return $endpoint->connectHost($this->host);
 	}
 }
