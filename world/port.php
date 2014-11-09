@@ -2,7 +2,6 @@
 
 namespace estvoyage\net\world;
 
-interface port
+interface port extends endpoint\address\component
 {
-	function connectTo(endpoint $endpoint);
 }

@@ -17,6 +17,11 @@ class socket implements net\socket
 		$this->driver = $driver;
 	}
 
+	function connect(net\endpoint\address\component $component)
+	{
+		return $component->connectTo($this);
+	}
+
 	function connectHost($host)
 	{
 		$socket = clone $this;

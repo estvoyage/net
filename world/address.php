@@ -6,7 +6,6 @@ use
 	estvoyage\net\world as net
 ;
 
-interface address
+interface address extends endpoint\address\component
 {
-	function connectTo(net\endpoint $endpoint);
 }
