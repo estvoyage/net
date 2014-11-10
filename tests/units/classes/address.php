@@ -15,7 +15,7 @@ class address extends units\test
 	{
 		$this->testedClass
 			->implements('estvoyage\net\world\endpoint\address\component')
-			->implements('estvoyage\net\world\address')
+			->implements('estvoyage\net\world\endpoint\address')
 		;
 	}
 
