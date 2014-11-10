@@ -1,12 +1,12 @@
 <?php
 
-namespace estvoyage\net\tests\units\socket\protocol;
+namespace estvoyage\net\tests\units\endpoint\socket\protocol;
 
-require __DIR__ . '/../../../runner.php';
+require __DIR__ . '/../../../../runner.php';
 
 use
 	estvoyage\net\tests\units,
-	mock\estvoyage\net\world as net
+	mock\estvoyage\net\world\endpoint
 ;
 
 class udp extends units\test
@@ -14,7 +14,7 @@ class udp extends units\test
 	function testClass()
 	{
 		$this->testedClass
-			->implements('estvoyage\net\world\socket\protocol')
+			->implements('estvoyage\net\world\endpoint\socket\protocol')
 		;
 	}
 
@@ -38,7 +38,7 @@ class udp extends units\test
 			)
 			->then
 				->exception(function() { $this->newTestedInstance(uniqid(), uniqid()); })
-					->isInstanceOf('estvoyage\net\socket\protocol\exception')
+					->isInstanceOf('estvoyage\net\endpoint\socket\protocol\exception')
 					->hasMessage($errorString)
 				->function('socket_last_error')->wasCalledWithArguments(null)->once
 				->function('socket_strerror')->wasCalledWithArguments($errorCode)->once
@@ -158,7 +158,7 @@ class udp extends units\test
 			)
 			->then
 				->exception(function() use ($data) { $this->testedInstance->writeData($data, function() {}); })
-					->isInstanceOf('estvoyage\net\socket\protocol\exception')
+					->isInstanceOf('estvoyage\net\endpoint\socket\protocol\exception')
 					->hasMessage($errorString)
 				->function('socket_last_error')->wasCalledWithArguments($resource)->once
 				->function('socket_strerror')->wasCalledWithArguments($errorCode)->once
@@ -169,7 +169,7 @@ class udp extends units\test
 	{
 		$this
 			->given(
-				$this->calling($data = new net\socket\data)->writeOn = $dataRemaining = new net\socket\data
+				$this->calling($data = new endpoint\socket\data)->writeOn = $dataRemaining = new endpoint\socket\data
 			)
 			->if(
 				$this->newTestedInstance(uniqid(), uniqid())

@@ -1,11 +1,10 @@
 <?php
 
-namespace estvoyage\net\socket\protocol;
+namespace estvoyage\net\endpoint\socket\protocol;
 
 use
-	estvoyage\net\world as net,
-	estvoyage\net\world\socket,
-	estvoyage\net\socket\protocol
+	estvoyage\net\endpoint\socket\protocol,
+	estvoyage\net\world\endpoint\socket
 ;
 
 class udp implements socket\protocol

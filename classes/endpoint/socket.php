@@ -1,23 +1,23 @@
 <?php
 
-namespace estvoyage\net;
+namespace estvoyage\net\endpoint;
 
 use
-	estvoyage\net\world as net
+	estvoyage\net\world\endpoint
 ;
 
-class socket implements net\socket
+class socket implements endpoint\socket
 {
 	private
 		$protocol
 	;
 
-	function __construct(net\socket\protocol $protocol)
+	function __construct(endpoint\socket\protocol $protocol)
 	{
 		$this->protocol = $protocol;
 	}
 
-	function connect(net\endpoint\address\component $component)
+	function connect(endpoint\address\component $component)
 	{
 		return $component->connectTo($this);
 	}
@@ -45,7 +45,7 @@ class socket implements net\socket
 		return $this;
 	}
 
-	function write(net\socket\data $data)
+	function write(endpoint\socket\data $data)
 	{
 		try
 		{

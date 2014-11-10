@@ -1,13 +1,13 @@
 <?php
 
-namespace estvoyage\net\tests\units;
+namespace estvoyage\net\tests\units\endpoint;
 
-require __DIR__ . '/../runner.php';
+require __DIR__ . '/../../runner.php';
 
 use
 	estvoyage\net\tests\units,
-	estvoyage\net\socket\data,
-	mock\estvoyage\net\world as net
+	estvoyage\endpoint\socket\data,
+	mock\estvoyage\net\world\endpoint
 ;
 
 class socket extends units\test
@@ -16,7 +16,7 @@ class socket extends units\test
 	{
 		$this->testedClass
 			->implements('estvoyage\net\world\endpoint')
-			->implements('estvoyage\net\world\socket')
+			->implements('estvoyage\net\world\endpoint\socket')
 		;
 	}
 
@@ -24,10 +24,10 @@ class socket extends units\test
 	{
 		$this
 			->given(
-				$this->calling($addressComponent = new net\endpoint\address\component)->connectTo = $endpointUsingComponent = new net\endpoint
+				$this->calling($addressComponent = new endpoint\address\component)->connectTo = $endpointUsingComponent = new endpoint
 			)
 			->if(
-				$this->newTestedInstance(new net\socket\protocol)
+				$this->newTestedInstance(new endpoint\socket\protocol)
 			)
 			->then
 				->object($this->testedInstance->connect($addressComponent))->isIdenticalTo($endpointUsingComponent)
@@ -40,7 +40,7 @@ class socket extends units\test
 		$this
 			->given(
 				$host = uniqid(),
-				$this->calling($protocol = new net\socket\protocol)->connectHost = $protocolConnectedToHost = new net\socket\protocol
+				$this->calling($protocol = new endpoint\socket\protocol)->connectHost = $protocolConnectedToHost = new endpoint\socket\protocol
 			)
 			->if(
 				$this->newTestedInstance($protocol)
@@ -56,7 +56,7 @@ class socket extends units\test
 		$this
 			->given(
 				$port = uniqid(),
-				$this->calling($protocol = new net\socket\protocol)->connectPort = $protocolConnectedToPort = new net\socket\protocol
+				$this->calling($protocol = new endpoint\socket\protocol)->connectPort = $protocolConnectedToPort = new endpoint\socket\protocol
 			)
 			->if(
 				$this->newTestedInstance($protocol)
@@ -72,7 +72,7 @@ class socket extends units\test
 		$this
 			->given(
 				$data = uniqid(),
-				$this->calling($protocol = new net\socket\protocol)->writeData = function($data, $callback) { $callback(''); },
+				$this->calling($protocol = new endpoint\socket\protocol)->writeData = function($data, $callback) { $callback(''); },
 				$callback = function($data) use (& $dataRemaining) { $dataRemaining = $data; }
 			)
 			->if(
@@ -95,8 +95,8 @@ class socket extends units\test
 	{
 		$this
 			->given(
-				$data = new net\socket\data,
-				$protocol = new net\socket\protocol
+				$data = new endpoint\socket\data,
+				$protocol = new endpoint\socket\protocol
 			)
 			->if(
 				$this->newTestedInstance($protocol)
@@ -110,7 +110,7 @@ class socket extends units\test
 			)
 			->then
 				->exception(function() use ($data) { $this->testedInstance->write($data); })
-					->isInstanceOf('estvoyage\net\socket\exception')
+					->isInstanceOf('estvoyage\net\endpoint\socket\exception')
 					->hasMessage($message)
 		;
 	}
@@ -119,7 +119,7 @@ class socket extends units\test
 	{
 		$this
 			->given(
-				$this->calling($protocol = new net\socket\protocol)->shutdown = $protocolAfterShutdown = new net\socket\protocol
+				$this->calling($protocol = new endpoint\socket\protocol)->shutdown = $protocolAfterShutdown = new endpoint\socket\protocol
 			)
 			->if(
 				$this->newTestedInstance($protocol)
@@ -134,7 +134,7 @@ class socket extends units\test
 	{
 		$this
 			->given(
-				$this->calling($protocol = new net\socket\protocol)->shutdownOnlyReading = $protocolAfterShutdown = new net\socket\protocol
+				$this->calling($protocol = new endpoint\socket\protocol)->shutdownOnlyReading = $protocolAfterShutdown = new endpoint\socket\protocol
 			)
 			->if(
 				$this->newTestedInstance($protocol)
@@ -149,7 +149,7 @@ class socket extends units\test
 	{
 		$this
 			->given(
-				$this->calling($protocol = new net\socket\protocol)->shutdownOnlyWriting = $protocolAfterShutdown = new net\socket\protocol
+				$this->calling($protocol = new endpoint\socket\protocol)->shutdownOnlyWriting = $protocolAfterShutdown = new endpoint\socket\protocol
 			)
 			->if(
 				$this->newTestedInstance($protocol)
@@ -164,7 +164,7 @@ class socket extends units\test
 	{
 		$this
 			->given(
-				$this->calling($protocol = new net\socket\protocol)->disconnect = $protocolDisconnected = new net\socket\protocol
+				$this->calling($protocol = new endpoint\socket\protocol)->disconnect = $protocolDisconnected = new endpoint\socket\protocol
 			)
 			->if(
 				$this->newTestedInstance($protocol)

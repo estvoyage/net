@@ -1,12 +1,12 @@
 <?php
 
-namespace estvoyage\net\tests\units\socket;
+namespace estvoyage\net\tests\units\endpoint\socket;
 
-require __DIR__ . '/../../runner.php';
+require __DIR__ . '/../../../runner.php';
 
 use
 	estvoyage\net\tests\units,
-	mock\estvoyage\net\world as net
+	mock\estvoyage\net\world\endpoint
 ;
 
 class data extends units\test
@@ -14,7 +14,7 @@ class data extends units\test
 	function testClass()
 	{
 		$this->testedClass
-			->implements('estvoyage\net\world\socket\data')
+			->implements('estvoyage\net\world\endpoint\socket\data')
 		;
 	}
 
@@ -23,7 +23,7 @@ class data extends units\test
 		$this
 			->given(
 				$data = uniqid(),
-				$protocol = new net\socket\protocol
+				$protocol = new endpoint\socket\protocol
 			)
 			->if(
 				$this->newTestedInstance
@@ -56,7 +56,7 @@ class data extends units\test
 			)
 			->then
 				->exception(function() use ($protocol) { $this->testedInstance->writeOn($protocol); })
-					->isInstanceOf('estvoyage\net\socket\data\exception')
+					->isInstanceOf('estvoyage\net\endpoint\socket\data\exception')
 					->hasMessage($message)
 		;
 	}

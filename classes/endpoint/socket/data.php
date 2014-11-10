@@ -1,12 +1,12 @@
 <?php
 
-namespace estvoyage\net\socket;
+namespace estvoyage\net\endpoint\socket;
 
 use
-	estvoyage\net\world as net
+	estvoyage\net\world\endpoint\socket
 ;
 
-class data implements net\socket\data
+class data implements socket\data
 {
 	private
 		$data
@@ -17,7 +17,7 @@ class data implements net\socket\data
 		$this->data = $data;
 	}
 
-	function writeOn(net\socket\protocol $protocol)
+	function writeOn(socket\protocol $protocol)
 	{
 		$data = $this->data;
 

@@ -1,17 +1,15 @@
 <?php
 
-namespace estvoyage\net\world\socket;
+namespace estvoyage\net\world\endpoint;
 
 use
 	estvoyage\net\world as net
 ;
 
-interface protocol
+interface socket extends net\endpoint
 {
-	function connectHost($host);
-	function connectPort($port);
 	function writeData($data, callable $dataRemaining);
-	function write(data $data);
+	function write(socket\data $data);
 	function shutdown();
 	function shutdownOnlyReading();
 	function shutdownOnlyWriting();
