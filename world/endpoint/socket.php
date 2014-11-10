@@ -8,8 +8,6 @@ use
 
 interface socket extends net\endpoint
 {
-	function writeData($data, callable $dataRemaining);
-	function write(socket\data $data);
 	function shutdown();
 	function shutdownOnlyReading();
 	function shutdownOnlyWriting();

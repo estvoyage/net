@@ -11,4 +11,5 @@ interface endpoint
 	function connect(endpoint\address\component $component);
 	function connectHost($host);
 	function connectPort($port);
+	function write($data, callable $dataRemaining);
 }

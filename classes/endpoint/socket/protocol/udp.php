@@ -4,7 +4,8 @@ namespace estvoyage\net\endpoint\socket\protocol;
 
 use
 	estvoyage\net\endpoint\socket\protocol,
-	estvoyage\net\world\endpoint\socket
+	estvoyage\net\world\endpoint\socket,
+	estvoyage\net\world\endpoint
 ;
 
 class udp implements socket\protocol
@@ -59,7 +60,7 @@ class udp implements socket\protocol
 		return $protocol;
 	}
 
-	function writeData($data, callable $dataRemaining)
+	function write($data, callable $dataRemaining)
 	{
 		$bytesWritten = socket_sendto($this->resource, $data, strlen($data), 0, $this->host, $this->port);
 
@@ -71,11 +72,6 @@ class udp implements socket\protocol
 		$dataRemaining(substr($data, $bytesWritten) ?: '');
 
 		return $this;
-	}
-
-	function write(socket\data $data)
-	{
-		return $data->writeOn($this);
 	}
 
 	function shutdown()

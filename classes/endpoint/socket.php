@@ -38,23 +38,9 @@ class socket implements endpoint\socket
 		return $this;
 	}
 
-	function writeData($data, callable $dataRemaining)
+	function write($data, callable $dataRemaining)
 	{
-		$this->protocol->writeData($data, $dataRemaining);
-
-		return $this;
-	}
-
-	function write(endpoint\socket\data $data)
-	{
-		try
-		{
-			$data->writeOn($this->protocol);
-		}
-		catch (\exception $exception)
-		{
-			throw new socket\exception($exception->getMessage());
-		}
+		$this->protocol->write($data, $dataRemaining);
 
 		return $this;
 	}

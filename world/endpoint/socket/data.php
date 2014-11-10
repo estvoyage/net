@@ -2,7 +2,10 @@
 
 namespace estvoyage\net\world\endpoint\socket;
 
-interface data
+use
+	estvoyage\net\world\endpoint
+;
+
+interface data extends endpoint\data
 {
-	function writeOn(protocol $protocol);
 }

@@ -9,12 +9,12 @@ use
 class connection implements net\endpoint\connection
 {
 	private
-		$address
+		$socket
 	;
 
-	function __construct(net\endpoint\address $address)
+	function __construct(net\endpoint\address $address, net\endpoint\socket\protocol $protocol)
 	{
-		$this->address = $address;
+		$this->socket = $address->connectTo(new socket($protocol));
 	}
 
 	function connect(net\endpoint\address\component $component)
@@ -28,5 +28,12 @@ class connection implements net\endpoint\connection
 
 	function connectPort($port)
 	{
+	}
+
+	function write($data, callable $dataRemaining)
+	{
+		$this->socket->write($data, $dataRemaining);
+
+		return $this;
 	}
 }

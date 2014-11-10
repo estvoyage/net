@@ -15,6 +15,7 @@ class udp extends units\test
 	{
 		$this->testedClass
 			->implements('estvoyage\net\world\endpoint\socket\protocol')
+			->implements('estvoyage\net\world\endpoint\protocol')
 		;
 	}
 
@@ -124,7 +125,7 @@ class udp extends units\test
 		;
 	}
 
-	function testWriteData()
+	function testWrite()
 	{
 		$this
 			->given(
@@ -142,7 +143,7 @@ class udp extends units\test
 				$this->newTestedInstance($host, $port)
 			)
 			->then
-				->object($this->testedInstance->writeData($data, $callback))->isTestedInstance
+				->object($this->testedInstance->write($data, $callback))->isTestedInstance
 				->function('socket_sendto')->wasCalledWithArguments($resource, $data, strlen($data), 0, $host, $port)->once
 				->string($dataRemaining)->isEmpty
 
@@ -150,34 +151,18 @@ class udp extends units\test
 				$this->function->socket_sendto[2] = 2
 			)
 			->then
-				->object($this->testedInstance->writeData($data, $callback))->isTestedInstance
+				->object($this->testedInstance->write($data, $callback))->isTestedInstance
 				->string($dataRemaining)->isEqualTo(substr($data, 2))
 
 			->if(
 				$this->function->socket_sendto = false
 			)
 			->then
-				->exception(function() use ($data) { $this->testedInstance->writeData($data, function() {}); })
+				->exception(function() use ($data) { $this->testedInstance->write($data, function() {}); })
 					->isInstanceOf('estvoyage\net\endpoint\socket\protocol\exception')
 					->hasMessage($errorString)
 				->function('socket_last_error')->wasCalledWithArguments($resource)->once
 				->function('socket_strerror')->wasCalledWithArguments($errorCode)->once
-		;
-	}
-
-	function testWrite()
-	{
-		$this
-			->given(
-				$this->calling($data = new endpoint\socket\data)->writeOn = $dataRemaining = new endpoint\socket\data
-			)
-			->if(
-				$this->newTestedInstance(uniqid(), uniqid())
-			)
-			->then
-				->object($this->testedInstance->write($data))->isIdenticalTo($dataRemaining)
-				->mock($data)->call('writeOn')->withIdenticalArguments($this->testedInstance)->once
-
 		;
 	}
 

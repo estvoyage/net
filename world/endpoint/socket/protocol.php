@@ -2,14 +2,13 @@
 
 namespace estvoyage\net\world\endpoint\socket;
 
-interface protocol
+use
+	estvoyage\net\world\endpoint
+;
+
+interface protocol extends endpoint\protocol
 {
-	function connectHost($host);
-	function connectPort($port);
-	function writeData($data, callable $dataRemaining);
-	function write(data $data);
 	function shutdown();
 	function shutdownOnlyReading();
 	function shutdownOnlyWriting();
-	function disconnect();
 }

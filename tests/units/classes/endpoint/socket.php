@@ -67,51 +67,27 @@ class socket extends units\test
 		;
 	}
 
-	function testWriteData()
+	function testWrite()
 	{
 		$this
 			->given(
 				$data = uniqid(),
-				$this->calling($protocol = new endpoint\socket\protocol)->writeData = function($data, $callback) { $callback(''); },
+				$this->calling($protocol = new endpoint\socket\protocol)->write = function($data, $callback) { $callback(''); },
 				$callback = function($data) use (& $dataRemaining) { $dataRemaining = $data; }
 			)
 			->if(
 				$this->newTestedInstance($protocol)
 			)
 			->then
-				->object($this->testedInstance->writeData($data, $callback))->isTestedInstance
-				->mock($protocol)->call('writeData')->withIdenticalArguments($data, $callback)->once
+				->object($this->testedInstance->write($data, $callback))->isTestedInstance
+				->mock($protocol)->call('write')->withIdenticalArguments($data, $callback)->once
 				->string($dataRemaining)->isEmpty
 			->if(
-				$this->calling($protocol)->writeData = function($data, $callback) { $callback(substr($data, 2)); }
+				$this->calling($protocol)->write = function($data, $callback) { $callback(substr($data, 2)); }
 			)
 			->then
-				->object($this->testedInstance->writeData($data, $callback))->isTestedInstance
+				->object($this->testedInstance->write($data, $callback))->isTestedInstance
 				->string($dataRemaining)->isEqualTo(substr($data, 2))
-		;
-	}
-
-	function testWrite()
-	{
-		$this
-			->given(
-				$data = new endpoint\socket\data,
-				$protocol = new endpoint\socket\protocol
-			)
-			->if(
-				$this->newTestedInstance($protocol)
-			)
-			->then
-				->object($this->testedInstance->write($data))->isTestedInstance
-				->mock($data)->call('writeOn')->withIdenticalArguments($protocol)->once
-
-			->if(
-				$this->calling($data)->writeOn->throw = new \exception($message = uniqid())
-			)
-			->then
-				->exception(function() use ($data) { $this->testedInstance->write($data); })
-					->isInstanceOf('estvoyage\net\endpoint\socket\exception')
-					->hasMessage($message)
 		;
 	}
 

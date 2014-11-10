@@ -14,6 +14,7 @@ class data extends units\test
 	function testClass()
 	{
 		$this->testedClass
+			->implements('estvoyage\net\world\endpoint\data')
 			->implements('estvoyage\net\world\endpoint\socket\data')
 		;
 	}
@@ -30,29 +31,29 @@ class data extends units\test
 			)
 			->then
 				->object($this->testedInstance->writeOn($protocol))->isTestedInstance
-				->mock($protocol)->call('writeData')->never
+				->mock($protocol)->call('write')->never
 
 			->if(
-				$this->calling($protocol)->writeData = function($data, $dataRemaining) { $dataRemaining(''); },
+				$this->calling($protocol)->write = function($data, $dataRemaining) { $dataRemaining(''); },
 				$this->newTestedInstance($data)
 			)
 			->then
 				->object($this->testedInstance->writeOn($protocol))->isTestedInstance
-				->mock($protocol)->call('writeData')->withIdenticalArguments($data)->once
+				->mock($protocol)->call('write')->withIdenticalArguments($data)->once
 
 			->if(
-				$this->calling($protocol)->writeData[2] = function($data, $dataRemaining) { $dataRemaining(substr($data, 2)); },
+				$this->calling($protocol)->write[2] = function($data, $dataRemaining) { $dataRemaining(substr($data, 2)); },
 				$this->newTestedInstance($data)
 			)
 			->then
 				->object($this->testedInstance->writeOn($protocol))->isTestedInstance
 				->mock($protocol)
-					->call('writeData')
+					->call('write')
 						->withIdenticalArguments($data)->twice
 						->withIdenticalArguments(substr($data, 2))->once
 
 			->if(
-				$this->calling($protocol)->writeData->throw = new \exception($message = uniqid())
+				$this->calling($protocol)->write->throw = new \exception($message = uniqid())
 			)
 			->then
 				->exception(function() use ($protocol) { $this->testedInstance->writeOn($protocol); })
