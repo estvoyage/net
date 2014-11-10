@@ -17,7 +17,7 @@ class data implements net\socket\data
 		$this->data = $data;
 	}
 
-	function writeOn(net\socket\driver $driver)
+	function writeOn(net\socket\protocol $protocol)
 	{
 		$data = $this->data;
 
@@ -25,7 +25,7 @@ class data implements net\socket\data
 		{
 			while ($data)
 			{
-				$driver->writeData($data, function($dataRemaining) use (& $data) { $data = $dataRemaining; });
+				$protocol->writeData($data, function($dataRemaining) use (& $data) { $data = $dataRemaining; });
 			}
 		}
 		catch (\exception $exception)

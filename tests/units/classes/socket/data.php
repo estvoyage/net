@@ -23,39 +23,39 @@ class data extends units\test
 		$this
 			->given(
 				$data = uniqid(),
-				$driver = new net\socket\driver
+				$protocol = new net\socket\protocol
 			)
 			->if(
 				$this->newTestedInstance
 			)
 			->then
-				->object($this->testedInstance->writeOn($driver))->isTestedInstance
-				->mock($driver)->call('writeData')->never
+				->object($this->testedInstance->writeOn($protocol))->isTestedInstance
+				->mock($protocol)->call('writeData')->never
 
 			->if(
-				$this->calling($driver)->writeData = function($data, $dataRemaining) { $dataRemaining(''); },
+				$this->calling($protocol)->writeData = function($data, $dataRemaining) { $dataRemaining(''); },
 				$this->newTestedInstance($data)
 			)
 			->then
-				->object($this->testedInstance->writeOn($driver))->isTestedInstance
-				->mock($driver)->call('writeData')->withIdenticalArguments($data)->once
+				->object($this->testedInstance->writeOn($protocol))->isTestedInstance
+				->mock($protocol)->call('writeData')->withIdenticalArguments($data)->once
 
 			->if(
-				$this->calling($driver)->writeData[2] = function($data, $dataRemaining) { $dataRemaining(substr($data, 2)); },
+				$this->calling($protocol)->writeData[2] = function($data, $dataRemaining) { $dataRemaining(substr($data, 2)); },
 				$this->newTestedInstance($data)
 			)
 			->then
-				->object($this->testedInstance->writeOn($driver))->isTestedInstance
-				->mock($driver)
+				->object($this->testedInstance->writeOn($protocol))->isTestedInstance
+				->mock($protocol)
 					->call('writeData')
 						->withIdenticalArguments($data)->twice
 						->withIdenticalArguments(substr($data, 2))->once
 
 			->if(
-				$this->calling($driver)->writeData->throw = new \exception($message = uniqid())
+				$this->calling($protocol)->writeData->throw = new \exception($message = uniqid())
 			)
 			->then
-				->exception(function() use ($driver) { $this->testedInstance->writeOn($driver); })
+				->exception(function() use ($protocol) { $this->testedInstance->writeOn($protocol); })
 					->isInstanceOf('estvoyage\net\socket\data\exception')
 					->hasMessage($message)
 		;

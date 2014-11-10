@@ -1,6 +1,6 @@
 <?php
 
-namespace estvoyage\net\world\socket\driver;
+namespace estvoyage\net\world\socket\protocol;
 
 use
 	estvoyage\net\world\socket

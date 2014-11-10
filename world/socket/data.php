@@ -8,5 +8,5 @@ use
 
 interface data
 {
-	function writeOn(net\socket\driver $driver);
+	function writeOn(net\socket\protocol $protocol);
 }

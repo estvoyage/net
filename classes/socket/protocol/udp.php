@@ -1,14 +1,14 @@
 <?php
 
-namespace estvoyage\net\socket\driver;
+namespace estvoyage\net\socket\protocol;
 
 use
 	estvoyage\net\world as net,
 	estvoyage\net\world\socket,
-	estvoyage\net\socket\driver
+	estvoyage\net\socket\protocol
 ;
 
-class udp implements socket\driver
+class udp implements socket\protocol
 {
 	private
 		$resource,
@@ -36,28 +36,28 @@ class udp implements socket\driver
 
 	function connectHost($host)
 	{
-		$driver = $this;
+		$protocol = $this;
 
 		if ($host != $this->host)
 		{
-			$driver = clone $this;
-			$driver->host = $host;
+			$protocol = clone $this;
+			$protocol->host = $host;
 		}
 
-		return $driver;
+		return $protocol;
 	}
 
 	function connectPort($port)
 	{
-		$driver = $this;
+		$protocol = $this;
 
 		if ($port != $this->port)
 		{
-			$driver = clone $this;
-			$driver->port = $port;
+			$protocol = clone $this;
+			$protocol->port = $port;
 		}
 
-		return $driver;
+		return $protocol;
 	}
 
 	function writeData($data, callable $dataRemaining)
@@ -66,7 +66,7 @@ class udp implements socket\driver
 
 		if ($bytesWritten === false)
 		{
-			throw new driver\exception(socket_strerror(socket_last_error($this->resource)));
+			throw new protocol\exception(socket_strerror(socket_last_error($this->resource)));
 		}
 
 		$dataRemaining(substr($data, $bytesWritten) ?: '');
@@ -105,7 +105,7 @@ class udp implements socket\driver
 
 		if (! $resource)
 		{
-			throw new driver\exception(socket_strerror(socket_last_error()));
+			throw new protocol\exception(socket_strerror(socket_last_error()));
 		}
 
 		$this->resource = $resource;

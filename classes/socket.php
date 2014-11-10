@@ -9,12 +9,12 @@ use
 class socket implements net\socket
 {
 	private
-		$driver
+		$protocol
 	;
 
-	function __construct(net\socket\driver $driver)
+	function __construct(net\socket\protocol $protocol)
 	{
-		$this->driver = $driver;
+		$this->protocol = $protocol;
 	}
 
 	function connect(net\endpoint\address\component $component)
@@ -25,7 +25,7 @@ class socket implements net\socket
 	function connectHost($host)
 	{
 		$socket = clone $this;
-		$socket->driver = $this->driver->connectHost($host);
+		$socket->protocol = $this->protocol->connectHost($host);
 
 		return $this;
 	}
@@ -33,14 +33,14 @@ class socket implements net\socket
 	function connectPort($port)
 	{
 		$socket = clone $this;
-		$socket->driver = $this->driver->connectPort($port);
+		$socket->protocol = $this->protocol->connectPort($port);
 
 		return $this;
 	}
 
 	function writeData($data, callable $dataRemaining)
 	{
-		$this->driver->writeData($data, $dataRemaining);
+		$this->protocol->writeData($data, $dataRemaining);
 
 		return $this;
 	}
@@ -49,7 +49,7 @@ class socket implements net\socket
 	{
 		try
 		{
-			$data->writeOn($this->driver);
+			$data->writeOn($this->protocol);
 		}
 		catch (\exception $exception)
 		{
@@ -62,7 +62,7 @@ class socket implements net\socket
 	function shutdown()
 	{
 		$socket = clone $this;
-		$socket->driver = $this->driver->shutdown();
+		$socket->protocol = $this->protocol->shutdown();
 
 		return $socket;
 	}
@@ -70,7 +70,7 @@ class socket implements net\socket
 	function shutdownOnlyReading()
 	{
 		$socket = clone $this;
-		$socket->driver = $this->driver->shutdownOnlyReading();
+		$socket->protocol = $this->protocol->shutdownOnlyReading();
 
 		return $socket;
 	}
@@ -78,7 +78,7 @@ class socket implements net\socket
 	function shutdownOnlyWriting()
 	{
 		$socket = clone $this;
-		$socket->driver = $this->driver->shutdownOnlyWriting();
+		$socket->protocol = $this->protocol->shutdownOnlyWriting();
 
 		return $socket;
 	}
@@ -86,7 +86,7 @@ class socket implements net\socket
 	function disconnect()
 	{
 		$socket = clone $this;
-		$socket->driver = $this->driver->disconnect();
+		$socket->protocol = $this->protocol->disconnect();
 
 		return $socket;
 	}

@@ -27,7 +27,7 @@ class socket extends units\test
 				$this->calling($addressComponent = new net\endpoint\address\component)->connectTo = $endpointUsingComponent = new net\endpoint
 			)
 			->if(
-				$this->newTestedInstance(new net\socket\driver)
+				$this->newTestedInstance(new net\socket\protocol)
 			)
 			->then
 				->object($this->testedInstance->connect($addressComponent))->isIdenticalTo($endpointUsingComponent)
@@ -40,14 +40,14 @@ class socket extends units\test
 		$this
 			->given(
 				$host = uniqid(),
-				$this->calling($driver = new net\socket\driver)->connectHost = $driverConnectedToHost = new net\socket\driver
+				$this->calling($protocol = new net\socket\protocol)->connectHost = $protocolConnectedToHost = new net\socket\protocol
 			)
 			->if(
-				$this->newTestedInstance($driver)
+				$this->newTestedInstance($protocol)
 			)
 			->then
-				->object($this->testedInstance->connectHost($host))->isEqualTo($this->newTestedInstance($driverConnectedToHost))
-				->mock($driver)->call('connectHost')->withIdenticalArguments($host)->once
+				->object($this->testedInstance->connectHost($host))->isEqualTo($this->newTestedInstance($protocolConnectedToHost))
+				->mock($protocol)->call('connectHost')->withIdenticalArguments($host)->once
 		;
 	}
 
@@ -56,14 +56,14 @@ class socket extends units\test
 		$this
 			->given(
 				$port = uniqid(),
-				$this->calling($driver = new net\socket\driver)->connectPort = $driverConnectedToPort = new net\socket\driver
+				$this->calling($protocol = new net\socket\protocol)->connectPort = $protocolConnectedToPort = new net\socket\protocol
 			)
 			->if(
-				$this->newTestedInstance($driver)
+				$this->newTestedInstance($protocol)
 			)
 			->then
-				->object($this->testedInstance->connectPort($port))->isEqualTo($this->newTestedInstance($driverConnectedToPort))
-				->mock($driver)->call('connectPort')->withIdenticalArguments($port)->once
+				->object($this->testedInstance->connectPort($port))->isEqualTo($this->newTestedInstance($protocolConnectedToPort))
+				->mock($protocol)->call('connectPort')->withIdenticalArguments($port)->once
 		;
 	}
 
@@ -72,18 +72,18 @@ class socket extends units\test
 		$this
 			->given(
 				$data = uniqid(),
-				$this->calling($driver = new net\socket\driver)->writeData = function($data, $callback) { $callback(''); },
+				$this->calling($protocol = new net\socket\protocol)->writeData = function($data, $callback) { $callback(''); },
 				$callback = function($data) use (& $dataRemaining) { $dataRemaining = $data; }
 			)
 			->if(
-				$this->newTestedInstance($driver)
+				$this->newTestedInstance($protocol)
 			)
 			->then
 				->object($this->testedInstance->writeData($data, $callback))->isTestedInstance
-				->mock($driver)->call('writeData')->withIdenticalArguments($data, $callback)->once
+				->mock($protocol)->call('writeData')->withIdenticalArguments($data, $callback)->once
 				->string($dataRemaining)->isEmpty
 			->if(
-				$this->calling($driver)->writeData = function($data, $callback) { $callback(substr($data, 2)); }
+				$this->calling($protocol)->writeData = function($data, $callback) { $callback(substr($data, 2)); }
 			)
 			->then
 				->object($this->testedInstance->writeData($data, $callback))->isTestedInstance
@@ -96,14 +96,14 @@ class socket extends units\test
 		$this
 			->given(
 				$data = new net\socket\data,
-				$driver = new net\socket\driver
+				$protocol = new net\socket\protocol
 			)
 			->if(
-				$this->newTestedInstance($driver)
+				$this->newTestedInstance($protocol)
 			)
 			->then
 				->object($this->testedInstance->write($data))->isTestedInstance
-				->mock($data)->call('writeOn')->withIdenticalArguments($driver)->once
+				->mock($data)->call('writeOn')->withIdenticalArguments($protocol)->once
 
 			->if(
 				$this->calling($data)->writeOn->throw = new \exception($message = uniqid())
@@ -119,14 +119,14 @@ class socket extends units\test
 	{
 		$this
 			->given(
-				$this->calling($driver = new net\socket\driver)->shutdown = $driverAfterShutdown = new net\socket\driver
+				$this->calling($protocol = new net\socket\protocol)->shutdown = $protocolAfterShutdown = new net\socket\protocol
 			)
 			->if(
-				$this->newTestedInstance($driver)
+				$this->newTestedInstance($protocol)
 			)
 			->then
-				->object($this->testedInstance->shutdown())->isEqualTo($this->newTestedInstance($driverAfterShutdown))
-				->mock($driver)->call('shutdown')->once
+				->object($this->testedInstance->shutdown())->isEqualTo($this->newTestedInstance($protocolAfterShutdown))
+				->mock($protocol)->call('shutdown')->once
 		;
 	}
 
@@ -134,14 +134,14 @@ class socket extends units\test
 	{
 		$this
 			->given(
-				$this->calling($driver = new net\socket\driver)->shutdownOnlyReading = $driverAfterShutdown = new net\socket\driver
+				$this->calling($protocol = new net\socket\protocol)->shutdownOnlyReading = $protocolAfterShutdown = new net\socket\protocol
 			)
 			->if(
-				$this->newTestedInstance($driver)
+				$this->newTestedInstance($protocol)
 			)
 			->then
-				->object($this->testedInstance->shutdownOnlyReading())->isEqualTo($this->newTestedInstance($driverAfterShutdown))
-				->mock($driver)->call('shutdownOnlyReading')->once
+				->object($this->testedInstance->shutdownOnlyReading())->isEqualTo($this->newTestedInstance($protocolAfterShutdown))
+				->mock($protocol)->call('shutdownOnlyReading')->once
 		;
 	}
 
@@ -149,14 +149,14 @@ class socket extends units\test
 	{
 		$this
 			->given(
-				$this->calling($driver = new net\socket\driver)->shutdownOnlyWriting = $driverAfterShutdown = new net\socket\driver
+				$this->calling($protocol = new net\socket\protocol)->shutdownOnlyWriting = $protocolAfterShutdown = new net\socket\protocol
 			)
 			->if(
-				$this->newTestedInstance($driver)
+				$this->newTestedInstance($protocol)
 			)
 			->then
-				->object($this->testedInstance->shutdownOnlyWriting())->isEqualTo($this->newTestedInstance($driverAfterShutdown))
-				->mock($driver)->call('shutdownOnlyWriting')->once
+				->object($this->testedInstance->shutdownOnlyWriting())->isEqualTo($this->newTestedInstance($protocolAfterShutdown))
+				->mock($protocol)->call('shutdownOnlyWriting')->once
 		;
 	}
 
@@ -164,14 +164,14 @@ class socket extends units\test
 	{
 		$this
 			->given(
-				$this->calling($driver = new net\socket\driver)->disconnect = $driverDisconnected = new net\socket\driver
+				$this->calling($protocol = new net\socket\protocol)->disconnect = $protocolDisconnected = new net\socket\protocol
 			)
 			->if(
-				$this->newTestedInstance($driver)
+				$this->newTestedInstance($protocol)
 			)
 			->then
-				->object($this->testedInstance->disconnect())->isEqualTo($this->newTestedInstance($driverDisconnected))
-				->mock($driver)->call('disconnect')->once
+				->object($this->testedInstance->disconnect())->isEqualTo($this->newTestedInstance($protocolDisconnected))
+				->mock($protocol)->call('disconnect')->once
 		;
 	}
 }

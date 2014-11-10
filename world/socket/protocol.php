@@ -6,7 +6,7 @@ use
 	estvoyage\net\world as net
 ;
 
-interface driver
+interface protocol
 {
 	function connectHost($host);
 	function connectPort($port);

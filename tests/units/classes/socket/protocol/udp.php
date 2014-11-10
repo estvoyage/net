@@ -1,6 +1,6 @@
 <?php
 
-namespace estvoyage\net\tests\units\socket\driver;
+namespace estvoyage\net\tests\units\socket\protocol;
 
 require __DIR__ . '/../../../runner.php';
 
@@ -14,7 +14,7 @@ class udp extends units\test
 	function testClass()
 	{
 		$this->testedClass
-			->implements('estvoyage\net\world\socket\driver')
+			->implements('estvoyage\net\world\socket\protocol')
 		;
 	}
 
@@ -38,7 +38,7 @@ class udp extends units\test
 			)
 			->then
 				->exception(function() { $this->newTestedInstance(uniqid(), uniqid()); })
-					->isInstanceOf('estvoyage\net\socket\driver\exception')
+					->isInstanceOf('estvoyage\net\socket\protocol\exception')
 					->hasMessage($errorString)
 				->function('socket_last_error')->wasCalledWithArguments(null)->once
 				->function('socket_strerror')->wasCalledWithArguments($errorCode)->once
@@ -158,7 +158,7 @@ class udp extends units\test
 			)
 			->then
 				->exception(function() use ($data) { $this->testedInstance->writeData($data, function() {}); })
-					->isInstanceOf('estvoyage\net\socket\driver\exception')
+					->isInstanceOf('estvoyage\net\socket\protocol\exception')
 					->hasMessage($errorString)
 				->function('socket_last_error')->wasCalledWithArguments($resource)->once
 				->function('socket_strerror')->wasCalledWithArguments($errorCode)->once
