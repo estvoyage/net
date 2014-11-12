@@ -46,7 +46,9 @@ class socket extends units\test
 				$this->newTestedInstance($protocol)
 			)
 			->then
-				->object($this->testedInstance->connectHost($host))->isEqualTo($this->newTestedInstance($protocolConnectedToHost))
+				->object($this->testedInstance->connectHost($host))
+					->isNotTestedInstance
+					->isEqualTo($this->newTestedInstance($protocolConnectedToHost))
 				->mock($protocol)->call('connectHost')->withIdenticalArguments($host)->once
 		;
 	}
@@ -62,7 +64,9 @@ class socket extends units\test
 				$this->newTestedInstance($protocol)
 			)
 			->then
-				->object($this->testedInstance->connectPort($port))->isEqualTo($this->newTestedInstance($protocolConnectedToPort))
+				->object($this->testedInstance->connectPort($port))
+					->isNotTestedInstance
+					->isEqualTo($this->newTestedInstance($protocolConnectedToPort))
 				->mock($protocol)->call('connectPort')->withIdenticalArguments($port)->once
 		;
 	}

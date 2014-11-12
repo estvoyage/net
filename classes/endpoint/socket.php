@@ -27,7 +27,7 @@ class socket implements endpoint\socket
 		$socket = clone $this;
 		$socket->protocol = $this->protocol->connectHost($host);
 
-		return $this;
+		return $socket;
 	}
 
 	function connectPort($port)
@@ -35,7 +35,7 @@ class socket implements endpoint\socket
 		$socket = clone $this;
 		$socket->protocol = $this->protocol->connectPort($port);
 
-		return $this;
+		return $socket;
 	}
 
 	function write($data, callable $dataRemaining)
