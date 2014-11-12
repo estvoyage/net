@@ -17,22 +17,6 @@ class socket implements endpoint\socket
 		$this->protocol = $protocol;
 	}
 
-	function connectHost($host)
-	{
-		$socket = clone $this;
-		$socket->protocol = $this->protocol->connectHost($host);
-
-		return $socket;
-	}
-
-	function connectPort($port)
-	{
-		$socket = clone $this;
-		$socket->protocol = $this->protocol->connectPort($port);
-
-		return $socket;
-	}
-
 	function write($data, callable $dataRemaining)
 	{
 		$this->protocol->write($data, $dataRemaining);
@@ -40,35 +24,42 @@ class socket implements endpoint\socket
 		return $this;
 	}
 
+	function connectHost($host)
+	{
+		return $this->useProtocol($this->protocol->connectHost($host));
+	}
+
+	function connectPort($port)
+	{
+		return $this->useProtocol($this->protocol->connectPort($port));
+	}
+
 	function shutdown()
 	{
-		$socket = clone $this;
-		$socket->protocol = $this->protocol->shutdown();
-
-		return $socket;
+		return $this->useProtocol($this->protocol->shutdown());
 	}
 
 	function shutdownOnlyReading()
 	{
-		$socket = clone $this;
-		$socket->protocol = $this->protocol->shutdownOnlyReading();
-
-		return $socket;
+		return $this->useProtocol($this->protocol->shutdownOnlyReading());
 	}
 
 	function shutdownOnlyWriting()
 	{
-		$socket = clone $this;
-		$socket->protocol = $this->protocol->shutdownOnlyWriting();
-
-		return $socket;
+		return $this->useProtocol($this->protocol->shutdownOnlyWriting());
 	}
 
 	function disconnect()
 	{
+		return $this->useProtocol($this->protocol->disconnect());
+	}
+
+	private function useProtocol(endpoint\socket\protocol $protocol)
+	{
 		$socket = clone $this;
-		$socket->protocol = $this->protocol->disconnect();
+		$socket->protocol = $protocol;
 
 		return $socket;
 	}
+
 }
