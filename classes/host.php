@@ -23,8 +23,10 @@ class host implements net\host
 		$this->host = $host;
 	}
 
-	function connect(net\endpoint $endpoint)
+	function connect(net\endpoint $endpoint, callable $callback)
 	{
-		return $endpoint->connectHost($this->host);
+		$callback($endpoint->connectHost($this->host));
+
+		return $this;
 	}
 }

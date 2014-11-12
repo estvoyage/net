@@ -53,14 +53,16 @@ class host extends units\test
 		$this
 			->given(
 				$host = 'foo.bar',
-				$this->calling($endpoint = new net\endpoint)->connectHost = $endpointConnectedToHost = new net\endpoint
+				$this->calling($endpoint = new net\endpoint)->connectHost = $endpointAfterConnectHost = new net\endpoint,
+				$callback = function($endpoint) use (& $endpointConnectedToHost) { $endpointConnectedToHost = $endpoint; }
 			)
 			->if(
 				$this->newTestedInstance($host)
 			)
 			->then
-				->object($this->testedInstance->connect($endpoint))->isIdenticalTo($endpointConnectedToHost)
+				->object($this->testedInstance->connect($endpoint, $callback))->isTestedInstance
 				->mock($endpoint)->call('connectHost')->withIdenticalArguments($host)->once
+				->object($endpointConnectedToHost)->isIdenticalTo($endpointAfterConnectHost)
 		;
 	}
 }

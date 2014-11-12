@@ -1,8 +1,8 @@
 <?php
 
-namespace estvoyage\net\tests\units\endpoint;
+namespace estvoyage\net\tests\units;
 
-require __DIR__ . '/../../runner.php';
+require __DIR__ . '/../runner.php';
 
 use
 	estvoyage\net\tests\units,
@@ -15,7 +15,7 @@ class connection extends units\test
 	function testClass()
 	{
 		$this->testedClass
-			->implements('estvoyage\net\world\endpoint')
+			->implements('estvoyage\net\world\connection')
 		;
 	}
 
@@ -23,7 +23,7 @@ class connection extends units\test
 	{
 		$this
 			->given(
-				$this->calling($address = new net\endpoint\address)->connect = new net\endpoint\socket,
+				$this->calling($address = new net\endpoint\address)->connect = function($endpoint, $callback) { $callback(new net\endpoint\socket); },
 				$protocol = new net\endpoint\socket\protocol
 			)
 			->if(
@@ -34,28 +34,13 @@ class connection extends units\test
 		;
 	}
 
-	function testConnect()
-	{
-		$this
-			->given(
-				$this->calling($address = new net\endpoint\address\component)->connect = $connectedConnection = new net\connection
-			)
-			->if(
-				$this->newTestedInstance(new net\endpoint\address, new net\endpoint\socket\protocol)
-			)
-			->then
-				->object($this->testedInstance->connect($address))->isIdenticalTo($connectedConnection)
-				->mock($address)->call('connect')->withIdenticalArguments($this->testedInstance)->once
-		;
-	}
-
 	function testWrite()
 	{
 		$this
 			->given(
 				$data = uniqid(),
 				$callback = function($data) use (& $dataRemaining) { $dataRemaining = $data; },
-				$this->calling($address = new net\endpoint\address)->connect = $connectedSocket = new net\endpoint\socket,
+				$this->calling($address = new net\endpoint\address)->connect = function($endpoint, $callback) use (& $connectedSocket) { $callback($connectedSocket = new net\endpoint\socket); },
 				$this->calling($protocol = new net\endpoint\socket\protocol)->write = function($data, $dataRemaining) { $dataRemaining(''); }
 			)
 			->if(

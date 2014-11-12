@@ -23,8 +23,9 @@ class address extends units\test
 	{
 		$this
 			->given(
-				$this->calling($host = new net\host)->connect = $endpointConnectedToHost = new net\endpoint,
-				$this->calling($port = new net\port)->connect = $endpointConnectedToPort = new net\endpoint,
+				$this->calling($host = new net\host)->connect = function($endpoint, $callback) use (& $endpointAfterHostConnect) { $callback($endpointAfterHostConnect = new net\endpoint); },
+				$this->calling($port = new net\port)->connect = function($endpoint, $callback) use (& $endpointAfterPortConnect) { $callback($endpointAfterPortConnect = new net\endpoint); },
+				$callback = function($endpoint) use (& $endpointConnectedToHostAndPort) { $endpointConnectedToHostAndPort = $endpoint; },
 				$endpoint = new net\endpoint
 			)
 
@@ -32,9 +33,10 @@ class address extends units\test
 				$this->newTestedInstance($host, $port)
 			)
 			->then
-				->object($this->testedInstance->connect($endpoint))->isIdenticalTo($endpointConnectedToPort)
+				->object($this->testedInstance->connect($endpoint, $callback))->isTestedInstance
 				->mock($host)->call('connect')->withIdenticalArguments($endpoint)->once
-				->mock($port)->call('connect')->withIdenticalArguments($endpointConnectedToHost)->once
+				->mock($port)->call('connect')->withIdenticalArguments($endpointAfterHostConnect)->once
+				->object($endpointConnectedToHostAndPort)->isIdenticalTo($endpointAfterPortConnect)
 		;
 	}
 }

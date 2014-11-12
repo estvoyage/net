@@ -26,8 +26,10 @@ class port implements net\port
 		$this->port = $port;
 	}
 
-	function connect(net\endpoint $endpoint)
+	function connect(net\endpoint $endpoint, callable $callback)
 	{
-		return $endpoint->connectPort($this->port);
+		$callback($endpoint->connectPort($this->port));
+
+		return $this;
 	}
 }

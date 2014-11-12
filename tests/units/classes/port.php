@@ -45,14 +45,16 @@ class port extends units\test
 		$this
 			->given(
 				$port = rand(0, 65535),
-				$this->calling($endpoint = new net\endpoint)->connectPort = $endpointConnectedToPort = new net\endpoint
+				$this->calling($endpoint = new net\endpoint)->connectPort = $endpointAfterConnectPort = new net\endpoint,
+				$callback = function($endpoint) use (& $endpointConnectedToPort) { $endpointConnectedToPort = $endpoint; }
 			)
 			->if(
 				$this->newTestedInstance($port)
 			)
 			->then
-				->object($this->testedInstance->connect($endpoint))->isIdenticalTo($endpointConnectedToPort)
+				->object($this->testedInstance->connect($endpoint, $callback))->isTestedInstance
 				->mock($endpoint)->call('connectPort')->withIdenticalArguments($port)->once
+				->object($endpointConnectedToPort)->isIdenticalTo($endpointAfterConnectPort)
 		;
 	}
 }

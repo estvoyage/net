@@ -19,8 +19,15 @@ class address implements net\endpoint\address
 		$this->port = $port;
 	}
 
-	function connect(net\endpoint $endpoint)
+	function connect(net\endpoint $endpoint, callable $callback)
 	{
-		return $this->port->connect($this->host->connect($endpoint));
+		$this->host
+			->connect($endpoint, function($endpoint) use ($callback) {
+					$this->port->connect($endpoint, $callback);
+				}
+			)
+		;
+
+		return $this;
 	}
 }

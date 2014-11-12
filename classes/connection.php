@@ -1,12 +1,12 @@
 <?php
 
-namespace estvoyage\net\endpoint;
+namespace estvoyage\net;
 
 use
 	estvoyage\net\world as net
 ;
 
-class connection implements net\endpoint\connection
+class connection implements net\connection
 {
 	private
 		$socket
@@ -14,20 +14,10 @@ class connection implements net\endpoint\connection
 
 	function __construct(net\endpoint\address $address, net\endpoint\socket\protocol $protocol)
 	{
-		$this->socket = $address->connect(new socket($protocol));
-	}
-
-	function connect(net\endpoint\address\component $component)
-	{
-		return $component->connect($this);
-	}
-
-	function connectHost($host)
-	{
-	}
-
-	function connectPort($port)
-	{
+		$address->connect(new endpoint\socket($protocol), function($socket) {
+				$this->socket = $socket;
+			}
+		);
 	}
 
 	function write($data, callable $dataRemaining)
