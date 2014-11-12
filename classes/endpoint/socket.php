@@ -17,11 +17,6 @@ class socket implements endpoint\socket
 		$this->protocol = $protocol;
 	}
 
-	function connect(endpoint\address\component $component)
-	{
-		return $component->connectTo($this);
-	}
-
 	function connectHost($host)
 	{
 		$socket = clone $this;

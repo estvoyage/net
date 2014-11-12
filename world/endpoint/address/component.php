@@ -8,5 +8,5 @@ use
 
 interface component
 {
-	function connectTo(net\endpoint $endpoint);
+	function connect(net\endpoint $endpoint);
 }

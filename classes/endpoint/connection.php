@@ -14,12 +14,12 @@ class connection implements net\endpoint\connection
 
 	function __construct(net\endpoint\address $address, net\endpoint\socket\protocol $protocol)
 	{
-		$this->socket = $address->connectTo(new socket($protocol));
+		$this->socket = $address->connect(new socket($protocol));
 	}
 
 	function connect(net\endpoint\address\component $component)
 	{
-		return $component->connectTo($this);
+		return $component->connect($this);
 	}
 
 	function connectHost($host)

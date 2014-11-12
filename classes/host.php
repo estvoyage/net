@@ -23,7 +23,7 @@ class host implements net\host
 		$this->host = $host;
 	}
 
-	function connectTo(net\endpoint $endpoint)
+	function connect(net\endpoint $endpoint)
 	{
 		return $endpoint->connectHost($this->host);
 	}

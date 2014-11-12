@@ -18,7 +18,7 @@ class localhost extends units\test
 		;
 	}
 
-	function testConnectTo()
+	function testConnect()
 	{
 		$this
 			->given(
@@ -28,7 +28,7 @@ class localhost extends units\test
 				$this->newTestedInstance
 			)
 			->then
-				->object($this->testedInstance->connectTo($endpoint))->isIdenticalTo($endpointConnectedToHost)
+				->object($this->testedInstance->connect($endpoint))->isIdenticalTo($endpointConnectedToHost)
 				->mock($endpoint)->call('connectHost')->withIdenticalArguments('127.0.0.1')->once
 		;
 	}

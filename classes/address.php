@@ -19,8 +19,8 @@ class address implements net\endpoint\address
 		$this->port = $port;
 	}
 
-	function connectTo(net\endpoint $endpoint)
+	function connect(net\endpoint $endpoint)
 	{
-		return $this->port->connectTo($this->host->connectTo($endpoint));
+		return $this->port->connect($this->host->connect($endpoint));
 	}
 }

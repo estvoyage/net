@@ -23,14 +23,14 @@ class connection extends units\test
 	{
 		$this
 			->given(
-				$this->calling($address = new net\endpoint\address)->connectTo = new net\endpoint\socket,
+				$this->calling($address = new net\endpoint\address)->connect = new net\endpoint\socket,
 				$protocol = new net\endpoint\socket\protocol
 			)
 			->if(
 				$this->newTestedInstance($address, $protocol)
 			)
 			->then
-				->mock($address)->call('connectTo')->withArguments(new endpoint\socket($protocol))->once
+				->mock($address)->call('connect')->withArguments(new endpoint\socket($protocol))->once
 		;
 	}
 
@@ -38,14 +38,14 @@ class connection extends units\test
 	{
 		$this
 			->given(
-				$this->calling($address = new net\endpoint\address\component)->connectTo = $connectedConnection = new net\connection
+				$this->calling($address = new net\endpoint\address\component)->connect = $connectedConnection = new net\connection
 			)
 			->if(
 				$this->newTestedInstance(new net\endpoint\address, new net\endpoint\socket\protocol)
 			)
 			->then
 				->object($this->testedInstance->connect($address))->isIdenticalTo($connectedConnection)
-				->mock($address)->call('connectTo')->withIdenticalArguments($this->testedInstance)->once
+				->mock($address)->call('connect')->withIdenticalArguments($this->testedInstance)->once
 		;
 	}
 
@@ -55,7 +55,7 @@ class connection extends units\test
 			->given(
 				$data = uniqid(),
 				$callback = function($data) use (& $dataRemaining) { $dataRemaining = $data; },
-				$this->calling($address = new net\endpoint\address)->connectTo = $connectedSocket = new net\endpoint\socket,
+				$this->calling($address = new net\endpoint\address)->connect = $connectedSocket = new net\endpoint\socket,
 				$this->calling($protocol = new net\endpoint\socket\protocol)->write = function($data, $dataRemaining) { $dataRemaining(''); }
 			)
 			->if(

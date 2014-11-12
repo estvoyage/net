@@ -40,7 +40,7 @@ class port extends units\test
 		;
 	}
 
-	function testConnectTo()
+	function testConnect()
 	{
 		$this
 			->given(
@@ -51,7 +51,7 @@ class port extends units\test
 				$this->newTestedInstance($port)
 			)
 			->then
-				->object($this->testedInstance->connectTo($endpoint))->isIdenticalTo($endpointConnectedToPort)
+				->object($this->testedInstance->connect($endpoint))->isIdenticalTo($endpointConnectedToPort)
 				->mock($endpoint)->call('connectPort')->withIdenticalArguments($port)->once
 		;
 	}

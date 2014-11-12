@@ -20,21 +20,6 @@ class socket extends units\test
 		;
 	}
 
-	function testConnect()
-	{
-		$this
-			->given(
-				$this->calling($addressComponent = new endpoint\address\component)->connectTo = $endpointUsingComponent = new endpoint
-			)
-			->if(
-				$this->newTestedInstance(new endpoint\socket\protocol)
-			)
-			->then
-				->object($this->testedInstance->connect($addressComponent))->isIdenticalTo($endpointUsingComponent)
-				->mock($addressComponent)->call('connectTo')->withIdenticalArguments($this->testedInstance)->once
-		;
-	}
-
 	function testConnectHost()
 	{
 		$this
