@@ -12,7 +12,7 @@ class connection implements net\connection
 		$socket
 	;
 
-	function __construct(net\endpoint\address $address, net\endpoint\socket\protocol $protocol)
+	function __construct(net\address $address, net\endpoint\socket\protocol $protocol)
 	{
 		$address->connect(new endpoint\socket($protocol), function($socket) {
 				$this->socket = $socket;

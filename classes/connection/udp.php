@@ -10,7 +10,7 @@ use
 
 class udp extends connection
 {
-	function __construct(net\endpoint\address $address)
+	function __construct(net\address $address)
 	{
 		parent::__construct($address, new socket\protocol\udp);
 	}

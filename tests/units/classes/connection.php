@@ -23,7 +23,7 @@ class connection extends units\test
 	{
 		$this
 			->given(
-				$this->calling($address = new net\endpoint\address)->connect = function($endpoint, $callback) { $callback(new net\endpoint\socket); },
+				$this->calling($address = new net\address)->connect = function($endpoint, $callback) { $callback(new net\endpoint\socket); },
 				$protocol = new net\endpoint\socket\protocol
 			)
 			->if(
@@ -40,7 +40,7 @@ class connection extends units\test
 			->given(
 				$data = uniqid(),
 				$callback = function($data) use (& $dataRemaining) { $dataRemaining = $data; },
-				$this->calling($address = new net\endpoint\address)->connect = function($endpoint, $callback) use (& $connectedSocket) { $callback($connectedSocket = new net\endpoint\socket); },
+				$this->calling($address = new net\address)->connect = function($endpoint, $callback) use (& $connectedSocket) { $callback($connectedSocket = new net\endpoint\socket); },
 				$this->calling($protocol = new net\endpoint\socket\protocol)->write = function($data, $dataRemaining) { $dataRemaining(''); }
 			)
 			->if(

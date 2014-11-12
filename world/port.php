@@ -2,6 +2,6 @@
 
 namespace estvoyage\net\world;
 
-interface port extends endpoint\address\component
+interface port extends address\component
 {
 }

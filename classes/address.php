@@ -6,7 +6,7 @@ use
 	estvoyage\net\world as net
 ;
 
-class address implements net\endpoint\address
+class address implements net\address
 {
 	private
 		$host,

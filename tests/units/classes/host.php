@@ -14,7 +14,7 @@ class host extends units\test
 	function testClass()
 	{
 		$this->testedClass
-			->implements('estvoyage\net\world\endpoint\address\component')
+			->implements('estvoyage\net\world\address\component')
 			->implements('estvoyage\net\world\host')
 		;
 	}

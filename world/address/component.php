@@ -1,6 +1,6 @@
 <?php
 
-namespace estvoyage\net\world\endpoint\address;
+namespace estvoyage\net\world\address;
 
 use
 	estvoyage\net\world as net

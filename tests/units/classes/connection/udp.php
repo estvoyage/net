@@ -23,7 +23,7 @@ class udp extends units\test
 	{
 		$this
 			->given(
-				$this->calling($address = new net\endpoint\address)->connect = function($endpoint, $callback) { $callback(new net\endpoint\socket); }
+				$this->calling($address = new net\address)->connect = function($endpoint, $callback) { $callback(new net\endpoint\socket); }
 			)
 			->if(
 				$this->newTestedInstance($address)
