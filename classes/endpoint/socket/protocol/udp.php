@@ -11,17 +11,12 @@ use
 class udp implements socket\protocol
 {
 	private
-		$resource,
-		$host,
-		$port
+		$resource
 	;
 
-	function __construct($host, $port)
+	function __construct()
 	{
 		$this->init();
-
-		$this->host = $host;
-		$this->port = $port;
 	}
 
 	function __destruct()
@@ -34,35 +29,9 @@ class udp implements socket\protocol
 		$this->init();
 	}
 
-	function connectHost($host)
+	function write($data, $host, $port, callable $dataRemaining)
 	{
-		$protocol = $this;
-
-		if ($host != $this->host)
-		{
-			$protocol = clone $this;
-			$protocol->host = $host;
-		}
-
-		return $protocol;
-	}
-
-	function connectPort($port)
-	{
-		$protocol = $this;
-
-		if ($port != $this->port)
-		{
-			$protocol = clone $this;
-			$protocol->port = $port;
-		}
-
-		return $protocol;
-	}
-
-	function write($data, callable $dataRemaining)
-	{
-		$bytesWritten = socket_sendto($this->resource, $data, strlen($data), 0, $this->host, $this->port);
+		$bytesWritten = socket_sendto($this->resource, $data, strlen($data), 0, $host, $port);
 
 		if ($bytesWritten === false)
 		{

@@ -9,29 +9,39 @@ use
 class socket implements endpoint\socket
 {
 	private
-		$protocol
+		$protocol,
+		$host,
+		$port
 	;
 
-	function __construct(endpoint\socket\protocol $protocol)
+	function __construct(endpoint\socket\protocol $protocol, $host = null, $port = null)
 	{
 		$this->protocol = $protocol;
+		$this->host = $host;
+		$this->port = $port;
 	}
 
 	function write($data, callable $dataRemaining)
 	{
-		$this->protocol->write($data, $dataRemaining);
+		$this->protocol->write($data, $this->host, $this->port, $dataRemaining);
 
 		return $this;
 	}
 
 	function connectHost($host)
 	{
-		return $this->useProtocol($this->protocol->connectHost($host));
+		$socket = clone $this;
+		$socket->host = $host;
+
+		return $socket;
 	}
 
 	function connectPort($port)
 	{
-		return $this->useProtocol($this->protocol->connectPort($port));
+		$socket = clone $this;
+		$socket->port = $port;
+
+		return $socket;
 	}
 
 	function shutdown()

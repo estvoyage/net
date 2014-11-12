@@ -79,52 +79,6 @@ class udp extends units\test
 		;
 	}
 
-	function testConnectHost()
-	{
-		$this
-			->given(
-				$host1 = uniqid(),
-				$host2 = uniqid(),
-				$port = uniqid(),
-				$this->function->socket_create = uniqid(),
-				$this->function->socket_close->doesNothing
-			)
-
-			->if(
-				$this->newTestedInstance($host1, $port)
-			)
-			->then
-				->object($this->testedInstance->connectHost($host1))->isTestedInstance
-				->function('socket_create')->wasCalledWithArguments(AF_INET, SOCK_DGRAM, SOL_UDP)->once
-
-				->object($this->testedInstance->connectHost($host2))->isEqualTo($this->newTestedInstance($host2, $port))
-				->function('socket_create')->wasCalledWithArguments(AF_INET, SOCK_DGRAM, SOL_UDP)->thrice
-		;
-	}
-
-	function testConnectPort()
-	{
-		$this
-			->given(
-				$host = uniqid(),
-				$port1 = uniqid(),
-				$port2 = uniqid(),
-				$this->function->socket_create = uniqid(),
-				$this->function->socket_close->doesNothing
-			)
-
-			->if(
-				$this->newTestedInstance($host, $port1)
-			)
-			->then
-				->object($this->testedInstance->connectPort($port1))->isTestedInstance
-				->function('socket_create')->wasCalledWithArguments(AF_INET, SOCK_DGRAM, SOL_UDP)->once
-
-				->object($this->testedInstance->connectPort($port2))->isEqualTo($this->newTestedInstance($host, $port2))
-				->function('socket_create')->wasCalledWithArguments(AF_INET, SOCK_DGRAM, SOL_UDP)->thrice
-		;
-	}
-
 	function testWrite()
 	{
 		$this
@@ -140,10 +94,10 @@ class udp extends units\test
 				$this->function->socket_strerror = $errorString = uniqid()
 			)
 			->if(
-				$this->newTestedInstance($host, $port)
+				$this->newTestedInstance
 			)
 			->then
-				->object($this->testedInstance->write($data, $callback))->isTestedInstance
+				->object($this->testedInstance->write($data, $host, $port, $callback))->isTestedInstance
 				->function('socket_sendto')->wasCalledWithArguments($resource, $data, strlen($data), 0, $host, $port)->once
 				->string($dataRemaining)->isEmpty
 
@@ -151,14 +105,14 @@ class udp extends units\test
 				$this->function->socket_sendto[2] = 2
 			)
 			->then
-				->object($this->testedInstance->write($data, $callback))->isTestedInstance
+				->object($this->testedInstance->write($data, $host, $port, $callback))->isTestedInstance
 				->string($dataRemaining)->isEqualTo(substr($data, 2))
 
 			->if(
 				$this->function->socket_sendto = false
 			)
 			->then
-				->exception(function() use ($data) { $this->testedInstance->write($data, function() {}); })
+				->exception(function() use ($data, $host, $port) { $this->testedInstance->write($data, $host, $port, function() {}); })
 					->isInstanceOf('estvoyage\net\endpoint\socket\protocol\exception')
 					->hasMessage($errorString)
 				->function('socket_last_error')->wasCalledWithArguments($resource)->once

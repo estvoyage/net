@@ -24,8 +24,8 @@ class socket extends units\test
 	{
 		$this
 			->given(
-				$host = uniqid(),
-				$this->calling($protocol = new endpoint\socket\protocol)->connectHost = $protocolConnectedToHost = new endpoint\socket\protocol
+				$protocol = new endpoint\socket\protocol,
+				$host = uniqid()
 			)
 			->if(
 				$this->newTestedInstance($protocol)
@@ -33,8 +33,7 @@ class socket extends units\test
 			->then
 				->object($this->testedInstance->connectHost($host))
 					->isNotTestedInstance
-					->isEqualTo($this->newTestedInstance($protocolConnectedToHost))
-				->mock($protocol)->call('connectHost')->withIdenticalArguments($host)->once
+					->isEqualTo($this->newTestedInstance($protocol, $host))
 		;
 	}
 
@@ -42,8 +41,8 @@ class socket extends units\test
 	{
 		$this
 			->given(
-				$port = uniqid(),
-				$this->calling($protocol = new endpoint\socket\protocol)->connectPort = $protocolConnectedToPort = new endpoint\socket\protocol
+				$protocol = new endpoint\socket\protocol,
+				$port = uniqid()
 			)
 			->if(
 				$this->newTestedInstance($protocol)
@@ -51,8 +50,7 @@ class socket extends units\test
 			->then
 				->object($this->testedInstance->connectPort($port))
 					->isNotTestedInstance
-					->isEqualTo($this->newTestedInstance($protocolConnectedToPort))
-				->mock($protocol)->call('connectPort')->withIdenticalArguments($port)->once
+					->isEqualTo($this->newTestedInstance($protocol, null, $port))
 		;
 	}
 
@@ -60,19 +58,22 @@ class socket extends units\test
 	{
 		$this
 			->given(
+				$host = uniqid(),
+				$port = uniqid(),
 				$data = uniqid(),
-				$this->calling($protocol = new endpoint\socket\protocol)->write = function($data, $callback) { $callback(''); },
+				$this->calling($protocol = new endpoint\socket\protocol)->write = function($data, $host, $port, $callback) { $callback(''); },
 				$callback = function($data) use (& $dataRemaining) { $dataRemaining = $data; }
 			)
 			->if(
-				$this->newTestedInstance($protocol)
+				$this->newTestedInstance($protocol, $host, $port)
 			)
 			->then
 				->object($this->testedInstance->write($data, $callback))->isTestedInstance
-				->mock($protocol)->call('write')->withIdenticalArguments($data, $callback)->once
+				->mock($protocol)->call('write')->withIdenticalArguments($data, $host, $port, $callback)->once
 				->string($dataRemaining)->isEmpty
+
 			->if(
-				$this->calling($protocol)->write = function($data, $callback) { $callback(substr($data, 2)); }
+				$this->calling($protocol)->write = function($data, $host, $port, $callback) { $callback(substr($data, 2)); }
 			)
 			->then
 				->object($this->testedInstance->write($data, $callback))->isTestedInstance
