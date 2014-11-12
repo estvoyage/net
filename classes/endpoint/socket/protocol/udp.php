@@ -11,27 +11,71 @@ use
 class udp implements socket\protocol
 {
 	private
-		$resource
+		$resource,
+		$host,
+		$port
 	;
 
-	function __construct()
+	function __construct($host = null, $port = null)
 	{
-		$this->init();
+		$this->resource = null;
+		$this->host = $host;
+		$this->port = $port;
 	}
 
 	function __destruct()
 	{
-		socket_close($this->resource);
+		if ($this->resource)
+		{
+			socket_close($this->resource);
+		}
 	}
 
 	function __clone()
 	{
-		$this->init();
+		$this->resource = null;
 	}
 
-	function write($data, $host, $port, callable $dataRemaining)
+	function connect($host, $port)
 	{
-		$bytesWritten = socket_sendto($this->resource, $data, strlen($data), 0, $host, $port);
+		$protocol = clone $this;
+		$protocol->host = $host;
+		$protocol->port = $port;
+
+		return $protocol;
+	}
+
+	function connectHost($host)
+	{
+		$protocol = clone $this;
+		$protocol->host = $host;
+
+		return $protocol;
+	}
+
+	function connectPort($port)
+	{
+		$protocol = clone $this;
+		$protocol->port = $port;
+
+		return $protocol;
+	}
+
+	function write($data, callable $dataRemaining)
+	{
+		if (! $this->resource)
+		{
+			$resource = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
+
+			if (! $resource)
+			{
+				throw new protocol\exception(socket_strerror(socket_last_error()));
+			}
+
+			$this->resource = $resource;
+		}
+
+		$bytesWritten = socket_sendto($this->resource, $data, strlen($data), 0, $this->host, $this->port);
 
 		if ($bytesWritten === false)
 		{
@@ -60,20 +104,6 @@ class udp implements socket\protocol
 
 	function disconnect()
 	{
-		return $this;
-	}
-
-	private function init()
-	{
-		$resource = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
-
-		if (! $resource)
-		{
-			throw new protocol\exception(socket_strerror(socket_last_error()));
-		}
-
-		$this->resource = $resource;
-
 		return $this;
 	}
 }

@@ -19,42 +19,22 @@ class udp extends units\test
 		;
 	}
 
-	function test__construct()
-	{
-		$this
-			->given(
-				$this->function->socket_create = uniqid(),
-				$this->function->socket_last_error = $errorCode = uniqid(),
-				$this->function->socket_strerror = $errorString = uniqid(),
-				$this->function->socket_close->doesNothing
-			)
-			->if(
-				$this->newTestedInstance(uniqid(), uniqid())
-			)
-			->then
-				->function('socket_create')->wasCalledWithArguments(AF_INET, SOCK_DGRAM, SOL_UDP)->once
-
-			->if(
-				$this->function->socket_create = false
-			)
-			->then
-				->exception(function() { $this->newTestedInstance(uniqid(), uniqid()); })
-					->isInstanceOf('estvoyage\net\endpoint\socket\protocol\exception')
-					->hasMessage($errorString)
-				->function('socket_last_error')->wasCalledWithArguments(null)->once
-				->function('socket_strerror')->wasCalledWithArguments($errorCode)->once
-		;
-	}
-
 	function test__destruct()
 	{
 		$this
 			->given(
 				$this->function->socket_create = $resource = uniqid(),
+				$this->function->socket_sendto->doesNothing,
 				$this->function->socket_close->doesNothing
 			)
 			->if(
 				$this->newTestedInstance(uniqid(), uniqid())->__destruct()
+			)
+			->then
+				->function('socket_close')->never
+
+			->if(
+				$this->newTestedInstance(uniqid(), uniqid())->write(uniqid(), function() {})->__destruct()
 			)
 			->then
 				->function('socket_close')->wasCalledWithArguments($resource)->once
@@ -67,6 +47,7 @@ class udp extends units\test
 			->given(
 				$this->function->socket_create[1] = $resource = uniqid(),
 				$this->function->socket_create[2] = $otherResource = uniqid(),
+				$this->function->socket_sendto->doesNothing,
 				$this->function->socket_close->doesNothing
 			)
 			->if(
@@ -74,8 +55,62 @@ class udp extends units\test
 			)
 			->when(function() { clone $this->testedInstance; })
 			->then
-				->function('socket_close')->wasCalledWithArguments($resource)->never
-				->function('socket_close')->wasCalledWithArguments($otherResource)->once
+				->function('socket_create')->never
+
+			->when(function() { $clone = clone $this->testedInstance->write(uniqid(), function() {}); $clone->write(uniqid(), function() {}); })
+			->then
+				->function('socket_create')->twice
+		;
+	}
+
+	function testConnect()
+	{
+		$this
+			->given(
+				$host = uniqid(),
+				$port = uniqid()
+			)
+			->if(
+				$this->newTestedInstance
+			)
+			->then
+				->object($this->testedInstance->connect($host, $port))
+					->isNotTestedInstance
+					->isEqualTo($this->newTestedInstance($host, $port))
+		;
+	}
+
+	function testConnectHost()
+	{
+		$this
+			->given(
+				$host = uniqid(),
+				$port = uniqid()
+			)
+			->if(
+				$this->newTestedInstance(uniqid(), $port)
+			)
+			->then
+				->object($this->testedInstance->connectHost($host))
+					->isNotTestedInstance
+					->isEqualTo($this->newTestedInstance($host, $port))
+		;
+	}
+
+	function testConnectPort()
+	{
+		$this
+			->given(
+				$host = uniqid(),
+				$port = uniqid()
+			)
+			->if(
+				$this->newTestedInstance($host, uniqid())
+			)
+			->then
+				->object($this->testedInstance->connectPort($port))
+					->isNotTestedInstance
+					->isEqualTo($this->newTestedInstance($host, $port))
 		;
 	}
 
@@ -94,10 +129,10 @@ class udp extends units\test
 				$this->function->socket_strerror = $errorString = uniqid()
 			)
 			->if(
-				$this->newTestedInstance
+				$this->newTestedInstance($host, $port)
 			)
 			->then
-				->object($this->testedInstance->write($data, $host, $port, $callback))->isTestedInstance
+				->object($this->testedInstance->write($data, $callback))->isTestedInstance
 				->function('socket_sendto')->wasCalledWithArguments($resource, $data, strlen($data), 0, $host, $port)->once
 				->string($dataRemaining)->isEmpty
 
@@ -105,14 +140,14 @@ class udp extends units\test
 				$this->function->socket_sendto[2] = 2
 			)
 			->then
-				->object($this->testedInstance->write($data, $host, $port, $callback))->isTestedInstance
+				->object($this->testedInstance->write($data, $callback))->isTestedInstance
 				->string($dataRemaining)->isEqualTo(substr($data, 2))
 
 			->if(
 				$this->function->socket_sendto = false
 			)
 			->then
-				->exception(function() use ($data, $host, $port) { $this->testedInstance->write($data, $host, $port, function() {}); })
+				->exception(function() use ($data) { $this->testedInstance->write($data, function() {}); })
 					->isInstanceOf('estvoyage\net\endpoint\socket\protocol\exception')
 					->hasMessage($errorString)
 				->function('socket_last_error')->wasCalledWithArguments($resource)->once

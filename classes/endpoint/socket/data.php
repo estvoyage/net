@@ -18,7 +18,7 @@ class data implements socket\data
 		$this->data = $data;
 	}
 
-	function writeOn(endpoint\protocol $protocol, $host, $port)
+	function writeOn(endpoint\protocol $protocol)
 	{
 		$data = $this->data;
 
@@ -26,7 +26,7 @@ class data implements socket\data
 		{
 			while ($data)
 			{
-				$protocol->write($data, $host, $port, function($dataRemaining) use (& $data) { $data = $dataRemaining; });
+				$protocol->write($data, function($dataRemaining) use (& $data) { $data = $dataRemaining; });
 			}
 		}
 		catch (\exception $exception)

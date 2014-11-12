@@ -23,8 +23,6 @@ class data extends units\test
 	{
 		$this
 			->given(
-				$host = uniqid(),
-				$port = uniqid(),
 				$data = uniqid(),
 				$protocol = new endpoint\socket\protocol
 			)
@@ -32,33 +30,33 @@ class data extends units\test
 				$this->newTestedInstance
 			)
 			->then
-				->object($this->testedInstance->writeOn($protocol, $host, $port))->isTestedInstance
+				->object($this->testedInstance->writeOn($protocol))->isTestedInstance
 				->mock($protocol)->call('write')->never
 
 			->if(
-				$this->calling($protocol)->write = function($data, $host, $port, $dataRemaining) { $dataRemaining(''); },
+				$this->calling($protocol)->write = function($data, $dataRemaining) { $dataRemaining(''); },
 				$this->newTestedInstance($data)
 			)
 			->then
-				->object($this->testedInstance->writeOn($protocol, $host, $port))->isTestedInstance
-				->mock($protocol)->call('write')->withIdenticalArguments($data, $host, $port)->once
+				->object($this->testedInstance->writeOn($protocol))->isTestedInstance
+				->mock($protocol)->call('write')->withIdenticalArguments($data)->once
 
 			->if(
-				$this->calling($protocol)->write[2] = function($data, $host, $port, $dataRemaining) { $dataRemaining(substr($data, 2)); },
+				$this->calling($protocol)->write[2] = function($data, $dataRemaining) { $dataRemaining(substr($data, 2)); },
 				$this->newTestedInstance($data)
 			)
 			->then
-				->object($this->testedInstance->writeOn($protocol, $host, $port))->isTestedInstance
+				->object($this->testedInstance->writeOn($protocol))->isTestedInstance
 				->mock($protocol)
 					->call('write')
-						->withIdenticalArguments($data, $host, $port)->twice
+						->withIdenticalArguments($data)->twice
 						->withIdenticalArguments(substr($data, 2))->once
 
 			->if(
 				$this->calling($protocol)->write->throw = new \exception($message = uniqid())
 			)
 			->then
-				->exception(function() use ($protocol, $host, $port) { $this->testedInstance->writeOn($protocol, $host, $port); })
+				->exception(function() use ($protocol) { $this->testedInstance->writeOn($protocol); })
 					->isInstanceOf('estvoyage\net\endpoint\socket\data\exception')
 					->hasMessage($message)
 		;
