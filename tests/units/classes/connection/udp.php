@@ -2,7 +2,7 @@
 
 namespace estvoyage\net\tests\units\connection;
 
-require __DIR__ . '/../../Runner.php';
+require __DIR__ . '/../../runner.php';
 
 use
 	estvoyage\net\tests\units,
