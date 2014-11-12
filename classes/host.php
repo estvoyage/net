@@ -15,12 +15,13 @@ class host implements net\host
 
 	function __construct($host)
 	{
-		if (! preg_match('/^[0-9a-z][0-9a-z-]{0,62}(?:\.[0-9a-z-]{1,63}){0,3}$/i', $host))
-		{
-			throw new host\exception('\'' . $host . '\' is not a valid host');
-		}
-
-		$this->host = $host;
+		(new host\validator)
+			->validate(
+				$host,
+				function($host) { $this->host = $host; },
+				function($host) { throw new host\exception('\'' . $host . '\' is not a valid host'); }
+			)
+		;
 	}
 
 	function connect(net\endpoint $endpoint, callable $callback)
