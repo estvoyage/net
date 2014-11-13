@@ -14,16 +14,13 @@ class port implements net\port
 
 	function __construct($port)
 	{
-		switch (true)
-		{
-			case ! $port:
-			case $port < 0:
-			case $port > 65535:
-			case filter_var($port, FILTER_VALIDATE_INT) === false:
-				throw new port\exception('\'' . $port . '\' is not a valid port');
-		}
-
-		$this->port = $port;
+		(new port\validator())
+			->validate(
+				$port,
+				function($port) { $this->port = $port; },
+				function($port) { throw new port\exception('\'' . $port . '\' is not a valid port'); }
+			)
+		;
 	}
 
 	function connect(net\endpoint $endpoint, callable $callback)
