@@ -65,6 +65,11 @@ class udp implements socket\protocol
 	{
 		if (! $this->resource)
 		{
+			if (! $this->host || ! $this->port)
+			{
+				throw new protocol\exception('Host or port are undefined');
+			}
+
 			$resource = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
 
 			if (! $resource)

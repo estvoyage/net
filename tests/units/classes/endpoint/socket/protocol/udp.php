@@ -152,6 +152,10 @@ class udp extends units\test
 					->hasMessage($errorString)
 				->function('socket_last_error')->wasCalledWithArguments($resource)->once
 				->function('socket_strerror')->wasCalledWithArguments($errorCode)->once
+
+			->exception(function() use ($data) { $this->newTestedInstance->write($data, function() {}); })
+				->isInstanceOf('estvoyage\net\endpoint\socket\protocol\exception')
+				->hasMessage('Host or port are undefined')
 		;
 	}
 
