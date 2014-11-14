@@ -3,11 +3,10 @@
 namespace estvoyage\net\endpoint\socket;
 
 use
-	estvoyage\net\world\endpoint,
-	estvoyage\net\world\endpoint\socket
+	estvoyage\net\world as net
 ;
 
-class data implements socket\data
+class data implements net\endpoint\socket\data
 {
 	private
 		$data
@@ -18,7 +17,7 @@ class data implements socket\data
 		$this->data = $data;
 	}
 
-	function writeOn(endpoint\protocol $protocol)
+	function writeOn(net\endpoint $endpoint)
 	{
 		$data = $this->data;
 
@@ -26,7 +25,7 @@ class data implements socket\data
 		{
 			while ($data)
 			{
-				$protocol->write($data, function($dataRemaining) use (& $data) { $data = $dataRemaining; });
+				$endpoint->write($data, function($dataRemaining) use (& $data) { $data = $dataRemaining; });
 			}
 		}
 		catch (\exception $exception)

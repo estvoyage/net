@@ -1,14 +1,13 @@
 <?php
 
-namespace estvoyage\net\endpoint\socket\protocol;
+namespace estvoyage\net\endpoint\socket;
 
 use
-	estvoyage\net\endpoint\socket\protocol,
 	estvoyage\net\world\endpoint\socket,
-	estvoyage\net\world\endpoint
+	estvoyage\net\endpoint\socket\exception
 ;
 
-class udp implements socket\protocol
+class udp implements socket
 {
 	private
 		$resource,
@@ -46,7 +45,7 @@ class udp implements socket\protocol
 			{
 				$errorCode = socket_last_error($this->resource);
 
-				throw new protocol\exception(socket_strerror(socket_last_error()), $errorCode);
+				throw new exception(socket_strerror(socket_last_error()), $errorCode);
 			}
 
 			$this->resource = $resource;
@@ -58,7 +57,7 @@ class udp implements socket\protocol
 		{
 			$errorCode = socket_last_error($this->resource);
 
-			throw new protocol\exception(socket_strerror($errorCode), $errorCode);
+			throw new exception(socket_strerror($errorCode), $errorCode);
 		}
 
 		$dataRemaining(substr($data, $bytesWritten) ?: '');

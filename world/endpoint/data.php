@@ -2,7 +2,11 @@
 
 namespace estvoyage\net\world\endpoint;
 
+use
+	estvoyage\net\world as net
+;
+
 interface data
 {
-	function writeOn(protocol $protocol);
+	function writeOn(net\endpoint $endpoint);
 }

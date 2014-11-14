@@ -1,8 +1,8 @@
 <?php
 
-namespace estvoyage\net\tests\units\endpoint\socket\protocol;
+namespace estvoyage\net\tests\units\endpoint\socket;
 
-require __DIR__ . '/../../../../runner.php';
+require __DIR__ . '/../../../runner.php';
 
 use
 	estvoyage\net\tests\units,
@@ -14,8 +14,7 @@ class udp extends units\test
 	function testClass()
 	{
 		$this->testedClass
-			->implements('estvoyage\net\world\endpoint\socket\protocol')
-			->implements('estvoyage\net\world\endpoint\protocol')
+			->implements('estvoyage\net\world\endpoint\socket')
 		;
 	}
 
@@ -97,7 +96,7 @@ class udp extends units\test
 			)
 			->then
 				->exception(function() use ($data) { $this->testedInstance->write($data, function() {}); })
-					->isInstanceOf('estvoyage\net\endpoint\socket\protocol\exception')
+					->isInstanceOf('estvoyage\net\endpoint\socket\exception')
 					->hasMessage($errorString)
 				->function('socket_last_error')->wasCalledWithArguments($resource)->once
 				->function('socket_strerror')->wasCalledWithArguments($errorCode)->once
