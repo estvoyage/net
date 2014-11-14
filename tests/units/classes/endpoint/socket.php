@@ -20,42 +20,6 @@ class socket extends units\test
 		;
 	}
 
-	function testConnectHost()
-	{
-		$this
-			->given(
-				$this->calling($protocol = new endpoint\socket\protocol)->connectHost = $protocolConnectedToHost = new endpoint\socket\protocol,
-				$host = uniqid()
-			)
-			->if(
-				$this->newTestedInstance($protocol)
-			)
-			->then
-				->object($this->testedInstance->connectHost($host))
-					->isNotTestedInstance
-					->isEqualTo($this->newTestedInstance($protocolConnectedToHost))
-				->mock($protocol)->call('connectHost')->withIdenticalArguments($host)->once
-		;
-	}
-
-	function testConnectPort()
-	{
-		$this
-			->given(
-				$this->calling($protocol = new endpoint\socket\protocol)->connectPort = $protocolConnectedToPort = new endpoint\socket\protocol,
-				$port = uniqid()
-			)
-			->if(
-				$this->newTestedInstance($protocol)
-			)
-			->then
-				->object($this->testedInstance->connectPort($port))
-					->isNotTestedInstance
-					->isEqualTo($this->newTestedInstance($protocolConnectedToPort))
-				->mock($protocol)->call('connectPort')->withIdenticalArguments($port)->once
-		;
-	}
-
 	function testWrite()
 	{
 		$this
@@ -91,7 +55,7 @@ class socket extends units\test
 				$this->newTestedInstance($protocol)
 			)
 			->then
-				->object($this->testedInstance->shutdown())->isEqualTo($this->newTestedInstance($protocolAfterShutdown))
+				->object($this->testedInstance->shutdown())->isTestedInstance
 				->mock($protocol)->call('shutdown')->once
 		;
 	}
@@ -106,7 +70,7 @@ class socket extends units\test
 				$this->newTestedInstance($protocol)
 			)
 			->then
-				->object($this->testedInstance->shutdownOnlyReading())->isEqualTo($this->newTestedInstance($protocolAfterShutdown))
+				->object($this->testedInstance->shutdownOnlyReading())->isTestedInstance
 				->mock($protocol)->call('shutdownOnlyReading')->once
 		;
 	}
@@ -121,7 +85,7 @@ class socket extends units\test
 				$this->newTestedInstance($protocol)
 			)
 			->then
-				->object($this->testedInstance->shutdownOnlyWriting())->isEqualTo($this->newTestedInstance($protocolAfterShutdown))
+				->object($this->testedInstance->shutdownOnlyWriting())->isTestedInstance
 				->mock($protocol)->call('shutdownOnlyWriting')->once
 		;
 	}
@@ -136,7 +100,7 @@ class socket extends units\test
 				$this->newTestedInstance($protocol)
 			)
 			->then
-				->object($this->testedInstance->disconnect())->isEqualTo($this->newTestedInstance($protocolDisconnected))
+				->object($this->testedInstance->disconnect())->isTestedInstance
 				->mock($protocol)->call('disconnect')->once
 		;
 	}

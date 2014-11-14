@@ -8,7 +8,5 @@ use
 
 interface endpoint
 {
-	function connectHost($host);
-	function connectPort($port);
 	function write($data, callable $dataRemaining);
 }

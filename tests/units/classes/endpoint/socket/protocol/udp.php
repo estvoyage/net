@@ -63,57 +63,6 @@ class udp extends units\test
 		;
 	}
 
-	function testConnect()
-	{
-		$this
-			->given(
-				$host = uniqid(),
-				$port = uniqid()
-			)
-			->if(
-				$this->newTestedInstance
-			)
-			->then
-				->object($this->testedInstance->connect($host, $port))
-					->isNotTestedInstance
-					->isEqualTo($this->newTestedInstance($host, $port))
-		;
-	}
-
-	function testConnectHost()
-	{
-		$this
-			->given(
-				$host = uniqid(),
-				$port = uniqid()
-			)
-			->if(
-				$this->newTestedInstance(uniqid(), $port)
-			)
-			->then
-				->object($this->testedInstance->connectHost($host))
-					->isNotTestedInstance
-					->isEqualTo($this->newTestedInstance($host, $port))
-		;
-	}
-
-	function testConnectPort()
-	{
-		$this
-			->given(
-				$host = uniqid(),
-				$port = uniqid()
-			)
-			->if(
-				$this->newTestedInstance($host, uniqid())
-			)
-			->then
-				->object($this->testedInstance->connectPort($port))
-					->isNotTestedInstance
-					->isEqualTo($this->newTestedInstance($host, $port))
-		;
-	}
-
 	function testWrite()
 	{
 		$this
@@ -125,7 +74,7 @@ class udp extends units\test
 				$this->function->socket_create = $resource = uniqid(),
 				$this->function->socket_sendto = function($resource, $data) { return strlen($data); },
 				$this->function->socket_close->doesNothing,
-				$this->function->socket_last_error = $errorCode = uniqid(),
+				$this->function->socket_last_error = $errorCode = rand(1, PHP_INT_MAX),
 				$this->function->socket_strerror = $errorString = uniqid()
 			)
 			->if(
@@ -152,10 +101,6 @@ class udp extends units\test
 					->hasMessage($errorString)
 				->function('socket_last_error')->wasCalledWithArguments($resource)->once
 				->function('socket_strerror')->wasCalledWithArguments($errorCode)->once
-
-			->exception(function() use ($data) { $this->newTestedInstance->write($data, function() {}); })
-				->isInstanceOf('estvoyage\net\endpoint\socket\protocol\exception')
-				->hasMessage('Host or port are undefined')
 		;
 	}
 

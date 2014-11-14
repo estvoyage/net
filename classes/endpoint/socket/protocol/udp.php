@@ -16,7 +16,7 @@ class udp implements socket\protocol
 		$port
 	;
 
-	function __construct($host = null, $port = null)
+	function __construct($host, $port)
 	{
 		$this->resource = null;
 		$this->host = $host;
@@ -36,45 +36,17 @@ class udp implements socket\protocol
 		$this->resource = null;
 	}
 
-	function connect($host, $port)
-	{
-		$protocol = clone $this;
-		$protocol->host = $host;
-		$protocol->port = $port;
-
-		return $protocol;
-	}
-
-	function connectHost($host)
-	{
-		$protocol = clone $this;
-		$protocol->host = $host;
-
-		return $protocol;
-	}
-
-	function connectPort($port)
-	{
-		$protocol = clone $this;
-		$protocol->port = $port;
-
-		return $protocol;
-	}
-
 	function write($data, callable $dataRemaining)
 	{
 		if (! $this->resource)
 		{
-			if (! $this->host || ! $this->port)
-			{
-				throw new protocol\exception('Host or port are undefined');
-			}
-
 			$resource = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
 
 			if (! $resource)
 			{
-				throw new protocol\exception(socket_strerror(socket_last_error()));
+				$errorCode = socket_last_error($this->resource);
+
+				throw new protocol\exception(socket_strerror(socket_last_error()), $errorCode);
 			}
 
 			$this->resource = $resource;
@@ -84,7 +56,9 @@ class udp implements socket\protocol
 
 		if ($bytesWritten === false)
 		{
-			throw new protocol\exception(socket_strerror(socket_last_error($this->resource)));
+			$errorCode = socket_last_error($this->resource);
+
+			throw new protocol\exception(socket_strerror($errorCode), $errorCode);
 		}
 
 		$dataRemaining(substr($data, $bytesWritten) ?: '');
