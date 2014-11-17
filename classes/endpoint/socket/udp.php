@@ -26,7 +26,7 @@ class udp implements socket
 		$this->resource = null;
 	}
 
-	function write($data, $host, $port, callable $dataRemaining)
+	function write($data, $host, $port, callable $dataNotWritten)
 	{
 		if (! $this->resource)
 		{
@@ -51,7 +51,7 @@ class udp implements socket
 			throw new exception(socket_strerror($errorCode), $errorCode);
 		}
 
-		$dataRemaining(substr($data, $bytesWritten) ?: '');
+		$dataNotWritten(substr($data, $bytesWritten) ?: '');
 
 		return $this;
 	}

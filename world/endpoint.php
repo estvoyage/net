@@ -8,5 +8,4 @@ use
 
 interface endpoint
 {
-	function write($data, $host, $port, callable $dataRemaining);
 }
