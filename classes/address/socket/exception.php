@@ -1,10 +1,10 @@
 <?php
 
-namespace estvoyage\net\endpoint\socket;
+namespace estvoyage\net\address\socket;
 
 use
 	estvoyage\net,
-	estvoyage\net\world\endpoint\socket
+	estvoyage\net\world\address\socket
 ;
 
 class exception extends net\exception implements socket\exception

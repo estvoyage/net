@@ -1,10 +1,10 @@
 <?php
 
-namespace estvoyage\net\endpoint\socket;
+namespace estvoyage\net\address\socket;
 
 use
-	estvoyage\net\world\endpoint\socket,
-	estvoyage\net\endpoint\socket\exception
+	estvoyage\net\world\address\socket,
+	estvoyage\net\address\socket\exception
 ;
 
 class udp implements socket

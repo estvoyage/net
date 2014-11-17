@@ -1,6 +1,6 @@
 <?php
 
-namespace estvoyage\net\tests\units\endpoint\socket;
+namespace estvoyage\net\tests\units\address\socket;
 
 require __DIR__ . '/../../../runner.php';
 
@@ -13,7 +13,7 @@ class exception extends units\test
 	function testClass()
 	{
 		$this->testedClass
-			->implements('estvoyage\net\world\endpoint\socket\exception')
+			->implements('estvoyage\net\world\address\socket\exception')
 			->implements('estvoyage\net\world\exception')
 			->extends('exception')
 		;
