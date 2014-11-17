@@ -10,17 +10,8 @@ use
 class udp implements socket
 {
 	private
-		$resource,
-		$host,
-		$port
+		$resource
 	;
-
-	function __construct($host, $port)
-	{
-		$this->resource = null;
-		$this->host = $host;
-		$this->port = $port;
-	}
 
 	function __destruct()
 	{
@@ -35,7 +26,7 @@ class udp implements socket
 		$this->resource = null;
 	}
 
-	function write($data, callable $dataRemaining)
+	function write($data, $host, $port, callable $dataRemaining)
 	{
 		if (! $this->resource)
 		{
@@ -51,7 +42,7 @@ class udp implements socket
 			$this->resource = $resource;
 		}
 
-		$bytesWritten = socket_sendto($this->resource, $data, strlen($data), 0, $this->host, $this->port);
+		$bytesWritten = socket_sendto($this->resource, $data, strlen($data), 0, $host, $port);
 
 		if ($bytesWritten === false)
 		{
