@@ -6,7 +6,7 @@ require __DIR__ . '/../../runner.php';
 
 use
 	estvoyage\net\tests\units,
-	estvoyage\net\byte,
+	estvoyage\net\socket,
 	mock\estvoyage\net\world as net
 ;
 
@@ -36,7 +36,7 @@ class udp extends units\test
 				->function('socket_close')->never
 
 			->if(
-				$this->newTestedInstance->write($data, new net\host, new net\port, function() {})->__destruct()
+				$this->newTestedInstance->write($data, new net\host, new net\port)->__destruct()
 			)
 			->then
 				->function('socket_close')->wasCalledWithArguments($resource)->once
@@ -61,7 +61,7 @@ class udp extends units\test
 			->then
 				->function('socket_create')->never
 
-			->when(function() use ($data) { $clone = clone $this->testedInstance->write($data, new net\host, new net\port, function() {}); $clone->write($data, new net\host, new net\port, function() {}); })
+			->when(function() use ($data) { $clone = clone $this->testedInstance->write($data, new net\host, new net\port); $clone->write($data, new net\host, new net\port); })
 			->then
 				->function('socket_create')->twice
 		;
@@ -89,21 +89,21 @@ class udp extends units\test
 			->then
 				->object($this->testedInstance->write($data, $host, $port))->isTestedInstance
 				->function('socket_sendto')->wasCalledWithArguments($resource, $data, strlen($data), 0, $host, $port)->once
-				->mock($data)->call('successfullySentTo')->withIdenticalArguments($this->testedInstance, $host, $port)->once
+				->mock($data)->call('sentTo')->withIdenticalArguments($this->testedInstance, $host, $port)->once
 
 			->if(
 				$this->function->socket_sendto[2] = 2
 			)
 			->then
 				->object($this->testedInstance->write($data, $host, $port))->isTestedInstance
-				->mock($data)->call('failToSentTo')->withArguments($this->testedInstance, $host, $port, new byte\number(strlen($data) - 2), null)->once
+				->mock($data)->call('notFullySentTo')->withArguments($this->testedInstance, $host, $port, new socket\data\offset(0), new socket\data\offset(strlen($data) - 2))->once
 
 			->if(
 				$this->function->socket_sendto = false
 			)
 			->then
 				->object($this->testedInstance->write($data, $host, $port))->isTestedInstance
-				->mock($data)->call('failToSentTo')->withArguments($this->testedInstance, $host, $port, new byte\number(strlen($data) - 2), $errorCode)->once
+				->mock($data)->call('notSentTo')->withArguments($this->testedInstance, $host, $port, new socket\data\offset(0), new socket\error(null))->once
 		;
 	}
 

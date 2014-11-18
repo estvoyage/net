@@ -8,6 +8,7 @@ use
 
 interface data extends net\string
 {
-	function successfullySentTo(net\socket $socket, net\host $host, net\port $port);
-	function failToSentTo(net\socket $socket, net\host $host, net\port $port, net\byte\number $bytes);
+	function sentTo(net\socket $socket, net\host $host, net\port $port);
+	function notFullySentTo(net\socket $socket, net\host $host, net\port $port, data\offset $start, data\offset $stop);
+	function notSentTo(net\socket $socket, net\host $host, net\port $port, data\offset $start, net\socket\error $error);
 }

@@ -3,10 +3,7 @@
 namespace estvoyage\net\socket;
 
 use
-	estvoyage\net\world as net,
-	estvoyage\net\byte,
-	estvoyage\net\socket\data,
-	estvoyage\net\socket\exception
+	estvoyage\net\world as net
 ;
 
 class udp implements net\socket
@@ -28,30 +25,30 @@ class udp implements net\socket
 		$this->resource = null;
 	}
 
-	function write(net\socket\data $data, net\host $host, net\port $port)
+	function write(net\socket\data $data, net\host $host, net\port $port, net\socket\data\offset $offset = null)
 	{
-		$dataLength = strlen($data);
+		$offset = $offset ?: new data\offset(0);
+		$dataString = substr($data, (string) $offset);
+		$dataLength = strlen($dataString);
 
 		if (! $this->resource)
 		{
-			$resource = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
-
-			if (! $resource)
-			{
-				$this->data->failToSentTo($this, $host, $port, new byte\number($dataLength), socket_last_error());
-			}
-
-			$this->resource = $resource;
+			$this->resource = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP) ?: null;
 		}
 
 		switch (true)
 		{
-			case ($bytesWritten = socket_sendto($this->resource, $data, $dataLength, 0, $host, $port)) === $dataLength:
-				$data->successfullySentTo($this, $host, $port);
+			case ! $this->resource:
+			case ($bytesWritten = socket_sendto($this->resource, $dataString, $dataLength, 0, $host, $port)) === false:
+				$data->notSentTo($this, $host, $port, $offset, new error(socket_last_error($this->resource)));
+				break;
+
+			case $bytesWritten < $dataLength:
+				$data->notFullySentTo($this, $host, $port, $offset, new data\offset($dataLength - $bytesWritten));
 				break;
 
 			default:
-				$data->failToSentTo($this, $host, $port, new byte\number($bytesWritten), $bytesWritten !== false ? null : socket_last_error($this->resource));
+				$data->sentTo($this, $host, $port);
 		}
 
 		return $this;
