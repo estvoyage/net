@@ -4,6 +4,8 @@ namespace estvoyage\net\socket;
 
 use
 	estvoyage\net\world as net,
+	estvoyage\net\byte,
+	estvoyage\net\socket\data,
 	estvoyage\net\socket\exception
 ;
 
@@ -26,32 +28,31 @@ class udp implements net\socket
 		$this->resource = null;
 	}
 
-	function write($data, $host, $port, callable $dataNotWritten)
+	function write(net\socket\data $data, net\host $host, net\port $port)
 	{
+		$dataLength = strlen($data);
+
 		if (! $this->resource)
 		{
 			$resource = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
 
 			if (! $resource)
 			{
-				$errorCode = socket_last_error($this->resource);
-
-				throw new exception(socket_strerror(socket_last_error()), $errorCode);
+				$this->data->failToSentTo($this, $host, $port, new byte\number($dataLength), socket_last_error());
 			}
 
 			$this->resource = $resource;
 		}
 
-		$bytesWritten = socket_sendto($this->resource, $data, strlen($data), 0, $host, $port);
-
-		if ($bytesWritten === false)
+		switch (true)
 		{
-			$errorCode = socket_last_error($this->resource);
+			case ($bytesWritten = socket_sendto($this->resource, $data, $dataLength, 0, $host, $port)) === $dataLength:
+				$data->successfullySentTo($this, $host, $port);
+				break;
 
-			throw new exception(socket_strerror($errorCode), $errorCode);
+			default:
+				$data->failToSentTo($this, $host, $port, new byte\number($bytesWritten), $bytesWritten !== false ? null : socket_last_error($this->resource));
 		}
-
-		$dataNotWritten(substr($data, $bytesWritten) ?: '');
 
 		return $this;
 	}

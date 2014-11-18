@@ -6,6 +6,7 @@ require __DIR__ . '/../../runner.php';
 
 use
 	estvoyage\net\tests\units,
+	estvoyage\net\byte,
 	mock\estvoyage\net\world as net
 ;
 
@@ -24,7 +25,9 @@ class udp extends units\test
 			->given(
 				$this->function->socket_create = $resource = uniqid(),
 				$this->function->socket_sendto->doesNothing,
-				$this->function->socket_close->doesNothing
+				$this->function->socket_close->doesNothing,
+
+				$this->calling($data = new net\socket\data)->__toString = uniqid()
 			)
 			->if(
 				$this->newTestedInstance->__destruct()
@@ -33,7 +36,7 @@ class udp extends units\test
 				->function('socket_close')->never
 
 			->if(
-				$this->newTestedInstance->write(uniqid(), uniqid(), uniqid(), function() {})->__destruct()
+				$this->newTestedInstance->write($data, new net\host, new net\port, function() {})->__destruct()
 			)
 			->then
 				->function('socket_close')->wasCalledWithArguments($resource)->once
@@ -47,7 +50,9 @@ class udp extends units\test
 				$this->function->socket_create[1] = $resource = uniqid(),
 				$this->function->socket_create[2] = $otherResource = uniqid(),
 				$this->function->socket_sendto->doesNothing,
-				$this->function->socket_close->doesNothing
+				$this->function->socket_close->doesNothing,
+
+				$this->calling($data = new net\socket\data)->__toString = uniqid()
 			)
 			->if(
 				$this->newTestedInstance
@@ -56,7 +61,7 @@ class udp extends units\test
 			->then
 				->function('socket_create')->never
 
-			->when(function() { $clone = clone $this->testedInstance->write(uniqid(), uniqid(), uniqid(), function() {}); $clone->write(uniqid(), uniqid(), uniqid(), function() {}); })
+			->when(function() use ($data) { $clone = clone $this->testedInstance->write($data, new net\host, new net\port, function() {}); $clone->write($data, new net\host, new net\port, function() {}); })
 			->then
 				->function('socket_create')->twice
 		;
@@ -66,40 +71,39 @@ class udp extends units\test
 	{
 		$this
 			->given(
-				$host = uniqid(),
-				$port = uniqid(),
-				$data = uniqid(),
-				$callback = function($data) use (& $dataRemaining) { $dataRemaining = $data; },
+				$host = new net\host,
+				$port = new net\port,
+
+				$this->calling($data = new net\socket\data)->__toString = uniqid(),
+
 				$this->function->socket_create = $resource = uniqid(),
 				$this->function->socket_sendto = function($resource, $data) { return strlen($data); },
 				$this->function->socket_close->doesNothing,
 				$this->function->socket_last_error = $errorCode = rand(1, PHP_INT_MAX),
 				$this->function->socket_strerror = $errorString = uniqid()
 			)
+
 			->if(
 				$this->newTestedInstance
 			)
 			->then
-				->object($this->testedInstance->write($data, $host, $port, $callback))->isTestedInstance
+				->object($this->testedInstance->write($data, $host, $port))->isTestedInstance
 				->function('socket_sendto')->wasCalledWithArguments($resource, $data, strlen($data), 0, $host, $port)->once
-				->string($dataRemaining)->isEmpty
+				->mock($data)->call('successfullySentTo')->withIdenticalArguments($this->testedInstance, $host, $port)->once
 
 			->if(
 				$this->function->socket_sendto[2] = 2
 			)
 			->then
-				->object($this->testedInstance->write($data, $host, $port, $callback))->isTestedInstance
-				->string($dataRemaining)->isEqualTo(substr($data, 2))
+				->object($this->testedInstance->write($data, $host, $port))->isTestedInstance
+				->mock($data)->call('failToSentTo')->withArguments($this->testedInstance, $host, $port, new byte\number(strlen($data) - 2), null)->once
 
 			->if(
 				$this->function->socket_sendto = false
 			)
 			->then
-				->exception(function() use ($data) { $this->testedInstance->write($data, uniqid(), uniqid(), function() {}); })
-					->isInstanceOf('estvoyage\net\socket\exception')
-					->hasMessage($errorString)
-				->function('socket_last_error')->wasCalledWithArguments($resource)->once
-				->function('socket_strerror')->wasCalledWithArguments($errorCode)->once
+				->object($this->testedInstance->write($data, $host, $port))->isTestedInstance
+				->mock($data)->call('failToSentTo')->withArguments($this->testedInstance, $host, $port, new byte\number(strlen($data) - 2), $errorCode)->once
 		;
 	}
 

@@ -4,7 +4,7 @@ namespace estvoyage\net\world;
 
 interface socket
 {
-	function write($data, $host, $port, callable $dataNotWritten);
+	function write(socket\data $data, host $host, port $port);
 	function shutdown();
 	function shutdownOnlyReading();
 	function shutdownOnlyWriting();
