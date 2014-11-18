@@ -1,10 +1,6 @@
 <?php
 
-namespace estvoyage\net\world\address;
-
-use
-	estvoyage\net\world as net
-;
+namespace estvoyage\net\world;
 
 interface socket
 {

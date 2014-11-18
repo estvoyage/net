@@ -1,13 +1,13 @@
 <?php
 
-namespace estvoyage\net\address\socket;
+namespace estvoyage\net\socket;
 
 use
-	estvoyage\net\world\address\socket,
-	estvoyage\net\address\socket\exception
+	estvoyage\net\world as net,
+	estvoyage\net\socket\exception
 ;
 
-class udp implements socket
+class udp implements net\socket
 {
 	private
 		$resource
