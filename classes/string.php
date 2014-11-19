@@ -8,6 +8,10 @@ use
 
 class string implements net\string
 {
+	private
+		$value
+	;
+
 	function __construct($value)
 	{
 		$previousErrorHandler = set_error_handler(function($errno, $errstr, $errfile, $errline, $errcontext) use (& $previousErrorHandler) {
