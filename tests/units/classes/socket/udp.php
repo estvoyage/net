@@ -25,9 +25,7 @@ class udp extends units\test
 			->given(
 				$this->function->socket_create = $resource = uniqid(),
 				$this->function->socket_sendto->doesNothing,
-				$this->function->socket_close->doesNothing,
-
-				$this->calling($data = new net\socket\data)->__toString = uniqid()
+				$this->function->socket_close->doesNothing
 			)
 			->if(
 				$this->newTestedInstance->__destruct()
@@ -36,7 +34,7 @@ class udp extends units\test
 				->function('socket_close')->never
 
 			->if(
-				$this->newTestedInstance->write($data, new net\host, new net\port)->__destruct()
+				$this->newTestedInstance->write(uniqid(), uniqid(), uniqid(), new net\socket\observer)->__destruct()
 			)
 			->then
 				->function('socket_close')->wasCalledWithArguments($resource)->once
@@ -50,9 +48,7 @@ class udp extends units\test
 				$this->function->socket_create[1] = $resource = uniqid(),
 				$this->function->socket_create[2] = $otherResource = uniqid(),
 				$this->function->socket_sendto->doesNothing,
-				$this->function->socket_close->doesNothing,
-
-				$this->calling($data = new net\socket\data)->__toString = uniqid()
+				$this->function->socket_close->doesNothing
 			)
 			->if(
 				$this->newTestedInstance
@@ -61,7 +57,7 @@ class udp extends units\test
 			->then
 				->function('socket_create')->never
 
-			->when(function() use ($data) { $clone = clone $this->testedInstance->write($data, new net\host, new net\port); $clone->write($data, new net\host, new net\port); })
+			->when(function() { $clone = clone $this->testedInstance->write(uniqid(), uniqid(), uniqid(), new net\socket\observer); $clone->write(uniqid(), uniqid(), uniqid(), new net\socket\observer); })
 			->then
 				->function('socket_create')->twice
 		;
@@ -71,39 +67,38 @@ class udp extends units\test
 	{
 		$this
 			->given(
-				$host = new net\host,
-				$port = new net\port,
-
-				$this->calling($data = new net\socket\data)->__toString = uniqid(),
+				$host = uniqid(),
+				$port = uniqid(),
+				$data = uniqid(),
+				$observer = new net\socket\observer,
 
 				$this->function->socket_create = $resource = uniqid(),
 				$this->function->socket_sendto = function($resource, $data) { return strlen($data); },
 				$this->function->socket_close->doesNothing,
-				$this->function->socket_last_error = $errorCode = rand(1, PHP_INT_MAX),
-				$this->function->socket_strerror = $errorString = uniqid()
+				$this->function->socket_last_error = $errno = rand(- PHP_INT_MAX, PHP_INT_MAX)
 			)
 
 			->if(
 				$this->newTestedInstance
 			)
 			->then
-				->object($this->testedInstance->write($data, $host, $port))->isTestedInstance
+				->object($this->testedInstance->write($data, $host, $port, $observer))->isTestedInstance
 				->function('socket_sendto')->wasCalledWithArguments($resource, $data, strlen($data), 0, $host, $port)->once
-				->mock($data)->call('sentTo')->withIdenticalArguments($this->testedInstance, $host, $port)->once
+				->mock($observer)->call('dataSent')->withIdenticalArguments($data, $host, $port, $this->testedInstance)->once
 
 			->if(
 				$this->function->socket_sendto[2] = 2
 			)
 			->then
-				->object($this->testedInstance->write($data, $host, $port))->isTestedInstance
-				->mock($data)->call('notFullySentTo')->withArguments($this->testedInstance, $host, $port, new socket\data\offset(0), new socket\data\offset(strlen($data) - 2))->once
+				->object($this->testedInstance->write($data, $host, $port, $observer))->isTestedInstance
+				->mock($observer)->call('dataNotFullySent')->withArguments($data, $host, $port, 2, $this->testedInstance)->once
 
 			->if(
 				$this->function->socket_sendto = false
 			)
 			->then
-				->object($this->testedInstance->write($data, $host, $port))->isTestedInstance
-				->mock($data)->call('notSentTo')->withArguments($this->testedInstance, $host, $port, new socket\data\offset(0), new socket\error(null))->once
+				->object($this->testedInstance->write($data, $host, $port, $observer))->isTestedInstance
+				->mock($observer)->call('dataNotSent')->withArguments($data, $host, $port, $errno, $this->testedInstance)->once
 		;
 	}
 

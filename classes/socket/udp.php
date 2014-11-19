@@ -25,11 +25,9 @@ class udp implements net\socket
 		$this->resource = null;
 	}
 
-	function write(net\socket\data $data, net\host $host, net\port $port, net\socket\data\offset $offset = null)
+	function write($data, $host, $port, net\socket\observer $observer)
 	{
-		$offset = $offset ?: new data\offset(0);
-		$dataString = substr($data, (string) $offset);
-		$dataLength = strlen($dataString);
+		$dataLength = strlen($data);
 
 		if (! $this->resource)
 		{
@@ -39,16 +37,16 @@ class udp implements net\socket
 		switch (true)
 		{
 			case ! $this->resource:
-			case ($bytesWritten = socket_sendto($this->resource, $dataString, $dataLength, 0, $host, $port)) === false:
-				$data->notSentTo($this, $host, $port, $offset, new error(socket_last_error($this->resource)));
+			case ($bytesWritten = socket_sendto($this->resource, $data, $dataLength, 0, $host, $port)) === false:
+				$observer->dataNotSent($data, $host, $port, socket_last_error($this->resource), $this);
 				break;
 
 			case $bytesWritten < $dataLength:
-				$data->notFullySentTo($this, $host, $port, $offset, new data\offset($dataLength - $bytesWritten));
+				$observer->dataNotFullySent($data, $host, $port, $bytesWritten, $this);
 				break;
 
 			default:
-				$data->sentTo($this, $host, $port);
+				$observer->dataSent($data, $host, $port, $this);
 		}
 
 		return $this;
