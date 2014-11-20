@@ -8,7 +8,7 @@ use
 
 interface observer
 {
-	function dataSent($data, $host, $port, net\socket $socket);
-	function dataNotFullySent($data, $bytesWritten, $host, $port, net\socket $socket);
-	function dataNotSent($data, $errno, $host, $port, net\socket $socket);
+	function dataSent($data, $id, net\socket $socket);
+	function dataNotFullySent($data, $bytesWritten, $id, net\socket $socket);
+	function dataNotSent($data, $errno, $id, net\socket $socket);
 }

@@ -25,28 +25,23 @@ class udp implements net\socket
 		$this->resource = null;
 	}
 
-	function write($data, $host, $port, net\socket\observer $observer)
+	function write($data, $host, $port, net\socket\observer $observer, $id = null)
 	{
 		$dataLength = strlen($data);
 
-		if (! $this->resource)
-		{
-			$this->resource = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP) ?: null;
-		}
-
 		switch (true)
 		{
-			case ! $this->resource:
+			case ! $this->resource && ! ($this->resource = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP) ?: null):
 			case ($bytesWritten = socket_sendto($this->resource, $data, $dataLength, 0, $host, $port)) === false:
-				$observer->dataNotSent($data, $host, $port, socket_last_error($this->resource), $this);
+				$observer->dataNotSent($data, $id, socket_last_error($this->resource), $this);
 				break;
 
 			case $bytesWritten < $dataLength:
-				$observer->dataNotFullySent($data, $host, $port, $bytesWritten, $this);
+				$observer->dataNotFullySent($data, $id, $bytesWritten, $this);
 				break;
 
 			default:
-				$observer->dataSent($data, $host, $port, $this);
+				$observer->dataSent($data, $id, $this);
 		}
 
 		return $this;

@@ -70,6 +70,7 @@ class udp extends units\test
 				$host = uniqid(),
 				$port = uniqid(),
 				$data = uniqid(),
+				$id = uniqid(),
 				$observer = new net\socket\observer,
 
 				$this->function->socket_create = $resource = uniqid(),
@@ -82,23 +83,23 @@ class udp extends units\test
 				$this->newTestedInstance
 			)
 			->then
-				->object($this->testedInstance->write($data, $host, $port, $observer))->isTestedInstance
+				->object($this->testedInstance->write($data, $host, $port, $observer, $id))->isTestedInstance
 				->function('socket_sendto')->wasCalledWithArguments($resource, $data, strlen($data), 0, $host, $port)->once
-				->mock($observer)->call('dataSent')->withIdenticalArguments($data, $host, $port, $this->testedInstance)->once
+				->mock($observer)->call('dataSent')->withIdenticalArguments($data, $id, $this->testedInstance)->once
 
 			->if(
 				$this->function->socket_sendto[2] = 2
 			)
 			->then
-				->object($this->testedInstance->write($data, $host, $port, $observer))->isTestedInstance
-				->mock($observer)->call('dataNotFullySent')->withArguments($data, $host, $port, 2, $this->testedInstance)->once
+				->object($this->testedInstance->write($data, $host, $port, $observer, $id))->isTestedInstance
+				->mock($observer)->call('dataNotFullySent')->withArguments($data, $id, 2, $this->testedInstance)->once
 
 			->if(
 				$this->function->socket_sendto = false
 			)
 			->then
-				->object($this->testedInstance->write($data, $host, $port, $observer))->isTestedInstance
-				->mock($observer)->call('dataNotSent')->withArguments($data, $host, $port, $errno, $this->testedInstance)->once
+				->object($this->testedInstance->write($data, $host, $port, $observer, $id))->isTestedInstance
+				->mock($observer)->call('dataNotSent')->withArguments($data, $id, $errno, $this->testedInstance)->once
 		;
 	}
 
