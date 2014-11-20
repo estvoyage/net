@@ -85,21 +85,21 @@ class udp extends units\test
 			->then
 				->object($this->testedInstance->write($data, $host, $port, $observer, $id))->isTestedInstance
 				->function('socket_sendto')->wasCalledWithArguments($resource, $data, strlen($data), 0, $host, $port)->once
-				->mock($observer)->call('dataSent')->withIdenticalArguments($data, $id, $this->testedInstance)->once
+				->mock($observer)->call('dataSentOnSocket')->withIdenticalArguments($data, $id, $this->testedInstance)->once
 
 			->if(
 				$this->function->socket_sendto[2] = 2
 			)
 			->then
 				->object($this->testedInstance->write($data, $host, $port, $observer, $id))->isTestedInstance
-				->mock($observer)->call('dataNotFullySent')->withArguments($data, $id, 2, $this->testedInstance)->once
+				->mock($observer)->call('dataNotFullySentOnSocket')->withArguments($data, $id, 2, $this->testedInstance)->once
 
 			->if(
 				$this->function->socket_sendto = false
 			)
 			->then
 				->object($this->testedInstance->write($data, $host, $port, $observer, $id))->isTestedInstance
-				->mock($observer)->call('dataNotSent')->withArguments($data, $id, $errno, $this->testedInstance)->once
+				->mock($observer)->call('dataNotSentOnSocket')->withArguments($data, $id, $errno, $this->testedInstance)->once
 		;
 	}
 

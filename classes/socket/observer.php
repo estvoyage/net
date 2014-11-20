@@ -13,28 +13,28 @@ class observer implements socket\observer
 		$dataNotFullySent
 	;
 
-	function __construct(callable $dataSent, callable $dataNotFullySent, callable $dataNotSent)
+	function __construct(callable $dataNotFullySent, callable $dataNotSent, callable $dataSent)
 	{
 		$this->dataSent = $dataSent;
 		$this->dataNotFullySent = $dataNotFullySent;
 		$this->dataNotSent = $dataNotSent;
 	}
 
-	function dataSent($data, $id, socket $socket)
+	function dataSentOnSocket($data, $id, socket $socket)
 	{
 		call_user_func_array($this->dataSent, func_get_args());
 
 		return $this;
 	}
 
-	function dataNotFullySent($data, $bytesWritten, $id, socket $socket)
+	function dataNotFullySentOnSocket($data, $bytesWritten, $id, socket $socket)
 	{
 		call_user_func_array($this->dataNotFullySent, func_get_args());
 
 		return $this;
 	}
 
-	function dataNotSent($data, $errno, $id, socket $socket)
+	function dataNotSentOnSocket($data, $errno, $id, socket $socket)
 	{
 		call_user_func_array($this->dataNotSent, func_get_args());
 

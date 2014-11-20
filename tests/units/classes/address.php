@@ -32,20 +32,20 @@ class address extends units\test
 			)
 
 			->if(
-				$this->calling($socket)->write = function($data, $host, $port, $observer, $id) { $observer->dataSent($data, $id, $this); }
+				$this->calling($socket)->write = function($data, $host, $port, $observer, $id) { $observer->dataSentOnSocket($data, $id, $this); }
 			)
 			->then
 				->object($this->testedInstance->send($data, $socket, $observer, $id))->isTestedInstance
 				->mock($socket)->call('write')->withIdenticalArguments($data, $host, $port, $observer, $id)->once
-				->mock($observer)->call('dataSent')->withIdenticalArguments($data, $id, $socket)->once
+				->mock($observer)->call('dataSentOnSocket')->withIdenticalArguments($data, $id, $socket)->once
 
 			->if(
-				$this->calling($socket)->write = function($data, $host, $port, $observer, $id) use (& $bytesWritten) { $observer->dataNotFullySent($data, $bytesWritten = rand(1, PHP_INT_MAX), $id, $this); }
+				$this->calling($socket)->write = function($data, $host, $port, $observer, $id) use (& $bytesWritten) { $observer->dataNotFullySentOnSocket($data, $bytesWritten = rand(1, PHP_INT_MAX), $id, $this); }
 			)
 			->then
 				->object($this->testedInstance->send($data, $socket, $observer, $id))->isTestedInstance
 				->mock($socket)->call('write')->withIdenticalArguments($data, $host, $port, $observer, $id)->twice
-				->mock($observer)->call('dataNotFullySent')->withIdenticalArguments($data, $bytesWritten, $id, $socket)->once
+				->mock($observer)->call('dataNotFullySentOnSocket')->withIdenticalArguments($data, $bytesWritten, $id, $socket)->once
 		;
 	}
 }

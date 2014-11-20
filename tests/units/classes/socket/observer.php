@@ -18,7 +18,7 @@ class observer extends units\test
 		;
 	}
 
-	function testDataSent()
+	function testDataSentOnSocket()
 	{
 		$this
 			->given(
@@ -32,17 +32,17 @@ class observer extends units\test
 				}
 			)
 			->if(
-				$this->newTestedInstance($dataSent, function() {}, function() {})
+				$this->newTestedInstance(function() {}, function() {}, $dataSent)
 			)
 			->then
-				->object($this->testedInstance->dataSent($data, $id, $socket))->isTestedInstance
+				->object($this->testedInstance->dataSentOnSocket($data, $id, $socket))->isTestedInstance
 				->string($dataSent)->isEqualTo($data)
 				->string($idUsed)->isEqualTo($id)
 				->object($socketUsed)->isIdenticalTo($socket)
 		;
 	}
 
-	function testDataNotFullySent()
+	function testDataNotFullySentOnSocket()
 	{
 		$this
 			->given(
@@ -58,10 +58,10 @@ class observer extends units\test
 				}
 			)
 			->if(
-				$this->newTestedInstance(function() {}, $dataNotFullySent, function() {})
+				$this->newTestedInstance($dataNotFullySent, function() {}, function() {})
 			)
 			->then
-				->object($this->testedInstance->dataNotFullySent($data, $bytes, $id, $socket))->isTestedInstance
+				->object($this->testedInstance->dataNotFullySentOnSocket($data, $bytes, $id, $socket))->isTestedInstance
 				->string($dataSent)->isEqualTo($data)
 				->string($idUsed)->isEqualTo($id)
 				->integer($bytesWritten)->isEqualTo($bytes)
@@ -69,7 +69,7 @@ class observer extends units\test
 		;
 	}
 
-	function testDataNotSent()
+	function testDataNotSentOnSocket()
 	{
 		$this
 			->given(
@@ -85,10 +85,10 @@ class observer extends units\test
 				}
 			)
 			->if(
-				$this->newTestedInstance(function() {}, function() {}, $dataNotSent)
+				$this->newTestedInstance(function() {}, $dataNotSent, function() {})
 			)
 			->then
-				->object($this->testedInstance->dataNotSent($data, $errno, $id, $socket))->isTestedInstance
+				->object($this->testedInstance->dataNotSentOnSocket($data, $errno, $id, $socket))->isTestedInstance
 				->string($dataSent)->isEqualTo($data)
 				->string($idUsed)->isEqualTo($id)
 				->integer($errnoEncoutered)->isEqualTo($errno)
