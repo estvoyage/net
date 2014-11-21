@@ -4,8 +4,58 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a4139ddad3433f4b911c30ceb6ff8276",
-    "packages": [],
+    "hash": "ceec6837cef5a10e9499a22c9ce6e178",
+    "packages": [
+        {
+            "name": "estvoyage/value",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/estvoyage/value.git",
+                "reference": "d3e9a64f71dbf68efda9a1b209e745da56f76cec"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/estvoyage/value/zipball/d3e9a64f71dbf68efda9a1b209e745da56f76cec",
+                "reference": "d3e9a64f71dbf68efda9a1b209e745da56f76cec",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.0"
+            },
+            "require-dev": {
+                "atoum/atoum": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "estvoyage\\value\\tests\\units\\": "tests/units",
+                    "estvoyage\\value\\world\\": "world",
+                    "estvoyage\\value\\": "classes"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD"
+            ],
+            "authors": [
+                {
+                    "name": "Frédéric Hardy",
+                    "email": "frederic.hardy@mageekbox.net",
+                    "homepage": "http://blog.mageekbox.net"
+                }
+            ],
+            "description": "A set of whole value to avoid using native PHP type, see http://c2.com/cgi/wiki?ValueObject for more information",
+            "homepage": "http://github.com/estvoyage/value",
+            "keywords": [
+                "East",
+                "Value Object",
+                "Whole value",
+                "value"
+            ],
+            "time": "2014-11-21 20:25:07"
+        }
+    ],
     "packages-dev": [
         {
             "name": "atoum/atoum",
@@ -13,12 +63,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/atoum/atoum.git",
-                "reference": "662e543db9302b92a9341180173890dfcdb8af34"
+                "reference": "9b87d03f0a8dbb7ee6bd434c06e3b9d8971ad1ba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/atoum/atoum/zipball/662e543db9302b92a9341180173890dfcdb8af34",
-                "reference": "662e543db9302b92a9341180173890dfcdb8af34",
+                "url": "https://api.github.com/repos/atoum/atoum/zipball/9b87d03f0a8dbb7ee6bd434c06e3b9d8971ad1ba",
+                "reference": "9b87d03f0a8dbb7ee6bd434c06e3b9d8971ad1ba",
                 "shasum": ""
             },
             "require": {
@@ -79,12 +129,13 @@
                 "test",
                 "unit testing"
             ],
-            "time": "2014-10-07 11:28:16"
+            "time": "2014-11-21 14:50:10"
         }
     ],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "estvoyage/value": 20,
         "atoum/atoum": 20
     },
     "prefer-stable": false,

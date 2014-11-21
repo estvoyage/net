@@ -14,7 +14,8 @@
 	],
 	"require": {
 		"ext-sockets": "*",
-		"php": ">=5.5.0"
+		"php": ">=5.5.0",
+		"estvoyage/value": "dev-master"
 	},
 	"require-dev": {
 		"atoum/atoum": "dev-master"
