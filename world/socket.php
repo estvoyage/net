@@ -2,9 +2,14 @@
 
 namespace estvoyage\net\world;
 
+use
+	estvoyage\net\socket\data,
+	estvoyage\net\address
+;
+
 interface socket
 {
-	function write($data, $host, $port, socket\observer $observer, $id = null);
+	function write(data $data, address $address);
 	function shutdown();
 	function shutdownOnlyReading();
 	function shutdownOnlyWriting();

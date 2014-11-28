@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "ceec6837cef5a10e9499a22c9ce6e178",
+    "hash": "7489c918de7e79d9c1567b5858a44134",
     "packages": [
         {
             "name": "estvoyage/value",
@@ -12,16 +12,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/estvoyage/value.git",
-                "reference": "d3e9a64f71dbf68efda9a1b209e745da56f76cec"
+                "reference": "84191dd092e3289017aec7c17eabe00c454f2874"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/estvoyage/value/zipball/d3e9a64f71dbf68efda9a1b209e745da56f76cec",
-                "reference": "d3e9a64f71dbf68efda9a1b209e745da56f76cec",
+                "url": "https://api.github.com/repos/estvoyage/value/zipball/84191dd092e3289017aec7c17eabe00c454f2874",
+                "reference": "84191dd092e3289017aec7c17eabe00c454f2874",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.5.0"
+                "php": ">=5.4.0"
             },
             "require-dev": {
                 "atoum/atoum": "dev-master"
@@ -30,7 +30,6 @@
             "autoload": {
                 "psr-4": {
                     "estvoyage\\value\\tests\\units\\": "tests/units",
-                    "estvoyage\\value\\world\\": "world",
                     "estvoyage\\value\\": "classes"
                 }
             },
@@ -53,7 +52,7 @@
                 "Whole value",
                 "value"
             ],
-            "time": "2014-11-21 20:25:07"
+            "time": "2014-11-28 12:02:44"
         }
     ],
     "packages-dev": [

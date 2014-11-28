@@ -3,10 +3,13 @@
 namespace estvoyage\net\socket;
 
 use
-	estvoyage\net\world as net
+	estvoyage\net\address,
+	estvoyage\net\socket\data,
+	estvoyage\net\socket\error,
+	estvoyage\net\world\socket
 ;
 
-class udp implements net\socket
+class udp implements socket
 {
 	private
 		$resource
@@ -25,26 +28,22 @@ class udp implements net\socket
 		$this->resource = null;
 	}
 
-	function write($data, $host, $port, net\socket\observer $observer, $id = null)
+	function write(data $data, address $address)
 	{
 		$dataLength = strlen($data);
 
 		switch (true)
 		{
 			case ! $this->resource && ! ($this->resource = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP) ?: null):
-			case ($bytesWritten = socket_sendto($this->resource, $data, $dataLength, 0, $host, $port)) === false:
-				$observer->dataNotSentOnSocket($data, $id, socket_last_error($this->resource), $this);
-				break;
+			case ($bytesWritten = socket_sendto($this->resource, $data, $dataLength, 0, $address->host, $address->port)) === false:
+				throw new exception(new error(new error\code(socket_last_error($this->resource))));
 
 			case $bytesWritten < $dataLength:
-				$observer->dataNotFullySentOnSocket($data, $id, $bytesWritten, $this);
-				break;
+				return new data(substr($data, $bytesWritten));
 
 			default:
-				$observer->dataSentOnSocket($data, $id, $this);
+				return new data;
 		}
-
-		return $this;
 	}
 
 	function shutdown()

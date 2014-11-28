@@ -6,46 +6,49 @@ require __DIR__ . '/../runner.php';
 
 use
 	estvoyage\net\tests\units,
-	mock\estvoyage\net\world as net
+	estvoyage\net\host,
+	estvoyage\net\port
 ;
 
 class address extends units\test
 {
-	function testClass()
-	{
-		$this->testedClass
-			->implements('estvoyage\net\world\address')
-		;
-	}
-
-	function testSend()
+	function testProperties()
 	{
 		$this
 			->given(
-				$observer = new net\socket\observer,
-				$socket = new net\socket,
-				$host = uniqid(),
-				$port = uniqid(),
-				$id = uniqid(),
-				$data = uniqid(),
+				$host = new host(uniqid()),
+				$port = new port(rand(0, 65535))
+			)
+			->if(
 				$this->newTestedInstance($host, $port)
 			)
+			->then
+				->object($this->testedInstance->host)->isIdenticalTo($host)
+				->object($this->testedInstance->port)->isIdenticalTo($port)
+				->exception(function() use (& $property) { $this->testedInstance->{$property = uniqid()}; })
+					->isInstanceOf('logicException')
+					->hasMessage('Undefined property: ' . get_class($this->testedInstance) . '::' . $property)
 
+				->boolean(isset($this->testedInstance->host))->isTrue
+				->boolean(isset($this->testedInstance->port))->isTrue
+				->boolean(isset($this->testedInstance->{uniqid()}))->isFalse
+		;
+	}
+
+	function testImmutability()
+	{
+		$this
 			->if(
-				$this->calling($socket)->write = function($data, $host, $port, $observer, $id) { $observer->dataSentOnSocket($data, $id, $this); }
+				$this->newTestedInstance(new host(uniqid()), new port(rand(0, 65535)))
 			)
 			->then
-				->object($this->testedInstance->send($data, $socket, $observer, $id))->isTestedInstance
-				->mock($socket)->call('write')->withIdenticalArguments($data, $host, $port, $observer, $id)->once
-				->mock($observer)->call('dataSentOnSocket')->withIdenticalArguments($data, $id, $socket)->once
+				->exception(function() { $this->testedInstance->{uniqid()} = uniqid(); })
+					->isInstanceOf('logicException')
+					->hasMessage(get_class($this->testedInstance) . ' is immutable')
 
-			->if(
-				$this->calling($socket)->write = function($data, $host, $port, $observer, $id) use (& $bytesWritten) { $observer->dataNotFullySentOnSocket($data, $bytesWritten = rand(1, PHP_INT_MAX), $id, $this); }
-			)
-			->then
-				->object($this->testedInstance->send($data, $socket, $observer, $id))->isTestedInstance
-				->mock($socket)->call('write')->withIdenticalArguments($data, $host, $port, $observer, $id)->twice
-				->mock($observer)->call('dataNotFullySentOnSocket')->withIdenticalArguments($data, $bytesWritten, $id, $socket)->once
+				->exception(function() { unset($this->testedInstance->{uniqid()}); })
+					->isInstanceOf('logicException')
+					->hasMessage(get_class($this->testedInstance) . ' is immutable')
 		;
 	}
 }

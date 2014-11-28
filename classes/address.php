@@ -3,26 +3,17 @@
 namespace estvoyage\net;
 
 use
-	estvoyage\net\world as net
+	estvoyage\value,
+	estvoyage\net\host,
+	estvoyage\net\port
 ;
 
-class address implements net\address
+final class address extends value\generic
 {
-	private
-		$host,
-		$port
-	;
+	use immutable;
 
-	function __construct($host, $port)
+	function __construct(host $host, port $port)
 	{
-		$this->host = $host;
-		$this->port = $port;
-	}
-
-	function send($data, net\socket $socket, net\socket\observer $observer, $id = null)
-	{
-		$socket->write($data, $this->host, $this->port, $observer, $id);
-
-		return $this;
+		parent::__construct([ 'host' => $host, 'port' => $port ]);
 	}
 }
