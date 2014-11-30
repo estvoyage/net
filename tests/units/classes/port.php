@@ -18,6 +18,14 @@ class port extends test
 	}
 
 	/**
+	 * @dataProvider validValueProvider
+	 */
+	function testConstructorWithValidValue($value)
+	{
+		$this->integer($this->newTestedInstance($value)->asInteger)->isEqualTo($value);
+	}
+
+	/**
 	 * @dataProvider invalidValueProvider
 	 */
 	function testConstructorWithInvalidValue($value)
@@ -29,11 +37,65 @@ class port extends test
 	}
 
 	/**
+	 * @dataProvider validValueProvider
+	 */
+	function testValidateWithValidValue($value)
+	{
+		$this->boolean(testedClass::validate($value))->isTrue;
+	}
+
+	/**
 	 * @dataProvider invalidValueProvider
 	 */
 	function testValidateWithInvalidValue($value)
 	{
 		$this->boolean(testedClass::validate($value))->isFalse;
+	}
+
+	function testProperties()
+	{
+		$this
+			->given(
+				$port = rand(0, 65535)
+			)
+			->if(
+				$this->newTestedInstance($port)
+			)
+			->then
+				->integer($this->testedInstance->asInteger)->isIdenticalTo($port)
+				->exception(function() use (& $property) { $this->testedInstance->{$property = uniqid()}; })
+					->isInstanceOf('logicException')
+					->hasMessage('Undefined property: ' . get_class($this->testedInstance) . '::' . $property)
+
+				->boolean(isset($this->testedInstance->asInteger))->isTrue
+				->boolean(isset($this->testedInstance->{uniqid()}))->isFalse
+		;
+	}
+
+	function testImmutability()
+	{
+		$this
+			->if(
+				$this->newTestedInstance(rand(0, 65535))
+			)
+			->then
+				->exception(function() { $this->testedInstance->{uniqid()} = uniqid(); })
+					->isInstanceOf('logicException')
+					->hasMessage(get_class($this->testedInstance) . ' is immutable')
+
+				->exception(function() { unset($this->testedInstance->{uniqid()}); })
+					->isInstanceOf('logicException')
+					->hasMessage(get_class($this->testedInstance) . ' is immutable')
+		;
+	}
+
+	protected function validValueProvider()
+	{
+		return [
+			0,
+			65535,
+			rand(1, 65534)
+		];
 	}
 
 	protected function invalidValueProvider()

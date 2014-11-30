@@ -16,4 +16,42 @@ class code extends units\test
 			->extends('estvoyage\value\integer\unsigned')
 		;
 	}
+
+	function testProperties()
+	{
+		$this
+
+			->given(
+				$code = rand(0, PHP_INT_MAX)
+			)
+			->if(
+				$this->newTestedInstance($code)
+			)
+			->then
+				->integer($this->testedInstance->asInteger)->isIdenticalTo($code)
+				->exception(function() use (& $property) { $this->testedInstance->{$property = uniqid()}; })
+					->isInstanceOf('logicException')
+					->hasMessage('Undefined property: ' . get_class($this->testedInstance) . '::' . $property)
+		;
+	}
+
+	function testImmutability()
+	{
+		$this
+			->given(
+				$code = rand(0, PHP_INT_MAX)
+			)
+			->if(
+				$this->newTestedInstance($code)
+			)
+			->then
+				->exception(function() { $this->testedInstance->{uniqid()} = uniqid(); })
+					->isInstanceOf('logicException')
+					->hasMessage(get_class($this->testedInstance) . ' is immutable')
+
+			->exception(function() { unset($this->testedInstance->{uniqid()}); })
+				->isInstanceOf('logicException')
+				->hasMessage(get_class($this->testedInstance) . ' is immutable')
+		;
+	}
 }

@@ -6,8 +6,7 @@ require __DIR__ . '/../runner.php';
 
 use
 	estvoyage\net\tests\units,
-	estvoyage\net\host,
-	estvoyage\net\port
+	estvoyage\net\tests\units\mock
 ;
 
 class address extends units\test
@@ -16,8 +15,8 @@ class address extends units\test
 	{
 		$this
 			->given(
-				$host = new host(uniqid()),
-				$port = new port(rand(0, 65535))
+				$host = new mock\host,
+				$port = new mock\port
 			)
 			->if(
 				$this->newTestedInstance($host, $port)
@@ -39,7 +38,7 @@ class address extends units\test
 	{
 		$this
 			->if(
-				$this->newTestedInstance(new host(uniqid()), new port(rand(0, 65535)))
+				$this->newTestedInstance(new mock\host(uniqid()), new mock\port(rand(0, 65535)))
 			)
 			->then
 				->exception(function() { $this->testedInstance->{uniqid()} = uniqid(); })

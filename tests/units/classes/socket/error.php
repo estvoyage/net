@@ -37,15 +37,19 @@ class error extends units\test
 	{
 		$this
 			->given(
-				$this->function->socket_strerror = $message = uniqid()
+				$this->function->socket_strerror = uniqid()
 			)
-			->exception(function() use (& $property) { $this->newTestedInstance(new code(rand(0, PHP_INT_MAX)), new message(uniqid()))->{uniqid()} = uniqid(); })
-				->isInstanceOf('logicException')
-				->hasMessage(get_class($this->testedInstance) . ' is immutable')
+			->if(
+				$this->newTestedInstance(new code(rand(0, PHP_INT_MAX)))
+			)
+			->then
+				->exception(function() { $this->testedInstance->{uniqid()} = uniqid(); })
+					->isInstanceOf('logicException')
+					->hasMessage(get_class($this->testedInstance) . ' is immutable')
 
-			->exception(function() use (& $property) { unset($this->newTestedInstance(new code(rand(0, PHP_INT_MAX)), new message(uniqid()))->{uniqid()}); })
-				->isInstanceOf('logicException')
-				->hasMessage(get_class($this->testedInstance) . ' is immutable')
+				->exception(function() { unset($this->testedInstance->{uniqid()}); })
+					->isInstanceOf('logicException')
+					->hasMessage(get_class($this->testedInstance) . ' is immutable')
 		;
 	}
 }

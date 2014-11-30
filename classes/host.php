@@ -8,4 +8,5 @@ use
 
 final class host extends value\string
 {
+	use immutable;
 }

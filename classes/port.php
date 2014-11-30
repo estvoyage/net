@@ -8,6 +8,8 @@ use
 
 final class port extends integer\unsigned
 {
+	use immutable;
+
 	function __construct($value)
 	{
 		$invalid = false;

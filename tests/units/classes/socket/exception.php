@@ -6,11 +6,7 @@ require __DIR__ . '/../../runner.php';
 
 use
 	estvoyage\net\tests\units,
-	estvoyage\net\host as shost,
-	estvoyage\net\port as sport,
-	estvoyage\net\address as saddress,
-	estvoyage\net\socket\error as serror,
-	mock\estvoyage\net\world\socket\exception\formatter
+	estvoyage\net\tests\units\mock
 ;
 
 class exception extends units\test
@@ -27,14 +23,16 @@ class exception extends units\test
 	{
 		$this
 			->given(
-				$error = new serror(new serror\code(rand(1, PHP_INT_MAX)), new serror\message(uniqid()))
+				$error = new mock\socket\error,
+				$error->code = new mock\socket\error\code($code = rand(- PHP_INT_MAX, PHP_INT_MAX)),
+				$error->message = new mock\socket\error\message($message = uniqid())
 			)
 			->if(
 				$this->newTestedInstance($error)
 			)
 			->then
-				->integer($this->testedInstance->getCode())->isEqualTo($error->code->asInteger)
-				->string($this->testedInstance->getMessage())->isEqualTo($error->message->asString)
+				->integer($this->testedInstance->getCode())->isEqualTo($code)
+				->string($this->testedInstance->getMessage())->isEqualTo($message)
 		;
 	}
 
@@ -42,14 +40,16 @@ class exception extends units\test
 	{
 		$this
 			->given(
-				$error = new serror(new serror\code(rand(1, PHP_INT_MAX)), new serror\message(uniqid()))
+				$error = new mock\socket\error,
+				$error->code = new mock\socket\error\code($code = rand(- PHP_INT_MAX, PHP_INT_MAX)),
+				$error->message = new mock\socket\error\message($message = uniqid())
 			)
 			->if(
 				$this->newTestedInstance($error)
 			)
 			->then
-				->object($this->testedInstance->code)->isEqualTo($error->code)
-				->object($this->testedInstance->message)->isEqualTo($error->message)
+				->object($this->testedInstance->code)->isIdenticalTo($error->code)
+				->object($this->testedInstance->message)->isIdenticalTo($error->message)
 				->exception(function() use (& $property) { $this->testedInstance->{$property = uniqid()}; })
 					->isInstanceOf('logicException')
 					->hasMessage('Undefined property: ' . get_class($this->testedInstance) . '::' . $property)
@@ -63,8 +63,13 @@ class exception extends units\test
 	function testImmutability()
 	{
 		$this
+			->given(
+				$error = new mock\socket\error,
+				$error->code = new mock\socket\error\code,
+				$error->message = new mock\socket\error\message
+			)
 			->if(
-				$this->newTestedInstance(new serror(new serror\code(rand(1, PHP_INT_MAX)), new serror\message(uniqid())))
+				$this->newTestedInstance($error)
 			)
 			->then
 				->exception(function() { $this->testedInstance->{uniqid()} = uniqid(); })
