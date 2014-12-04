@@ -4,12 +4,11 @@ namespace estvoyage\net\socket;
 
 use
 	estvoyage\value,
-	estvoyage\net\world as net,
-	estvoyage\net\world\socket\logger,
+	estvoyage\net,
 	estvoyage\net\socket\error
 ;
 
-final class exception extends \exception implements net\exception
+final class exception extends net\exception
 {
 	use value\immutable;
 

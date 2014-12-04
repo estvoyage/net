@@ -11,20 +11,12 @@ use
 	mock\estvoyage\net\world as net
 ;
 
-class foo
-{
-	function __construct(\estvoyage\net\host $host)
-	{
-		var_dump($host);
-	}
-}
-
 class udp extends units\test
 {
 	function testClass()
 	{
 		$this->testedClass
-			->implements('estvoyage\net\world\socket')
+			->implements('estvoyage\net\socket')
 		;
 	}
 

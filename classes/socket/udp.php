@@ -3,10 +3,10 @@
 namespace estvoyage\net\socket;
 
 use
+	estvoyage\net\socket,
 	estvoyage\net\address,
 	estvoyage\net\socket\data,
-	estvoyage\net\socket\error,
-	estvoyage\net\world\socket
+	estvoyage\net\socket\error
 ;
 
 class udp implements socket
