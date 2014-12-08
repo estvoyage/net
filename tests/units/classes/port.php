@@ -10,13 +10,6 @@ use
 
 class port extends test
 {
-	function testClass()
-	{
-		$this->testedClass
-			->extends('estvoyage\value\integer\unsigned')
-		;
-	}
-
 	/**
 	 * @dataProvider validValueProvider
 	 */
@@ -92,25 +85,31 @@ class port extends test
 	protected function validValueProvider()
 	{
 		return [
-			0,
-			65535,
-			rand(1, 65534)
+			'min value as integer' => 0,
+			'max value as integer' => 65535,
+			'any valid value as integer' => rand(1, 65534),
+			'min value as float' => 0.,
+			'max value as float' => 65535.,
+			'any valid value as flaot' => (float) rand(1, 65534),
+			'min value as string' => '0',
+			'max value as string' => '65535',
+			'any valid value as string' => (string) rand(1, 65534)
 		];
 	}
 
 	protected function invalidValueProvider()
 	{
 		return [
-			null,
-			true,
-			false,
-			'',
-			uniqid(),
-			- rand(1, PHP_INT_MAX),
-			rand(65536, PHP_INT_MAX),
-			(float) rand(-PHP_INT_MAX, PHP_INT_MAX),
-			[ [] ],
-			new \stdclass
+			'null' => null,
+			'true '=> true,
+			'false' => false,
+			'empty string' => '',
+			'any string' => uniqid() . ' ' . uniqid(),
+			'any negative integer' => - rand(1, PHP_INT_MAX),
+			'any integer greater than max value' => rand(65536, PHP_INT_MAX),
+			'a float' => M_PI,
+			'an array' => [ [] ],
+			'an object' => new \stdclass
 		];
 	}
 }

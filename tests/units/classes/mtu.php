@@ -10,19 +10,12 @@ use
 
 class mtu extends test
 {
-	function testClass()
-	{
-		$this->testedClass
-			->extends('estvoyage\value\integer\unsigned')
-		;
-	}
-
 	/**
 	 * @dataProvider validValueProvider
 	 */
-	function testConstructorWithValidValue($value)
+	function testBuildWithValidValue($value)
 	{
-		$this->integer($this->newTestedInstance($value)->asInteger)->isEqualTo($value);
+		$this->integer(testedClass::build($value)->asInteger)->isEqualTo($value);
 	}
 
 	/**
@@ -30,9 +23,9 @@ class mtu extends test
 	 */
 	function testConstructorWithInvalidValue($value)
 	{
-		$this->exception(function() use ($value) { $this->newTestedInstance($value); })
+		$this->exception(function() use ($value) { testedClass::build($value); })
 			->isInstanceOf('domainException')
-			->hasMessage('MTU should be an integer greater than or equal to 68')
+			->hasMessage('Argument should be an integer greater than or equal to 68')
 		;
 	}
 
@@ -56,36 +49,39 @@ class mtu extends test
 	{
 		$this
 			->given(
-				$port = rand(0, 65535)
+				$value = rand(68, PHP_INT_MAX)
 			)
 			->if(
-				$this->newTestedInstance($port)
+				$mtu = testedClass::build($value)
 			)
 			->then
-				->integer($this->testedInstance->asInteger)->isIdenticalTo($port)
-				->exception(function() use (& $property) { $this->testedInstance->{$property = uniqid()}; })
+				->integer($mtu->asInteger)->isIdenticalTo($value)
+				->exception(function() use ($mtu, & $property) { $mtu->{$property = uniqid()}; })
 					->isInstanceOf('logicException')
-					->hasMessage('Undefined property: ' . get_class($this->testedInstance) . '::' . $property)
+					->hasMessage('Undefined property: ' . get_class($mtu) . '::' . $property)
 
-				->boolean(isset($this->testedInstance->asInteger))->isTrue
-				->boolean(isset($this->testedInstance->{uniqid()}))->isFalse
+				->boolean(isset($mtu->asInteger))->isTrue
+				->boolean(isset($mtu->{uniqid()}))->isFalse
 		;
 	}
 
 	function testImmutability()
 	{
 		$this
+			->given(
+				$value = rand(68, PHP_INT_MAX)
+			)
 			->if(
-				$this->newTestedInstance(rand(0, 65535))
+				$mtu = testedClass::build($value)
 			)
 			->then
-				->exception(function() { $this->testedInstance->{uniqid()} = uniqid(); })
+				->exception(function() use ($mtu) { $mtu->{uniqid()} = uniqid(); })
 					->isInstanceOf('logicException')
-					->hasMessage(get_class($this->testedInstance) . ' is immutable')
+					->hasMessage(get_class($mtu) . ' is immutable')
 
-				->exception(function() { unset($this->testedInstance->{uniqid()}); })
+				->exception(function() use ($mtu) { unset($mtu->{uniqid()}); })
 					->isInstanceOf('logicException')
-					->hasMessage(get_class($this->testedInstance) . ' is immutable')
+					->hasMessage(get_class($mtu) . ' is immutable')
 		;
 	}
 

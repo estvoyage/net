@@ -3,7 +3,7 @@
 namespace estvoyage\net\socket;
 
 use
-	estvoyage\value,
+	estvoyage\value\world as value,
 	estvoyage\net,
 	estvoyage\net\socket\error
 ;
@@ -16,6 +16,6 @@ final class exception extends net\exception
 	{
 		parent::__construct($error->message->asString, $error->code->asInteger);
 
-		$this->values = [ 'code' => $error->code, 'message' => $error->message ];
+		$this->init([ 'code' => $error->code, 'message' => $error->message ]);
 	}
 }

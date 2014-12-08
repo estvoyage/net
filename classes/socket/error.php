@@ -3,18 +3,17 @@
 namespace estvoyage\net\socket;
 
 use
-	estvoyage\value,
-	estvoyage\net,
+	estvoyage\value\world as value,
 	estvoyage\net\socket\error\code,
 	estvoyage\net\socket\error\message
 ;
 
-final class error extends value\generic
+final class error
 {
-	use net\immutable;
+	use value\immutable;
 
 	function __construct(code $code)
 	{
-		parent::__construct([ 'code' => $code, 'message' => new message(socket_strerror($code->asInteger)) ]);
+		$this->init([ 'code' => $code, 'message' => new message(socket_strerror($code->asInteger)) ]);
 	}
 }

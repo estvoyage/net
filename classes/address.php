@@ -3,17 +3,17 @@
 namespace estvoyage\net;
 
 use
-	estvoyage\value,
+	estvoyage\value\world as value,
 	estvoyage\net\host,
 	estvoyage\net\port
 ;
 
-final class address extends value\generic
+final class address
 {
-	use immutable;
+	use value\immutable;
 
 	function __construct(host $host, port $port)
 	{
-		parent::__construct([ 'host' => $host, 'port' => $port ]);
+		$this->init([ 'host' => $host, 'port' => $port ]);
 	}
 }

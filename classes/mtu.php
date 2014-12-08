@@ -3,32 +3,41 @@
 namespace estvoyage\net;
 
 use
-	estvoyage\value\integer
+	estvoyage\value\world\integer
 ;
 
-final class mtu extends integer\unsigned
+final class mtu
 {
-	use immutable;
+	use integer\unsigned {
+		__construct as private;
+		validate as private isUnsignedInteger;
+	}
 
-	function __construct($value)
+	static function build($value)
 	{
-		$exception = null;
+		static $instances = [];
 
-		try
+		if (! self::validate($value))
 		{
-			parent::__construct($value);
+			throw new \domainException('Argument should be an integer greater than or equal to 68');
 		}
-		catch (\domainException $exception) {}
 
-		if ($exception || ! self::isInValidRange($value))
+		if (! isset($instances[$value]))
 		{
-			throw new \domainException('MTU should be an integer greater than or equal to 68');
+			$instances[$value] = new self($value);
 		}
+
+		return $instances[$value];
 	}
 
 	static function validate($value)
 	{
-		return parent::validate($value) && self::isInValidRange($value);
+		return self::isUnsignedInteger($value) && self::isInValidRange($value);
+	}
+
+	private function __construct($value)
+	{
+		$this->initAsInteger($value);
 	}
 
 	private static function isInValidRange($value)

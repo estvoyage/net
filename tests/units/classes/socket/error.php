@@ -15,7 +15,6 @@ class error extends units\test
 	function testProperties()
 	{
 		$this
-
 			->given(
 				$code = new code(rand(0, PHP_INT_MAX)),
 				$this->function->socket_strerror = $message = uniqid()
