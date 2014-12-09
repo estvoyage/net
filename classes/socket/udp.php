@@ -3,13 +3,13 @@
 namespace estvoyage\net\socket;
 
 use
-	estvoyage\net\socket,
+	estvoyage\net\world as net,
 	estvoyage\net\address,
 	estvoyage\net\socket\data,
 	estvoyage\net\socket\error
 ;
 
-class udp implements socket
+class udp implements net\socket
 {
 	private
 		$resource

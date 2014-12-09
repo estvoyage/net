@@ -16,7 +16,7 @@ class udp extends units\test
 	function testClass()
 	{
 		$this->testedClass
-			->implements('estvoyage\net\socket')
+			->implements('estvoyage\net\world\socket')
 		;
 	}
 

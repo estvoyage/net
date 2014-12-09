@@ -1,6 +1,6 @@
 <?php
 
-namespace estvoyage\net;
+namespace estvoyage\net\world;
 
 use
 	estvoyage\net\socket\data,
