@@ -14,7 +14,8 @@ class exception extends units\test
 	function testClass()
 	{
 		$this->testedClass
-			->extends('estvoyage\net\exception')
+			->implements('estvoyage\net\world\exception')
+			->extends('runtimeException')
 		;
 	}
 

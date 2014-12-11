@@ -88,24 +88,24 @@ class mtu extends test
 	protected function validValueProvider()
 	{
 		return [
-			rand(68, PHP_INT_MAX)
+			'any integer greater than or equal to 68' => rand(68, PHP_INT_MAX)
 		];
 	}
 
 	protected function invalidValueProvider()
 	{
 		return [
-			null,
-			true,
-			false,
-			'',
-			uniqid(),
-			- rand(1, PHP_INT_MAX),
-			0,
-			rand(1, 67),
-			(float) rand(-PHP_INT_MAX, PHP_INT_MAX),
-			[ [] ],
-			new \stdclass
+			'null' => null,
+			'true' => true,
+			'false' => false,
+			'empty string' => '',
+			'any string' => uniqid() . ' ' . uniqid(),
+			'any negative integer' => - rand(1, PHP_INT_MAX),
+			'zero as integer',
+			'any integer between 1 and 67' => rand(1, 67),
+			'any integer as float' => (float) rand(-PHP_INT_MAX, PHP_INT_MAX),
+			'array' => [ [] ],
+			'object' => new \stdclass
 		];
 	}
 }
