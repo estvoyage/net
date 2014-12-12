@@ -1,6 +1,6 @@
 <?php
 
-namespace estvoyage\net\tests\units\mock;
+namespace estvoyage\net;
 
 class address
 {
@@ -15,5 +15,3 @@ class address
 		$this->port = $port;
 	}
 }
-
-@class_alias(__NAMESPACE__ . '\address', 'estvoyage\net\address');

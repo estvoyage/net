@@ -1,6 +1,6 @@
 <?php
 
-namespace estvoyage\net\tests\units\mock\socket;
+namespace estvoyage\net\socket;
 
 class data
 {
@@ -18,5 +18,3 @@ class data
 		return $this->asString;
 	}
 }
-
-@class_alias(__NAMESPACE__ . '\data', 'estvoyage\net\socket\data');

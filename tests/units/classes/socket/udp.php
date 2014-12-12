@@ -7,9 +7,11 @@ require __DIR__ . '/../../runner.php';
 use
 	estvoyage\net\tests\units,
 	estvoyage\net\socket,
-	estvoyage\net\tests\units\mock,
-	mock\estvoyage\net\world as net
+	estvoyage\net\address
 ;
+
+require 'mock/socket/data.php';
+require 'mock/address.php';
 
 class udp extends units\test
 {
@@ -35,7 +37,7 @@ class udp extends units\test
 				->function('socket_close')->never
 
 			->if(
-				$this->newTestedInstance->write(new mock\socket\data, new mock\address),
+				$this->newTestedInstance->write(new socket\data, new address),
 				$this->testedInstance->__destruct()
 			)
 			->then
@@ -59,7 +61,7 @@ class udp extends units\test
 			->then
 				->function('socket_create')->never
 
-			->when(function() { $this->testedInstance->write(new mock\socket\data, new mock\address); $clone = clone $this->testedInstance; $clone->write(new mock\socket\data, new mock\address); })
+			->when(function() { $this->testedInstance->write(new socket\data, new address); $clone = clone $this->testedInstance; $clone->write(new socket\data, new address); })
 			->then
 				->function('socket_create')->twice
 		;
@@ -69,8 +71,8 @@ class udp extends units\test
 	{
 		$this
 			->given(
-				$address = new mock\address(uniqid(), uniqid()),
-				$data = new mock\socket\data(uniqid()),
+				$address = new address(uniqid(), uniqid()),
+				$data = new socket\data(uniqid()),
 
 				$this->function->socket_create = $resource = uniqid(),
 				$this->function->socket_sendto = function($resource, $data) { return strlen($data); },
@@ -82,14 +84,14 @@ class udp extends units\test
 				$this->newTestedInstance
 			)
 			->then
-				->object($this->testedInstance->write($data, $address))->isEqualTo(new mock\socket\data)
+				->object($this->testedInstance->write($data, $address))->isEqualTo(new socket\data)
 				->function('socket_sendto')->wasCalledWithArguments($resource, $data, strlen($data), 0, $address->host, $address->port)->once
 
 			->if(
 				$this->function->socket_sendto[2] = 2
 			)
 			->then
-				->object($this->testedInstance->write($data, $address))->isEqualTo(new mock\socket\data(substr($data, 2)))
+				->object($this->testedInstance->write($data, $address))->isEqualTo(new socket\data(substr($data, 2)))
 
 			->if(
 				$this->function->socket_sendto = false

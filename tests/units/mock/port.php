@@ -1,9 +1,7 @@
 <?php
 
-namespace estvoyage\net\tests\units\mock;
+namespace estvoyage\net;
 
 class port
 {
 }
-
-@class_alias(__NAMESPACE__ . '\port', 'estvoyage\net\port');
