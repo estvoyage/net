@@ -10,8 +10,8 @@ use
 	estvoyage\net\address
 ;
 
-require 'mock/socket/data.php';
-require 'mock/address.php';
+require_once 'mock/socket/data.php';
+require_once 'mock/address.php';
 
 class udp extends units\test
 {
@@ -98,6 +98,45 @@ class udp extends units\test
 			)
 			->then
 				->exception(function() use ($data, $address) { $this->testedInstance->write($data, $address); })
+					->isInstanceOf('estvoyage\net\socket\exception')
+					->hasCode($errno)
+		;
+	}
+
+	function testWriteAll()
+	{
+		$this
+			->given(
+				$address = new address(uniqid(), uniqid()),
+				$data = new socket\data(uniqid()),
+
+				$this->function->socket_create = $resource = uniqid(),
+				$this->function->socket_sendto = function($resource, $data) { return strlen($data); },
+				$this->function->socket_close->doesNothing,
+				$this->function->socket_last_error = $errno = rand(0, PHP_INT_MAX)
+			)
+
+			->if(
+				$this->newTestedInstance
+			)
+			->then
+				->object($this->testedInstance->writeAll($data, $address))->isTestedInstance
+				->function('socket_sendto')->wasCalledWithArguments($resource, $data, strlen($data), 0, $address->host, $address->port)->once
+
+			->if(
+				$this->function->socket_sendto[2] = 2
+			)
+			->then
+				->object($this->testedInstance->writeAll($data, $address))->isTestedInstance
+				->function('socket_sendto')
+					->wasCalledWithArguments($resource, $data, strlen($data), 0, $address->host, $address->port)->twice
+					->wasCalledWithArguments($resource, substr($data, 2), strlen(substr($data, 2)), 0, $address->host, $address->port)->once
+
+			->if(
+				$this->function->socket_sendto = false
+			)
+			->then
+				->exception(function() use ($data, $address) { $this->testedInstance->writeAll($data, $address); })
 					->isInstanceOf('estvoyage\net\socket\exception')
 					->hasCode($errno)
 		;

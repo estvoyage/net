@@ -46,6 +46,16 @@ class udp implements net\socket
 		}
 	}
 
+	function writeAll(data $data, address $address)
+	{
+		while ((string) $data)
+		{
+			$data = $this->write($data, $address);
+		}
+
+		return $this;
+	}
+
 	function shutdown()
 	{
 		return $this;

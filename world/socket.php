@@ -10,6 +10,7 @@ use
 interface socket
 {
 	function write(data $data, address $address);
+	function writeAll(data $data, address $address);
 	function shutdown();
 	function shutdownOnlyReading();
 	function shutdownOnlyWriting();
