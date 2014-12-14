@@ -9,8 +9,8 @@ use
 	estvoyage\net
 ;
 
-require 'mock/host.php';
-require 'mock/port.php';
+require_once 'mock/host.php';
+require_once 'mock/port.php';
 
 class address extends units\test
 {
