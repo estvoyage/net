@@ -12,8 +12,14 @@ use
 class udp implements net\socket
 {
 	private
-		$resource
+		$resource,
+		$address
 	;
+
+	function __construct(address $address)
+	{
+		$this->address = $address;
+	}
 
 	function __destruct()
 	{
@@ -28,14 +34,14 @@ class udp implements net\socket
 		$this->resource = null;
 	}
 
-	function write(data $data, address $address)
+	function write(data $data)
 	{
 		$dataLength = strlen($data);
 
 		switch (true)
 		{
 			case ! $this->resource && ! ($this->resource = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP) ?: null):
-			case ($bytesWritten = socket_sendto($this->resource, $data, $dataLength, 0, $address->host, $address->port)) === false:
+			case ($bytesWritten = socket_sendto($this->resource, $data, $dataLength, 0, $this->address->host, $this->address->port)) === false:
 				throw new exception(new error(new error\code(socket_last_error($this->resource))));
 
 			case $bytesWritten < $dataLength:
@@ -46,11 +52,11 @@ class udp implements net\socket
 		}
 	}
 
-	function writeAll(data $data, address $address)
+	function writeAll(data $data)
 	{
 		while ((string) $data)
 		{
-			$data = $this->write($data, $address);
+			$data = $this->write($data);
 		}
 
 		return $this;

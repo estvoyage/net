@@ -9,8 +9,8 @@ use
 
 interface socket
 {
-	function write(data $data, address $address);
-	function writeAll(data $data, address $address);
+	function write(data $data);
+	function writeAll(data $data);
 	function shutdown();
 	function shutdownOnlyReading();
 	function shutdownOnlyWriting();
