@@ -7,7 +7,8 @@ require __DIR__ . '/../../runner.php';
 use
 	estvoyage\net\tests\units,
 	estvoyage\net\socket,
-	estvoyage\net\address
+	estvoyage\net\address,
+	mock\estvoyage\net\world\socket\buffer
 ;
 
 class udp extends units\test
@@ -30,6 +31,7 @@ class udp extends units\test
 		$this
 			->given(
 				$address = new address,
+				$buffer = new buffer,
 				$this->function->socket_create = $resource = uniqid(),
 				$this->function->socket_sendto->doesNothing,
 				$this->function->socket_close->doesNothing
@@ -41,7 +43,7 @@ class udp extends units\test
 				->function('socket_close')->never
 
 			->if(
-				$this->newTestedInstance($address)->write(new socket\data),
+				$this->newTestedInstance($address)->shouldSend(new socket\data, $buffer),
 				$this->testedInstance->__destruct()
 			)
 			->then
@@ -54,9 +56,10 @@ class udp extends units\test
 		$this
 			->given(
 				$address = new address,
+				$buffer = new buffer,
 				$this->function->socket_create[1] = $resource = uniqid(),
 				$this->function->socket_create[2] = $otherResource = uniqid(),
-				$this->function->socket_sendto->doesNothing,
+				$this->function->socket_sendto = function($resource, $data) { return strlen($data); },
 				$this->function->socket_close->doesNothing
 			)
 			->if(
@@ -66,18 +69,19 @@ class udp extends units\test
 			->then
 				->function('socket_create')->never
 
-			->when(function() { $this->testedInstance->write(new socket\data); $clone = clone $this->testedInstance; $clone->write(new socket\data); })
+			->when(function() { $this->testedInstance->mustSend(new socket\data(uniqid())); $clone = clone $this->testedInstance; $clone->mustSend(new socket\data(uniqid())); })
 			->then
 				->function('socket_create')->twice
 		;
 	}
 
-	function testWrite()
+	function testShouldSend()
 	{
 		$this
 			->given(
 				$address = new address(uniqid(), uniqid()),
 				$data = new socket\data(uniqid()),
+				$buffer = new buffer,
 
 				$this->function->socket_create = $resource = uniqid(),
 				$this->function->socket_sendto = function($resource, $data) { return strlen($data); },
@@ -89,26 +93,28 @@ class udp extends units\test
 				$this->newTestedInstance($address)
 			)
 			->then
-				->object($this->testedInstance->write($data))->isEqualTo(new socket\data)
+				->object($this->testedInstance->shouldSend($data, $buffer))->isTestedInstance
 				->function('socket_sendto')->wasCalledWithArguments($resource, $data, strlen($data), 0, $address->host, $address->port)->once
+				->mock($buffer)->call('dataWasNotSent')->never
 
 			->if(
 				$this->function->socket_sendto[2] = 2
 			)
 			->then
-				->object($this->testedInstance->write($data))->isEqualTo(new socket\data(substr($data, 2)))
+				->object($this->testedInstance->shouldSend($data, $buffer))->isTestedInstance
+				->mock($buffer)->call('dataWasNotSent')->withArguments(new socket\data(substr($data, 2)))->once
 
 			->if(
 				$this->function->socket_sendto = false
 			)
 			->then
-				->exception(function() use ($data) { $this->testedInstance->write($data); })
+				->exception(function() use ($data, $buffer) { $this->testedInstance->shouldSend($data, $buffer); })
 					->isInstanceOf('estvoyage\net\socket\exception')
 					->hasCode($errno)
 		;
 	}
 
-	function testWriteAll()
+	function testMustSend()
 	{
 		$this
 			->given(
@@ -125,14 +131,14 @@ class udp extends units\test
 				$this->newTestedInstance($address)
 			)
 			->then
-				->object($this->testedInstance->writeAll($data))->isTestedInstance
+				->object($this->testedInstance->mustSend($data))->isTestedInstance
 				->function('socket_sendto')->wasCalledWithArguments($resource, $data, strlen($data), 0, $address->host, $address->port)->once
 
 			->if(
 				$this->function->socket_sendto[2] = 2
 			)
 			->then
-				->object($this->testedInstance->writeAll($data))->isTestedInstance
+				->object($this->testedInstance->mustSend($data))->isTestedInstance
 				->function('socket_sendto')
 					->wasCalledWithArguments($resource, $data, strlen($data), 0, $address->host, $address->port)->twice
 					->wasCalledWithArguments($resource, substr($data, 2), strlen(substr($data, 2)), 0, $address->host, $address->port)->once
@@ -141,53 +147,53 @@ class udp extends units\test
 				$this->function->socket_sendto = false
 			)
 			->then
-				->exception(function() use ($data) { $this->testedInstance->writeAll($data); })
+				->exception(function() use ($data) { $this->testedInstance->mustSend($data); })
 					->isInstanceOf('estvoyage\net\socket\exception')
 					->hasCode($errno)
 		;
 	}
 
-	function testShutdown()
+	function testNoMoreDataToSendOrReceive()
 	{
 		$this
 			->if(
 				$this->newTestedInstance(new address)
 			)
 			->then
-				->object($this->testedInstance->shutdown())->isTestedInstance
+				->object($this->testedInstance->noMoreDataToSendOrReceive())->isTestedInstance
 		;
 	}
 
-	function testShutdownOnlyReading()
+	function testNoMoreDataToReceive()
 	{
 		$this
 			->if(
 				$this->newTestedInstance(new address)
 			)
 			->then
-				->object($this->testedInstance->shutdownOnlyReading())->isTestedInstance
+				->object($this->testedInstance->noMoreDataToReceive())->isTestedInstance
 		;
 	}
 
-	function testShutdownOnlyWriting()
+	function testNoMoreDataToSend()
 	{
 		$this
 			->if(
 				$this->newTestedInstance(new address)
 			)
 			->then
-				->object($this->testedInstance->shutdownOnlyWriting())->isTestedInstance
+				->object($this->testedInstance->noMoreDataToSend())->isTestedInstance
 		;
 	}
 
-	function testDisconnect()
+	function testIsNowUseless()
 	{
 		$this
 			->if(
 				$this->newTestedInstance(new address)
 			)
 			->then
-				->object($this->testedInstance->disconnect())->isTestedInstance
+				->object($this->testedInstance->IsNowUseless())->isTestedInstance
 		;
 	}
 }
