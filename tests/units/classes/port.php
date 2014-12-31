@@ -10,6 +10,13 @@ use
 
 class port extends test
 {
+	function testClass()
+	{
+		$this->testedClass
+			->isFinal
+		;
+	}
+
 	/**
 	 * @dataProvider validValueProvider
 	 */
