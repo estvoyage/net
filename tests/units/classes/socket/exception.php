@@ -6,11 +6,18 @@ require __DIR__ . '/../../runner.php';
 
 use
 	estvoyage\net\tests\units,
-	estvoyage\net\tests\units\mock
+	estvoyage\net
 ;
 
 class exception extends units\test
 {
+	function beforeTestMethod($method)
+	{
+		require_once 'mock/net/socket/error.php';
+		require_once 'mock/net/socket/error/code.php';
+		require_once 'mock/net/socket/error/message.php';
+	}
+
 	function testClass()
 	{
 		$this->testedClass
@@ -23,9 +30,9 @@ class exception extends units\test
 	{
 		$this
 			->given(
-				$error = new mock\socket\error,
-				$error->code = new mock\socket\error\code($code = rand(- PHP_INT_MAX, PHP_INT_MAX)),
-				$error->message = new mock\socket\error\message($message = uniqid())
+				$error = new net\socket\error,
+				$error->code = new net\socket\error\code($code = rand(- PHP_INT_MAX, PHP_INT_MAX)),
+				$error->message = new net\socket\error\message($message = uniqid())
 			)
 			->if(
 				$this->newTestedInstance($error)
@@ -40,9 +47,9 @@ class exception extends units\test
 	{
 		$this
 			->given(
-				$error = new mock\socket\error,
-				$error->code = new mock\socket\error\code($code = rand(- PHP_INT_MAX, PHP_INT_MAX)),
-				$error->message = new mock\socket\error\message($message = uniqid())
+				$error = new net\socket\error,
+				$error->code = new net\socket\error\code($code = rand(- PHP_INT_MAX, PHP_INT_MAX)),
+				$error->message = new net\socket\error\message($message = uniqid())
 			)
 			->if(
 				$this->newTestedInstance($error)
@@ -64,9 +71,9 @@ class exception extends units\test
 	{
 		$this
 			->given(
-				$error = new mock\socket\error,
-				$error->code = new mock\socket\error\code,
-				$error->message = new mock\socket\error\message
+				$error = new net\socket\error,
+				$error->code = new net\socket\error\code,
+				$error->message = new net\socket\error\message
 			)
 			->if(
 				$this->newTestedInstance($error)

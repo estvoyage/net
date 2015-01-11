@@ -15,8 +15,8 @@ class udp extends units\test
 {
 	function beforeTestMethod($method)
 	{
-		require_once 'mock/socket/data.php';
-		require_once 'mock/address.php';
+		require_once 'mock/net/socket/data.php';
+		require_once 'mock/net/address.php';
 	}
 
 	function testClass()

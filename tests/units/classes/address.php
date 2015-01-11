@@ -9,11 +9,14 @@ use
 	estvoyage\net
 ;
 
-require_once 'mock/host.php';
-require_once 'mock/port.php';
-
 class address extends units\test
 {
+	function beforeTestMethod($method)
+	{
+		require_once 'mock/net/host.php';
+		require_once 'mock/net/port.php';
+	}
+
 	function testProperties()
 	{
 		$this
