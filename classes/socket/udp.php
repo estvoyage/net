@@ -4,7 +4,8 @@ namespace estvoyage\net\socket;
 
 use
 	estvoyage\net\world as net,
-	estvoyage\net\address,
+	estvoyage\net\host,
+	estvoyage\net\port,
 	estvoyage\net\socket\data,
 	estvoyage\net\socket\error
 ;
@@ -13,12 +14,14 @@ class udp implements net\socket
 {
 	private
 		$resource,
-		$address
+		$host,
+		$port
 	;
 
-	function __construct(address $address)
+	function __construct(host $host, port $port)
 	{
-		$this->address = $address;
+		$this->host = $host;
+		$this->port = $port;
 	}
 
 	function __destruct()
@@ -83,7 +86,7 @@ class udp implements net\socket
 		switch (true)
 		{
 			case ! $this->resource && ! ($this->resource = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP) ?: null):
-			case ($bytesWritten = socket_sendto($this->resource, $data, $dataLength, 0, $this->address->host, $this->address->port)) === false:
+			case ($bytesWritten = socket_sendto($this->resource, $data, $dataLength, 0, $this->host, $this->port)) === false:
 				throw new exception(new error(new error\code(socket_last_error($this->resource))));
 		}
 

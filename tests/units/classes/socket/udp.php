@@ -6,6 +6,7 @@ require __DIR__ . '/../../runner.php';
 
 use
 	estvoyage\net\tests\units,
+	estvoyage\net,
 	estvoyage\net\socket,
 	estvoyage\net\address,
 	mock\estvoyage\net\world\socket\buffer
@@ -16,7 +17,8 @@ class udp extends units\test
 	function beforeTestMethod($method)
 	{
 		require_once 'mock/net/socket/data.php';
-		require_once 'mock/net/address.php';
+		require_once 'mock/net/host.php';
+		require_once 'mock/net/port.php';
 	}
 
 	function testClass()
@@ -30,20 +32,21 @@ class udp extends units\test
 	{
 		$this
 			->given(
-				$address = new address,
+				$host = new net\host,
+				$port = new net\port,
 				$buffer = new buffer,
 				$this->function->socket_create = $resource = uniqid(),
 				$this->function->socket_sendto->doesNothing,
 				$this->function->socket_close->doesNothing
 			)
 			->if(
-				$this->newTestedInstance($address)->__destruct()
+				$this->newTestedInstance($host, $port)->__destruct()
 			)
 			->then
 				->function('socket_close')->never
 
 			->if(
-				$this->newTestedInstance($address)->shouldSend(new socket\data, $buffer),
+				$this->newTestedInstance($host, $port)->shouldSend(new socket\data, $buffer),
 				$this->testedInstance->__destruct()
 			)
 			->then
@@ -55,7 +58,8 @@ class udp extends units\test
 	{
 		$this
 			->given(
-				$address = new address,
+				$host = new net\host,
+				$port = new net\port,
 				$buffer = new buffer,
 				$this->function->socket_create[1] = $resource = uniqid(),
 				$this->function->socket_create[2] = $otherResource = uniqid(),
@@ -63,7 +67,7 @@ class udp extends units\test
 				$this->function->socket_close->doesNothing
 			)
 			->if(
-				$this->newTestedInstance($address)
+				$this->newTestedInstance($host, $port)
 			)
 			->when(function() { clone $this->testedInstance; })
 			->then
@@ -79,7 +83,8 @@ class udp extends units\test
 	{
 		$this
 			->given(
-				$address = new address(uniqid(), uniqid()),
+				$host = new net\host,
+				$port = new net\port,
 				$data = new socket\data(uniqid()),
 				$buffer = new buffer,
 
@@ -90,11 +95,11 @@ class udp extends units\test
 			)
 
 			->if(
-				$this->newTestedInstance($address)
+				$this->newTestedInstance($host, $port)
 			)
 			->then
 				->object($this->testedInstance->shouldSend($data, $buffer))->isTestedInstance
-				->function('socket_sendto')->wasCalledWithArguments($resource, $data, strlen($data), 0, $address->host, $address->port)->once
+				->function('socket_sendto')->wasCalledWithArguments($resource, $data, strlen($data), 0, $host, $port)->once
 				->mock($buffer)->call('dataWasNotSent')->never
 
 			->if(
@@ -118,7 +123,8 @@ class udp extends units\test
 	{
 		$this
 			->given(
-				$address = new address(uniqid(), uniqid()),
+				$host = new net\host,
+				$port = new net\port,
 				$data = new socket\data(uniqid()),
 
 				$this->function->socket_create = $resource = uniqid(),
@@ -128,11 +134,11 @@ class udp extends units\test
 			)
 
 			->if(
-				$this->newTestedInstance($address)
+				$this->newTestedInstance($host, $port)
 			)
 			->then
 				->object($this->testedInstance->mustSend($data))->isTestedInstance
-				->function('socket_sendto')->wasCalledWithArguments($resource, $data, strlen($data), 0, $address->host, $address->port)->once
+				->function('socket_sendto')->wasCalledWithArguments($resource, $data, strlen($data), 0, $host, $port)->once
 
 			->if(
 				$this->function->socket_sendto[2] = 2
@@ -140,8 +146,8 @@ class udp extends units\test
 			->then
 				->object($this->testedInstance->mustSend($data))->isTestedInstance
 				->function('socket_sendto')
-					->wasCalledWithArguments($resource, $data, strlen($data), 0, $address->host, $address->port)->twice
-					->wasCalledWithArguments($resource, substr($data, 2), strlen(substr($data, 2)), 0, $address->host, $address->port)->once
+					->wasCalledWithArguments($resource, $data, strlen($data), 0, $host, $port)->twice
+					->wasCalledWithArguments($resource, substr($data, 2), strlen(substr($data, 2)), 0, $host, $port)->once
 
 			->if(
 				$this->function->socket_sendto = false
@@ -157,7 +163,7 @@ class udp extends units\test
 	{
 		$this
 			->if(
-				$this->newTestedInstance(new address)
+				$this->newTestedInstance(new net\host, new net\port)
 			)
 			->then
 				->object($this->testedInstance->noMoreDataToSendOrReceive())->isTestedInstance
@@ -168,7 +174,7 @@ class udp extends units\test
 	{
 		$this
 			->if(
-				$this->newTestedInstance(new address)
+				$this->newTestedInstance(new net\host, new net\port)
 			)
 			->then
 				->object($this->testedInstance->noMoreDataToReceive())->isTestedInstance
@@ -179,7 +185,7 @@ class udp extends units\test
 	{
 		$this
 			->if(
-				$this->newTestedInstance(new address)
+				$this->newTestedInstance(new net\host, new net\port)
 			)
 			->then
 				->object($this->testedInstance->noMoreDataToSend())->isTestedInstance
@@ -190,7 +196,7 @@ class udp extends units\test
 	{
 		$this
 			->if(
-				$this->newTestedInstance(new address)
+				$this->newTestedInstance(new net\host, new net\port)
 			)
 			->then
 				->object($this->testedInstance->IsNowUseless())->isTestedInstance
