@@ -8,5 +8,6 @@ use
 
 interface buffer
 {
+	function newData(data $data);
 	function remainingData(data $data);
 }
