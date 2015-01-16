@@ -37,49 +37,7 @@ class udp implements net\socket
 		$this->resource = null;
 	}
 
-	function shouldSend(data $data, net\socket\buffer $buffer)
-	{
-		$dataRemaining = $this->send($data);
-
-		if ($dataRemaining)
-		{
-			$buffer->dataWasNotSent($dataRemaining);
-		}
-
-		return $this;
-	}
-
-	function mustSend(data $data)
-	{
-		while ((string) $data)
-		{
-			$data = $this->send($data);
-		}
-
-		return $this;
-	}
-
-	function noMoreDataToSend()
-	{
-		return $this;
-	}
-
-	function noMoreDataToReceive()
-	{
-		return $this;
-	}
-
-	function noMoreDataToSendOrReceive()
-	{
-		return $this;
-	}
-
-	function isNowUseless()
-	{
-		return $this;
-	}
-
-	private function send(data $data)
+	function bufferContains(net\socket\buffer $buffer, data $data)
 	{
 		$dataLength = strlen($data);
 
@@ -90,6 +48,11 @@ class udp implements net\socket
 				throw new exception(new error(new error\code(socket_last_error($this->resource))));
 		}
 
-		return $bytesWritten === $dataLength ? null : new data(substr($data, $bytesWritten));
+		if ($bytesWritten < $dataLength)
+		{
+			$buffer->remainingData(new data(substr($data, $bytesWritten)));
+		}
+
+		return $this;
 	}
 }

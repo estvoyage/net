@@ -8,7 +8,6 @@ use
 	estvoyage\net\tests\units,
 	estvoyage\net,
 	estvoyage\net\socket,
-	estvoyage\net\address,
 	mock\estvoyage\net\world\socket\buffer
 ;
 
@@ -46,7 +45,7 @@ class udp extends units\test
 				->function('socket_close')->never
 
 			->if(
-				$this->newTestedInstance($host, $port)->shouldSend(new socket\data, $buffer),
+				$this->newTestedInstance($host, $port)->bufferContains($buffer, new socket\data),
 				$this->testedInstance->__destruct()
 			)
 			->then
@@ -73,13 +72,13 @@ class udp extends units\test
 			->then
 				->function('socket_create')->never
 
-			->when(function() { $this->testedInstance->mustSend(new socket\data(uniqid())); $clone = clone $this->testedInstance; $clone->mustSend(new socket\data(uniqid())); })
+			->when(function() use ($buffer) { $this->testedInstance->bufferContains($buffer, new socket\data(uniqid())); $clone = clone $this->testedInstance; $clone->bufferContains($buffer, new socket\data(uniqid())); })
 			->then
 				->function('socket_create')->twice
 		;
 	}
 
-	function testShouldSend()
+	function testBufferContains()
 	{
 		$this
 			->given(
@@ -98,108 +97,24 @@ class udp extends units\test
 				$this->newTestedInstance($host, $port)
 			)
 			->then
-				->object($this->testedInstance->shouldSend($data, $buffer))->isTestedInstance
+				->object($this->testedInstance->bufferContains($buffer, $data))->isTestedInstance
 				->function('socket_sendto')->wasCalledWithArguments($resource, $data, strlen($data), 0, $host, $port)->once
-				->mock($buffer)->call('dataWasNotSent')->never
+				->mock($buffer)->call('remainingData')->never
 
 			->if(
 				$this->function->socket_sendto[2] = 2
 			)
 			->then
-				->object($this->testedInstance->shouldSend($data, $buffer))->isTestedInstance
-				->mock($buffer)->call('dataWasNotSent')->withArguments(new socket\data(substr($data, 2)))->once
+				->object($this->testedInstance->bufferContains($buffer, $data))->isTestedInstance
+				->mock($buffer)->call('remainingData')->withArguments(new socket\data(substr($data, 2)))->once
 
 			->if(
 				$this->function->socket_sendto = false
 			)
 			->then
-				->exception(function() use ($data, $buffer) { $this->testedInstance->shouldSend($data, $buffer); })
+				->exception(function() use ($buffer, $data) { $this->testedInstance->bufferContains($buffer, $data); })
 					->isInstanceOf('estvoyage\net\socket\exception')
 					->hasCode($errno)
-		;
-	}
-
-	function testMustSend()
-	{
-		$this
-			->given(
-				$host = new net\host,
-				$port = new net\port,
-				$data = new socket\data(uniqid()),
-
-				$this->function->socket_create = $resource = uniqid(),
-				$this->function->socket_sendto = function($resource, $data) { return strlen($data); },
-				$this->function->socket_close->doesNothing,
-				$this->function->socket_last_error = $errno = rand(0, PHP_INT_MAX)
-			)
-
-			->if(
-				$this->newTestedInstance($host, $port)
-			)
-			->then
-				->object($this->testedInstance->mustSend($data))->isTestedInstance
-				->function('socket_sendto')->wasCalledWithArguments($resource, $data, strlen($data), 0, $host, $port)->once
-
-			->if(
-				$this->function->socket_sendto[2] = 2
-			)
-			->then
-				->object($this->testedInstance->mustSend($data))->isTestedInstance
-				->function('socket_sendto')
-					->wasCalledWithArguments($resource, $data, strlen($data), 0, $host, $port)->twice
-					->wasCalledWithArguments($resource, substr($data, 2), strlen(substr($data, 2)), 0, $host, $port)->once
-
-			->if(
-				$this->function->socket_sendto = false
-			)
-			->then
-				->exception(function() use ($data) { $this->testedInstance->mustSend($data); })
-					->isInstanceOf('estvoyage\net\socket\exception')
-					->hasCode($errno)
-		;
-	}
-
-	function testNoMoreDataToSendOrReceive()
-	{
-		$this
-			->if(
-				$this->newTestedInstance(new net\host, new net\port)
-			)
-			->then
-				->object($this->testedInstance->noMoreDataToSendOrReceive())->isTestedInstance
-		;
-	}
-
-	function testNoMoreDataToReceive()
-	{
-		$this
-			->if(
-				$this->newTestedInstance(new net\host, new net\port)
-			)
-			->then
-				->object($this->testedInstance->noMoreDataToReceive())->isTestedInstance
-		;
-	}
-
-	function testNoMoreDataToSend()
-	{
-		$this
-			->if(
-				$this->newTestedInstance(new net\host, new net\port)
-			)
-			->then
-				->object($this->testedInstance->noMoreDataToSend())->isTestedInstance
-		;
-	}
-
-	function testIsNowUseless()
-	{
-		$this
-			->if(
-				$this->newTestedInstance(new net\host, new net\port)
-			)
-			->then
-				->object($this->testedInstance->IsNowUseless())->isTestedInstance
 		;
 	}
 }

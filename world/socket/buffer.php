@@ -8,5 +8,5 @@ use
 
 interface buffer
 {
-	function dataWasNotSent(data $data);
+	function remainingData(data $data);
 }
