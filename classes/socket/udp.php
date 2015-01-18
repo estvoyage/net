@@ -34,7 +34,10 @@ class udp implements net\socket
 
 	function __clone()
 	{
-		$this->resource = null;
+		if ($this->resource)
+		{
+			$this->resource = null;
+		}
 	}
 
 	function bufferWantToWait()
