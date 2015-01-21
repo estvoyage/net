@@ -168,7 +168,7 @@ class udp extends units\test
 			)
 			->then
 				->object($this->testedInstance->bufferContains($buffer, $data))->isTestedInstance
-				->function('socket_sendto')->wasCalledWithArguments($resource, $data, strlen($data), 0, $host, $port)->once
+				->function('socket_sendto')->wasCalledWithArguments($resource, $data, strlen($data), 0, $host, $port->asInteger)->once
 				->mock($buffer)->call('remainingData')->never
 
 			->if(

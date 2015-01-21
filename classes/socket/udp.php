@@ -54,7 +54,7 @@ class udp implements net\socket
 	{
 		$dataLength = strlen($data);
 
-		if (($bytesWritten = socket_sendto($this->connectToHost()->resource, $data, $dataLength, 0, $this->host, $this->port)) === false)
+		if (($bytesWritten = socket_sendto($this->connectToHost()->resource, $data, $dataLength, 0, $this->host, $this->port->asInteger)) === false)
 		{
 			throw new exception(new error(new error\code(socket_last_error($this->resource))));
 		}
