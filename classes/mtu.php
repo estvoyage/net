@@ -35,11 +35,6 @@ final class mtu
 		return self::isUnsignedInteger($value) && self::isInValidRange($value);
 	}
 
-	private function __construct($value)
-	{
-		$this->initAsInteger($value);
-	}
-
 	private static function isInValidRange($value)
 	{
 		return $value >= 68;
