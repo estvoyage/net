@@ -13,7 +13,7 @@ use
 class udp implements net\socket
 {
 	private
-		$resource,
+		$socket,
 		$host,
 		$port
 	;
@@ -26,17 +26,17 @@ class udp implements net\socket
 
 	function __destruct()
 	{
-		if ($this->resource)
+		if ($this->socket)
 		{
-			socket_close($this->resource);
+			socket_close($this->socket);
 		}
 	}
 
 	function __clone()
 	{
-		if ($this->resource)
+		if ($this->socket)
 		{
-			$this->resource = null;
+			$this->socket = null;
 		}
 	}
 
@@ -44,9 +44,9 @@ class udp implements net\socket
 	{
 		$dataLength = strlen($data);
 
-		if (($bytesWritten = socket_sendto($this->connectToHost()->resource, $data, $dataLength, 0, $this->host, $this->port->asInteger)) === false)
+		if (($bytesWritten = socket_sendto($this->createSocket()->socket, $data, $dataLength, 0, $this->host, $this->port->asInteger)) === false)
 		{
-			throw new exception(new error(new error\code(socket_last_error($this->resource))));
+			throw new exception(new error(new error\code(socket_last_error($this->socket))));
 		}
 
 		if ($bytesWritten < $dataLength)
@@ -57,11 +57,11 @@ class udp implements net\socket
 		return $this;
 	}
 
-	private function connectToHost()
+	private function createSocket()
 	{
-		if (! $this->resource && ! ($this->resource = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP) ?: null))
+		if (! $this->socket && ! ($this->socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP) ?: null))
 		{
-			throw new exception(new error(new error\code(socket_last_error($this->resource))));
+			throw new exception(new error(new error\code(socket_last_error($this->socket))));
 		}
 
 		return $this;
