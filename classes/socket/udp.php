@@ -10,60 +10,69 @@ use
 	estvoyage\net\socket\error
 ;
 
-class udp implements net\socket
+class udp
 {
 	private
-		$socket,
 		$host,
 		$port
 	;
+
+	use \estvoyage\value\world\immutable {
+		__get as private getValueOfProperty;
+	}
 
 	function __construct(host $host, port $port)
 	{
 		$this->host = $host;
 		$this->port = $port;
+
+		$this->initResource();
 	}
 
 	function __destruct()
 	{
-		if ($this->socket)
+		$resource = $this->getValueOfProperty('resource');
+
+		if (is_resource($resource))
 		{
-			socket_close($this->socket);
+			socket_close($resource);
+
+			$this->initResource();
 		}
 	}
 
 	function __clone()
 	{
-		if ($this->socket)
-		{
-			$this->socket = null;
-		}
+		$this->initResource();
 	}
 
-	function bufferContains(net\socket\buffer $buffer, data $data)
+	function __get($property)
 	{
-		$dataLength = strlen($data);
+		$property = $this->getValueOfProperty($property);
 
-		if (($bytesWritten = socket_sendto($this->createSocket()->socket, $data, $dataLength, 0, $this->host, $this->port->asInteger)) === false)
+		if (! is_resource($property))
 		{
-			throw new exception(new error(new error\code(socket_last_error($this->socket))));
+			$this->initResource($property = $this->createResource());
 		}
 
-		if ($bytesWritten < $dataLength)
-		{
-			$buffer->remainingData(new data(substr($data, $bytesWritten)));
-		}
-
-		return $this;
+		return $property;
 	}
 
-	private function createSocket()
+	private function initResource($resource = null)
 	{
-		if (! $this->socket && ! ($this->socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP) ?: null))
-		{
-			throw new exception(new error(new error\code(socket_last_error($this->socket))));
-		}
+		return $this->init([ 'resource' => $resource ]);
+	}
 
-		return $this;
+	private function createResource()
+	{
+		switch (true)
+		{
+			case ! ($resource = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP)):
+			case ! socket_connect($resource, $this->host, $this->port->asInteger):
+				throw new exception(new error(new error\code(socket_last_error($resource))));
+
+			default:
+				return $resource;
+		}
 	}
 }
