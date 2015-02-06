@@ -30,7 +30,7 @@ class write extends units\test
 		$this
 			->given(
 				$socket = new net\socket($resource = uniqid()),
-				$owner = new mock\socket\buffer\write\owner,
+				$owner = new mock\socket\writer,
 				$data = new net\socket\data(uniqid()),
 				$this->function->socket_send = strlen($data),
 				$this->function->socket_last_error = $errno = rand(0, PHP_INT_MAX)

@@ -4,20 +4,20 @@ namespace estvoyage\net\socket\buffer;
 
 use
 	estvoyage\net,
-	estvoyage\net\world\socket\buffer
+	estvoyage\net\world\socket
 ;
 
 final class write
 {
 	private
 		$socket,
-		$owner
+		$writer
 	;
 
-	function __construct(net\socket $socket, buffer\write\owner $owner)
+	function __construct(net\socket $socket, socket\writer $writer)
 	{
 		$this->socket = $socket;
-		$this->owner = $owner;
+		$this->writer = $writer;
 	}
 
 	function newData(net\socket\data $data)
@@ -31,7 +31,7 @@ final class write
 
 		if ($bytesWritten < $dataLength)
 		{
-			$this->owner->remainingDataInSocketBufferAre(new net\socket\data(substr($data, $bytesWritten)));
+			$this->writer->remainingDataInSocketBufferAre(new net\socket\data(substr($data, $bytesWritten)));
 		}
 
 		return $this;

@@ -1,12 +1,12 @@
 <?php
 
-namespace estvoyage\net\world\socket\buffer\write;
+namespace estvoyage\net\world\socket;
 
 use
 	estvoyage\net\socket
 ;
 
-interface owner
+interface writer
 {
 	function remainingDataInSocketBufferAre(socket\data $data);
 }

@@ -6,18 +6,23 @@ require __DIR__ . '/../../runner.php';
 
 use
 	estvoyage\net\tests\units,
-	estvoyage\net,
-	estvoyage\net\socket,
-	mock\estvoyage\net\world\socket\buffer
+	estvoyage\net
 ;
 
 class udp extends units\test
 {
 	function beforeTestMethod($method)
 	{
-		require_once 'mock/net/socket/data.php';
 		require_once 'mock/net/host.php';
 		require_once 'mock/net/port.php';
+	}
+
+	function testClass()
+	{
+		$this->testedClass
+			->isFinal
+			->extends('estvoyage\net\socket')
+		;
 	}
 
 	function test__destruct()
@@ -60,25 +65,42 @@ class udp extends units\test
 	{
 		$this
 			->given(
-				$host = new net\host,
-				$port = new net\port,
-				$buffer = new buffer,
 				$this->function->socket_connect = true,
 				$this->function->socket_create[1] = $resource = uniqid(),
 				$this->function->socket_create[2] = $otherResource = uniqid(),
-				$this->function->socket_sendto = function($resource, $data) { return strlen($data); },
 				$this->function->socket_close->doesNothing
 			)
+
 			->if(
-				$this->newTestedInstance($host, $port)
+				$this->newTestedInstance(new net\host, new net\port),
+				clone $this->testedInstance
 			)
-			->when(function() { clone $this->testedInstance; })
 			->then
 				->function('socket_create')->never
 
-			->when(function() use ($buffer) { $this->testedInstance->resource; $clone = clone $this->testedInstance; $clone->resource; })
+			->if(
+				$this->testedInstance->resource,
+				$clone = clone $this->testedInstance,
+				$clone->resource
+			)
 			->then
 				->function('socket_create')->twice
+		;
+	}
+
+	function testImmutability()
+	{
+		$this
+			->given(
+				$this->function->socket_connect = true,
+				$this->function->socket_create = $resource = uniqid(),
+				$this->function->socket_close->doesNothing
+			)
+			->if(
+				$this->newTestedInstance(new net\host, new net\port)
+			)
+			->then
+				->string($this->testedInstance->resource)->isEqualTo($resource)
 		;
 	}
 }
