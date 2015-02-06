@@ -1,8 +1,8 @@
 <?php
 
-namespace estvoyage\net\tests\units\socket\buffer;
+namespace estvoyage\net\tests\units\socket;
 
-require __DIR__ . '/../../../runner.php';
+require __DIR__ . '/../../runner.php';
 
 use
 	estvoyage\net\tests\units,
@@ -10,7 +10,7 @@ use
 	mock\estvoyage\net\world as mock
 ;
 
-class write extends units\test
+class writeBuffer extends units\test
 {
 	function beforeTestMethod($method)
 	{

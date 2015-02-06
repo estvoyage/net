@@ -14,7 +14,7 @@ final class udp extends net\socket
 {
 	function buildWriteBufferFor(socket\writer $writer)
 	{
-		return new net\socket\buffer\write($this, $writer);
+		return new net\socket\writeBuffer($this, $writer);
 	}
 
 	protected function isConnected($resource)

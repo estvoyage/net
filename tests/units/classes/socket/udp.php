@@ -6,7 +6,8 @@ require __DIR__ . '/../../runner.php';
 
 use
 	estvoyage\net\tests\units,
-	estvoyage\net
+	estvoyage\net,
+	mock\estvoyage\net\world\socket
 ;
 
 class udp extends units\test
@@ -101,6 +102,20 @@ class udp extends units\test
 			)
 			->then
 				->string($this->testedInstance->resource)->isEqualTo($resource)
+		;
+	}
+
+	function testBuildWriteBufferFor()
+	{
+		$this
+			->given(
+				$writer = new socket\writer
+			)
+			->if(
+				$this->newTestedInstance(new net\host, new net\port)
+			)
+			->then
+				->object($this->testedInstance->buildWriteBufferFor($writer))->isEqualTo(new net\socket\writeBuffer($this->testedInstance, $writer))
 		;
 	}
 }

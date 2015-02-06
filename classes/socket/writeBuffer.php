@@ -1,13 +1,13 @@
 <?php
 
-namespace estvoyage\net\socket\buffer;
+namespace estvoyage\net\socket;
 
 use
 	estvoyage\net,
 	estvoyage\net\world\socket
 ;
 
-final class write
+final class writeBuffer
 {
 	private
 		$socket,
