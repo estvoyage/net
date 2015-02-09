@@ -1,27 +1,16 @@
 <?php
 
-namespace estvoyage\net\socket;
+namespace estvoyage\net\socket\client\sockets;
 
 use
 	estvoyage\net,
 	estvoyage\net\host,
 	estvoyage\net\port,
-	estvoyage\net\socket\error,
-	estvoyage\net\world\socket
+	estvoyage\net\socket\error
 ;
 
-final class udp extends net\socket
+final class udp extends socket
 {
-	function buildWriteBufferFor(socket\writer $writer)
-	{
-		return new net\socket\writeBuffer($this, $writer);
-	}
-
-	protected function isConnected($resource)
-	{
-		return is_resource($resource);
-	}
-
 	protected function connectToHostAndPort(host $host, port $port)
 	{
 		switch (true)
@@ -33,10 +22,5 @@ final class udp extends net\socket
 			default:
 				return $resource;
 		}
-	}
-
-	protected function disconnect($resource)
-	{
-		socket_close($resource);
 	}
 }

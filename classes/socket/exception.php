@@ -3,8 +3,8 @@
 namespace estvoyage\net\socket;
 
 use
-	estvoyage\value\world as value,
-	estvoyage\net\world as net,
+	estvoyage\net,
+	estvoyage\value,
 	estvoyage\net\socket\error
 ;
 

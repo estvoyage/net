@@ -1,8 +1,8 @@
 <?php
 
-namespace estvoyage\net\tests\units;
+namespace estvoyage\net\tests\units\socket\client;
 
-require __DIR__ . '/../runner.php';
+require __DIR__ . '/../../../runner.php';
 
 use
 	estvoyage\net\tests\units

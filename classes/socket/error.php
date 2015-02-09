@@ -3,7 +3,7 @@
 namespace estvoyage\net\socket;
 
 use
-	estvoyage\value\world as value,
+	estvoyage\value,
 	estvoyage\net\socket\error\code,
 	estvoyage\net\socket\error\message
 ;

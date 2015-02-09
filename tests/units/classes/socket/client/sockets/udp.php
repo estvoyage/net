@@ -1,13 +1,13 @@
 <?php
 
-namespace estvoyage\net\tests\units\socket;
+namespace estvoyage\net\tests\units\socket\client\sockets;
 
-require __DIR__ . '/../../runner.php';
+require __DIR__ . '/../../../../runner.php';
 
 use
 	estvoyage\net\tests\units,
 	estvoyage\net,
-	mock\estvoyage\net\world\socket
+	mock\estvoyage\net\socket\client
 ;
 
 class udp extends units\test
@@ -22,7 +22,7 @@ class udp extends units\test
 	{
 		$this->testedClass
 			->isFinal
-			->extends('estvoyage\net\socket')
+			->extends('estvoyage\net\socket\client\socket')
 		;
 	}
 
@@ -109,13 +109,13 @@ class udp extends units\test
 	{
 		$this
 			->given(
-				$writer = new socket\writer
+				$writer = new client\writer
 			)
 			->if(
 				$this->newTestedInstance(new net\host, new net\port)
 			)
 			->then
-				->object($this->testedInstance->buildWriteBufferFor($writer))->isEqualTo(new net\socket\writeBuffer($this->testedInstance, $writer))
+				->object($this->testedInstance->buildWriteBufferFor($writer))->isEqualTo(new net\socket\client\sockets\writeBuffer($this->testedInstance, $writer))
 		;
 	}
 }

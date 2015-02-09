@@ -3,31 +3,33 @@
 namespace estvoyage\net;
 
 use
-	estvoyage\value\world as value
+	estvoyage\value
 ;
 
-final class port
+final class port extends value\integer\unsigned
 {
-	use value\integer\unsigned {
-		validate as isUnsignedInteger;
-	}
-
 	function __construct($value)
 	{
-		if (! self::validate($value))
+		$domainException = null;
+
+		try
+		{
+			parent::__construct($value);
+		}
+		catch (\domainException $domainException) {}
+
+		if ($domainException || ! self::isPort($value))
 		{
 			throw new \domainException('Port should be an integer greater than or equal to 0 and less than 65536');
 		}
-
-		$this->initAsInteger($value);
 	}
 
 	static function validate($value)
 	{
-		return self::isUnsignedInteger($value) && self::isInValidRange($value);
+		return parent::validate($value) && self::isPort($value);
 	}
 
-	private static function isInValidRange($value)
+	private static function isPort($value)
 	{
 		return $value <= 65535;
 	}

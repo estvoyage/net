@@ -1,6 +1,10 @@
 <?php
 
-namespace estvoyage\net;
+namespace estvoyage\net\socket\client;
+
+use
+	estvoyage\net\socket\client
+;
 
 class socket
 {

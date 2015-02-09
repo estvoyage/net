@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/estvoyage/value.git",
-                "reference": "2b980765649bc912b2530733615e5a6d774c9d97"
+                "reference": "8093f4ba94997a6784372a04ec75028047ea04d5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/estvoyage/value/zipball/2b980765649bc912b2530733615e5a6d774c9d97",
-                "reference": "2b980765649bc912b2530733615e5a6d774c9d97",
+                "url": "https://api.github.com/repos/estvoyage/value/zipball/8093f4ba94997a6784372a04ec75028047ea04d5",
+                "reference": "8093f4ba94997a6784372a04ec75028047ea04d5",
                 "shasum": ""
             },
             "require": {
@@ -53,7 +53,7 @@
                 "Whole value",
                 "value"
             ],
-            "time": "2015-02-03 11:56:32"
+            "time": "2015-02-09 12:20:46"
         }
     ],
     "packages-dev": [
@@ -144,6 +144,7 @@
         "atoum/atoum": 20
     },
     "prefer-stable": false,
+    "prefer-lowest": false,
     "platform": {
         "ext-sockets": "*",
         "php": ">=5.5.0"

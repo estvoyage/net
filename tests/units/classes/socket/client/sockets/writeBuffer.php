@@ -1,20 +1,20 @@
 <?php
 
-namespace estvoyage\net\tests\units\socket;
+namespace estvoyage\net\tests\units\socket\client\sockets;
 
-require __DIR__ . '/../../runner.php';
+require __DIR__ . '/../../../../runner.php';
 
 use
 	estvoyage\net\tests\units,
 	estvoyage\net,
-	mock\estvoyage\net\world as mock
+	mock\estvoyage\net\socket\client
 ;
 
 class writeBuffer extends units\test
 {
 	function beforeTestMethod($method)
 	{
-		require_once 'mock/net/socket.php';
+		require_once 'mock/net/socket/client/sockets/socket.php';
 		require_once 'mock/net/socket/data.php';
 	}
 
@@ -22,6 +22,7 @@ class writeBuffer extends units\test
 	{
 		$this->testedClass
 			->isFinal
+			->extends('estvoyage\net\socket\client\writeBuffer')
 		;
 	}
 
@@ -29,8 +30,8 @@ class writeBuffer extends units\test
 	{
 		$this
 			->given(
-				$socket = new net\socket($resource = uniqid()),
-				$owner = new mock\socket\writer,
+				$socket = new net\socket\client\sockets\socket($resource = uniqid()),
+				$owner = new client\writer,
 				$data = new net\socket\data(uniqid()),
 				$this->function->socket_send = strlen($data),
 				$this->function->socket_last_error = $errno = rand(0, PHP_INT_MAX)

@@ -13,6 +13,7 @@ class port extends test
 	function testClass()
 	{
 		$this->testedClass
+			->extends('estvoyage\value\integer\unsigned')
 			->isFinal
 		;
 	}

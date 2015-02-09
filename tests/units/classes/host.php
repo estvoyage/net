@@ -13,6 +13,7 @@ class host extends test
 	function testClass()
 	{
 		$this->testedClass
+			->extends('estvoyage\value\string')
 			->isFinal
 		;
 	}
@@ -24,7 +25,6 @@ class host extends test
 	{
 		$this->boolean(testedClass::validate($value))->isTrue;
 	}
-
 
 	/**
 	 * @dataProvider invalidValueProvider

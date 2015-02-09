@@ -1,9 +1,9 @@
 <?php
 
-namespace estvoyage\net;
+namespace estvoyage\net\socket\client;
 
 use
-	estvoyage\net\world as net,
+	estvoyage\net,
 	estvoyage\net\host,
 	estvoyage\net\port
 ;
@@ -15,7 +15,7 @@ abstract class socket
 		$port
 	;
 
-	use \estvoyage\value\world\immutable {
+	use \estvoyage\value\immutable {
 		__get as private getValueOfProperty;
 	}
 
@@ -54,7 +54,7 @@ abstract class socket
 		return $property;
 	}
 
-	abstract function buildWriteBufferFor(net\socket\writer $writer);
+	abstract function buildWriteBufferFor(net\socket\client\writer $writer);
 
 	abstract protected function isConnected($resource);
 	abstract protected function connectToHostAndPort(host $host, port $port);
