@@ -13,17 +13,25 @@ abstract class writeBuffer
 		$writer
 	;
 
-	function __construct(net\socket\client\socket $socket, net\socket\client\writer $writer)
+	function __construct(net\socket\client\socket $socket)
 	{
 		$this->socket = $socket;
-		$this->writer = $writer;
 	}
 
 	function newData(net\socket\data $data)
 	{
-		if (($bytesWritten = $this->sendDataOnSocket($data, $this->socket)) < strlen($data))
+		$dataLength = strlen($data);
+
+		while ($dataLength)
 		{
-			$this->writer->remainingDataInSocketBufferAre(new net\socket\data(substr($data, $bytesWritten)));
+			$bytesWritten = $this->sendDataOnSocket($data, $this->socket);
+
+			if ($bytesWritten > 0)
+			{
+				$data = new net\socket\data(substr($data, $bytesWritten) ?: '');
+
+				$dataLength -= $bytesWritten;
+			}
 		}
 
 		return $this;

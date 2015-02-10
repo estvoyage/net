@@ -10,9 +10,9 @@ use
 
 abstract class socket extends net\socket\client\socket
 {
-	function buildWriteBufferFor(net\socket\client\writer $writer)
+	function buildWriteBuffer()
 	{
-		return new writeBuffer($this, $writer);
+		return new writeBuffer($this);
 	}
 
 	protected function isConnected($resource)

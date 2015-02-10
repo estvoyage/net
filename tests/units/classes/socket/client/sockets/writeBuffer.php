@@ -41,18 +41,20 @@ class writeBuffer extends units\test
 			)
 			->then
 				->object($this->testedInstance->newData($data))->isTestedInstance
-				->mock($owner)->receive('remainingDataInSocketBufferAre')->never
 				->function('socket_send')->wasCalledWithArguments($resource, $data, strlen($data), 0)->once
 
 			->if(
-				$this->function->socket_send[2] = 2
+				$this->function->socket_send[2] = 2,
+				$this->function->socket_send[3] = 0,
+				$this->function->socket_send[4] = strlen($data) - 2
 			)
 			->then
 				->object($this->testedInstance->newData($data))->isTestedInstance
-				->mock($owner)->receive('remainingDataInSocketBufferAre')->withArguments(new net\socket\data(substr($data, 2)))->once
+				->function('socket_send')->wasCalledWithArguments($resource, $data, strlen($data), 0)->twice
+				->function('socket_send')->wasCalledWithArguments($resource, new net\socket\data(substr($data, 2)), strlen($data) - 2, 0)->twice
 
 			->if(
-				$this->function->socket_send[3] = false
+				$this->function->socket_send[5] = false
 			)
 			->then
 				->exception(function() use ($data) { $this->testedInstance->newData($data); })

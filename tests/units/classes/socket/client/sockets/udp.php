@@ -105,17 +105,11 @@ class udp extends units\test
 		;
 	}
 
-	function testBuildWriteBufferFor()
+	function testBuildWriteBuffer()
 	{
 		$this
-			->given(
-				$writer = new client\writer
-			)
-			->if(
-				$this->newTestedInstance(new net\host, new net\port)
-			)
-			->then
-				->object($this->testedInstance->buildWriteBufferFor($writer))->isEqualTo(new net\socket\client\sockets\writeBuffer($this->testedInstance, $writer))
+			->object($this->newTestedInstance(new net\host, new net\port)->buildWriteBuffer())
+				->isEqualTo(new net\socket\client\sockets\writeBuffer($this->testedInstance))
 		;
 	}
 }

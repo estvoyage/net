@@ -5,16 +5,16 @@ namespace estvoyage\net\socket;
 class data
 {
 	public
-		$asString
+		$value
 	;
 
-	function __construct($asString = '')
+	function __construct($value = '')
 	{
-		$this->asString = $asString;
+		$this->value = $value;
 	}
 
 	function __toString()
 	{
-		return $this->asString;
+		return (string) $this->value;
 	}
 }

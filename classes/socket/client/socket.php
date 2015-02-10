@@ -54,7 +54,7 @@ abstract class socket
 		return $property;
 	}
 
-	abstract function buildWriteBufferFor(net\socket\client\writer $writer);
+	abstract function buildWriteBuffer();
 
 	abstract protected function isConnected($resource);
 	abstract protected function connectToHostAndPort(host $host, port $port);
