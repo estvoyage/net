@@ -20,22 +20,13 @@ abstract class writeBuffer
 
 	function newData(net\socket\data $data)
 	{
-		$dataLength = strlen($data);
-
-		while ($dataLength)
+		while ((string) $data)
 		{
-			$bytesWritten = $this->sendDataOnSocket($data, $this->socket);
-
-			if ($bytesWritten > 0)
-			{
-				$data = new net\socket\data(substr($data, $bytesWritten) ?: '');
-
-				$dataLength -= $bytesWritten;
-			}
+			$data = new net\socket\data(substr($data, $this->bytesOfDataWrittenOnSocket($data, $this->socket)->asInteger) ?: '');
 		}
 
 		return $this;
 	}
 
-	protected abstract function sendDataOnSocket(net\socket\data $data, net\socket\client\socket $socket);
+	protected abstract function bytesOfDataWrittenOnSocket(net\socket\data $data, net\socket\client\socket $socket);
 }

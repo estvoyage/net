@@ -8,7 +8,7 @@ use
 
 final class writeBuffer extends net\socket\client\writeBuffer
 {
-	protected function sendDataOnSocket(net\socket\data $data, net\socket\client\socket $socket)
+	protected function bytesOfDataWrittenOnSocket(net\socket\data $data, net\socket\client\socket $socket)
 	{
 		$bytesWritten = socket_send($socket->socket, $data, strlen($data), 0);
 
@@ -17,6 +17,6 @@ final class writeBuffer extends net\socket\client\writeBuffer
 			throw new net\socket\exception(new net\socket\error(new net\socket\error\code(socket_last_error($socket->socket))));
 		}
 
-		return $bytesWritten;
+		return new net\socket\data\byte($bytesWritten);
 	}
 }

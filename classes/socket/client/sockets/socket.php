@@ -24,4 +24,14 @@ abstract class socket extends net\socket\client\socket
 	{
 		socket_close($resource);
 	}
+
+	protected function connectResourceToHostAndPort($resource, host $host, port $port)
+	{
+		if (! socket_connect($resource, $host, $port->asInteger))
+		{
+			throw new exception(new error(new error\code(socket_last_error($resource))));
+		}
+
+		return $resource;
+	}
 }
