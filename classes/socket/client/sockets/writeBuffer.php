@@ -10,7 +10,7 @@ final class writeBuffer extends net\socket\client\writeBuffer
 {
 	protected function bytesOfDataWrittenOnSocket(net\socket\data $data, net\socket\client\socket $socket)
 	{
-		$bytesWritten = socket_send($socket->socket, $data, strlen($data), 0);
+		$bytesWritten = socket_send($socket->resource, $data, strlen($data), 0);
 
 		if ($bytesWritten === false)
 		{

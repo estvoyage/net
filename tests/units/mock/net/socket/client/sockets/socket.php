@@ -10,4 +10,12 @@ require __DIR__ . '/../socket.php';
 
 class socket extends client\socket
 {
+	public
+		$resource
+	;
+
+	function __construct($resource)
+	{
+		$this->resource = $resource;
+	}
 }

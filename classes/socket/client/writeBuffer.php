@@ -22,7 +22,7 @@ abstract class writeBuffer
 	{
 		while ((string) $data)
 		{
-			$data = new net\socket\data(substr($data, $this->bytesOfDataWrittenOnSocket($data, $this->socket)->asInteger) ?: '');
+			$data = $data->shift($this->bytesOfDataWrittenOnSocket($data, $this->socket));
 		}
 
 		return $this;
