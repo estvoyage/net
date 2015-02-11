@@ -22,7 +22,6 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"estvoyage\\net\\tests\\units\\mock\\": "tests/units/mock",
 			"estvoyage\\net\\tests\\units\\": "tests/units",
 			"estvoyage\\net\\world\\": "world",
 			"estvoyage\\net\\": "classes"
