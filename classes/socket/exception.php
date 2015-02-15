@@ -10,12 +10,4 @@ use
 
 final class exception extends \runtimeException implements net\exception
 {
-	use value\immutable;
-
-	function __construct(error $error)
-	{
-		parent::__construct($error->message->asString, $error->code->asInteger);
-
-		$this->init([ 'code' => $error->code, 'message' => $error->message ]);
-	}
 }
