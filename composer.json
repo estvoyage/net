@@ -12,13 +12,19 @@
 			"homepage": "http://blog.mageekbox.net"
 		}
 	],
+	"repositories": [
+		{
+			"url": "https://github.com/mageekguy/atoum.git",
+			"type": "git"
+		}
+	],
 	"require": {
 		"ext-sockets": "*",
 		"php": ">=5.5.0",
 		"estvoyage/value": "dev-master"
 	},
 	"require-dev": {
-		"atoum/atoum": "dev-master"
+		"mageekguy/atoum": "dev-master"
 	},
 	"autoload": {
 		"psr-4": {
