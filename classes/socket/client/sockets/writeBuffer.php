@@ -14,7 +14,7 @@ final class writeBuffer extends net\socket\client\writeBuffer
 
 		if ($bytesWritten === false)
 		{
-			throw new net\socket\client\sockets\exception($socket);
+			throw new exception($socket->resource);
 		}
 
 		return new net\socket\data\byte($bytesWritten);

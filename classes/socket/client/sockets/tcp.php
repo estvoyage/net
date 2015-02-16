@@ -16,7 +16,7 @@ final class tcp extends socket
 
 		if (! $resource)
 		{
-			throw new net\socket\client\sockets\exception;
+			throw new exception;
 		}
 
 		return $this->connectResourceToHostAndPort($resource, $host, $port);

@@ -8,9 +8,9 @@ use
 
 class exception extends net\socket\exception
 {
-	function __construct(socket $socket = null)
+	function __construct($socket = null)
 	{
-		$errorCode = $socket ? socket_last_error($socket->resource) : socket_last_error();
+		$errorCode = $socket ? socket_last_error($socket) : socket_last_error();
 
 		if (! $errorCode)
 		{

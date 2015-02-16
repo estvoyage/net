@@ -102,6 +102,23 @@ class udp extends units\test
 			->then
 				->string($this->testedInstance->resource)->isEqualTo($resource)
 				->function('fsockopen')->wasCalledWithArguments('udp://' . $host, $port->asInteger)->once
+
+			->given(
+				$this->function->fsockopen = function($host, $port, & $errno, & $errstr) use (& $errorCode, & $errorMessage) {
+					$errorCode = $errno = rand(1, PHP_INT_MAX);
+					$errorMessage = $errstr = uniqid();
+
+					return false;
+				}
+			)
+			->if(
+				$this->newTestedInstance($host, $port)
+			)
+			->then
+				->exception(function() { $this->testedInstance->resource; })
+					->isInstanceOf('estvoyage\net\socket\exception')
+					->hasCode($errorCode)
+					->hasMessage($errorMessage)
 		;
 	}
 

@@ -16,6 +16,7 @@ class udp extends units\test
 	{
 		require_once 'mock/net/host.php';
 		require_once 'mock/net/port.php';
+		require_once 'mock/net/socket/client/sockets/exception.php';
 	}
 
 	function testClass()
@@ -102,6 +103,22 @@ class udp extends units\test
 			)
 			->then
 				->string($this->testedInstance->resource)->isEqualTo($resource)
+
+			->if(
+				$this->function->socket_connect = false,
+				$this->newTestedInstance(new net\host, new net\port)
+			)
+			->then
+				->exception(function() { $this->testedInstance->resource; })
+					->isInstanceOf('estvoyage\net\socket\client\sockets\exception')
+
+			->if(
+				$this->function->socket_create = false,
+				$this->newTestedInstance(new net\host, new net\port)
+			)
+			->then
+				->exception(function() { $this->testedInstance->resource; })
+					->isInstanceOf('estvoyage\net\socket\client\sockets\exception')
 		;
 	}
 

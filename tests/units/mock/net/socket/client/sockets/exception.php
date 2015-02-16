@@ -12,7 +12,7 @@ class exception extends net\socket\exception
 		$socket
 	;
 
-	function __construct(net\socket\client\sockets\socket $socket = null)
+	function __construct($socket = null)
 	{
 		$this->socket = $socket;
 	}

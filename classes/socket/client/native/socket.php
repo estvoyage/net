@@ -27,11 +27,11 @@ abstract class socket extends net\socket\client\socket
 
 	final protected function openStream($host, $port)
 	{
-		$resource = @fsockopen($host, $port->asInteger, $errno);
+		$resource = @fsockopen($host, $port->asInteger, $errno, $errstr);
 
 		if (! $resource)
 		{
-			throw new exception(new error(new error\code($errno)));
+			throw new net\socket\exception($errstr, $errno);
 		}
 
 		return $resource;

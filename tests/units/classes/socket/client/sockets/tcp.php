@@ -105,9 +105,15 @@ class tcp extends units\test
 				->string($this->testedInstance->resource)->isEqualTo($resource)
 
 			->if(
+				$this->function->socket_connect = false,
+				$this->newTestedInstance(new net\host, new net\port)
+			)
+			->then
+				->exception(function() { $this->testedInstance->resource; })
+					->isInstanceOf('estvoyage\net\socket\client\sockets\exception')
+
+			->if(
 				$this->function->socket_create = false,
-				$this->function->socket_last_error = $errorCode = rand(1, PHP_INT_MAX),
-				$this->function->socket_strerror = $errorMessage = uniqid(),
 				$this->newTestedInstance(new net\host, new net\port)
 			)
 			->then

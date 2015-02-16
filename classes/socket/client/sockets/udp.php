@@ -17,7 +17,7 @@ final class udp extends socket
 
 		if (! $resource)
 		{
-			throw new exception(new error(new error\code(socket_last_error())));
+			throw new exception;
 		}
 
 		return $this->connectResourceToHostAndPort($resource, $host, $port);

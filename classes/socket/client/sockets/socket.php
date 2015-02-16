@@ -29,7 +29,7 @@ abstract class socket extends net\socket\client\socket
 	{
 		if (! socket_connect($resource, $host, $port->asInteger))
 		{
-			throw new exception(new error(new error\code(socket_last_error($resource))));
+			throw new exception($resource);
 		}
 
 		return $resource;

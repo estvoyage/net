@@ -42,7 +42,7 @@ class exception extends units\test
 			->given(
 				$this->function->socket_last_error = $errorCode = rand(1, PHP_INT_MAX),
 				$this->function->socket_strerror = $errorMessage = uniqid(),
-				$socket = new client\sockets\socket($resource = uniqid())
+				$socket = uniqid()
 
 			)
 
@@ -60,7 +60,7 @@ class exception extends units\test
 			->then
 				->integer($this->testedInstance->getCode())->isEqualTo($errorCode)
 				->string($this->testedInstance->getMessage())->isEqualTo($errorMessage)
-				->function('socket_last_error')->wasCalledWithArguments($resource)->once
+				->function('socket_last_error')->wasCalledWithArguments($socket)->once
 		;
 	}
 }

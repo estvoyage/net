@@ -58,7 +58,7 @@ class writeBuffer extends units\test
 			->then
 				->exception(function() use ($data) { $this->testedInstance->newData($data); })
 					->isInstanceOf('estvoyage\net\socket\client\sockets\exception')
-				->object($this->exception->socket)->isIdenticalTo($socket)
+				->string($this->exception->socket)->isEqualTo($resource)
 		;
 	}
 }
