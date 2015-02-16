@@ -15,7 +15,7 @@ final class writeBuffer extends net\socket\client\writeBuffer
 			}
 		);
 
-		$bytesWritten = fwrite($socket->resource, $data, strlen($data), 0);
+		$bytesWritten = fwrite($socket->resource, $data, strlen($data));
 
 		set_error_handler($previousErrorHandler);
 
