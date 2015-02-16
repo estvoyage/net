@@ -15,6 +15,7 @@ class writeBuffer extends units\test
 	function beforeTestMethod($method)
 	{
 		require_once 'mock/net/socket/client/sockets/socket.php';
+		require_once 'mock/net/socket/client/sockets/exception.php';
 	}
 
 	function testClass()
@@ -52,13 +53,12 @@ class writeBuffer extends units\test
 				->function('socket_send')->wasCalledWithArguments($resource, $data->shift(new socket\data\byte(2)), strlen($data->shift(new socket\data\byte(2))), 0)->twice
 
 			->if(
-				$this->function->socket_send[5] = false,
-				$this->function->socket_last_error = $errno = rand(0, PHP_INT_MAX)
+				$this->function->socket_send[5] = false
 			)
 			->then
 				->exception(function() use ($data) { $this->testedInstance->newData($data); })
-					->isInstanceOf('estvoyage\net\socket\exception')
-					->hasCode($errno)
+					->isInstanceOf('estvoyage\net\socket\client\sockets\exception')
+				->object($this->exception->socket)->isIdenticalTo($socket)
 		;
 	}
 }

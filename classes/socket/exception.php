@@ -8,6 +8,6 @@ use
 	estvoyage\net\socket\error
 ;
 
-final class exception extends \runtimeException implements net\exception
+class exception extends \runtimeException implements net\exception
 {
 }
