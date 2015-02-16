@@ -91,14 +91,17 @@ class udp extends units\test
 	{
 		$this
 			->given(
+				$host = new net\host(uniqid()),
+				$port = new net\port(rand(0, PHP_INT_MAX)),
 				$this->function->fsockopen = $resource = uniqid(),
 				$this->function->fclose->doesNothing
 			)
 			->if(
-				$this->newTestedInstance(new net\host, new net\port)
+				$this->newTestedInstance($host, $port)
 			)
 			->then
 				->string($this->testedInstance->resource)->isEqualTo($resource)
+				->function('fsockopen')->wasCalledWithArguments('udp://' . $host, $port->asInteger)->once
 		;
 	}
 
