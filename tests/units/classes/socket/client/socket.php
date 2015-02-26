@@ -14,6 +14,7 @@ class socket extends units\test
 	{
 		$this->testedClass
 			->isAbstract
+			->implements('estvoyage\data\consumer')
 		;
 	}
 }

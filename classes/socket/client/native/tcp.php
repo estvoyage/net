@@ -11,8 +11,13 @@ use
 
 final class tcp extends socket
 {
-	protected function connectToHostAndPort(host $host, port $port)
+	function __construct(host $host, $port)
 	{
-		return $this->openStream('tcp://' . $host, $port);
+		parent::__construct($host, $port, 'tcp');
+	}
+
+	protected function newInstanceForHostAndPort(host $host, port $port)
+	{
+		return new self($host, $port);
 	}
 }

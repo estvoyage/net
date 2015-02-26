@@ -11,8 +11,13 @@ use
 
 final class udp extends socket
 {
-	protected function connectToHostAndPort(host $host, port $port)
+	function __construct(host $host, $port)
 	{
-		return $this->openStream('udp://' . $host, $port);
+		parent::__construct($host, $port, 'udp');
+	}
+
+	protected function newInstanceForHostAndPort(host $host, port $port)
+	{
+		return new self($host, $port);
 	}
 }

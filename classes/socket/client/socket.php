@@ -5,63 +5,83 @@ namespace estvoyage\net\socket\client;
 use
 	estvoyage\net,
 	estvoyage\net\host,
-	estvoyage\net\port
+	estvoyage\net\port,
+	estvoyage\data
 ;
 
-abstract class socket
+abstract class socket implements data\consumer
 {
 	private
 		$host,
-		$port
+		$port,
+		$dataProvider
 	;
-
-	use \estvoyage\value\immutable {
-		__get as private getValueOfProperty;
-	}
 
 	function __construct(host $host, port $port)
 	{
 		$this->host = $host;
 		$this->port = $port;
-
-		$this->initResource();
 	}
 
 	function __destruct()
 	{
-		$resource = $this->getValueOfProperty('resource');
-
-		if ($this->isConnected($resource))
+		if (! $this->dataProvider)
 		{
-			$this->disconnect($resource);
+			$this->disconnect();
 		}
 	}
 
-	function __clone()
+	final function dataProviderIs(data\provider $dataProvider)
 	{
-		$this->initResource();
+		$this->connectToHostAndPort($this->host, $this->port);
+
+		$this
+			->newDataProviderForHostAndPort($this->host, $this->port)
+			->setDataProvider($dataProvider)
+		;
+
+		return $this;
 	}
 
-	function __get($property)
+	function newData(data\data $data)
 	{
-		$property = $this->getValueOfProperty($property);
-
-		if (! $this->isConnected($property))
-		{
-			$this->initResource($property = $this->connectToHostAndPort($this->host, $this->port));
-		}
-
-		return $property;
+		return $this->ifDataProvider(function() use ($data) {
+				$this->writeData($data);
+			}
+		);
 	}
 
-	abstract function buildWriteBuffer();
+	protected function lengthOfDataWrittenIs(data\data\length $length)
+	{
+		return $this->ifDataProvider(function() use ($length) {
+				$this->dataProvider->lengthOfDataWrittenIs($length);
+			}
+		);
+	}
 
-	abstract protected function isConnected($resource);
 	abstract protected function connectToHostAndPort(host $host, port $port);
-	abstract protected function disconnect($resource);
+	abstract protected function disconnect();
+	abstract protected function newDataProviderForHostAndPort(host $host, port $port);
+	abstract protected function writeData(data\data $data);
 
-	private function initResource($resource = null)
+	private function setDataProvider(data\provider $dataProvider)
 	{
-		return $this->init([ 'resource' => $resource ]);
+		$this->dataProvider = $dataProvider;
+
+		$dataProvider->useDataConsumer($this);
+
+		return $this;
+	}
+
+	private function ifDataProvider(callable $callable)
+	{
+		if (! $this->dataProvider)
+		{
+			throw new exception\logic('Data provider is undefined');
+		}
+
+		$callable();
+
+		return $this;
 	}
 }

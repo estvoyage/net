@@ -21,10 +21,11 @@
 	"require": {
 		"ext-sockets": "*",
 		"php": ">=5.5.0",
-		"estvoyage/value": "dev-master"
+		"estvoyage/value": "@dev",
+		"estvoyage/data": "@dev"
 	},
 	"require-dev": {
-		"mageekguy/atoum": "dev-master"
+		"mageekguy/atoum": "@dev"
 	},
 	"autoload": {
 		"psr-4": {

@@ -11,15 +11,13 @@ use
 
 final class udp extends socket
 {
-	protected function connectToHostAndPort(host $host, port $port)
+	function __construct(host $host, port $port)
 	{
-		$resource = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
+		parent::__construct($host, $port, AF_INET, SOCK_DGRAM, SOL_UDP);
+	}
 
-		if (! $resource)
-		{
-			throw new exception;
-		}
-
-		return $this->connectResourceToHostAndPort($resource, $host, $port);
+	protected function newInstanceForHostAndPort(host $host, port $port)
+	{
+		return new self($host, $port);
 	}
 }
