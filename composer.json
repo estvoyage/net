@@ -4,7 +4,7 @@
 	"description": "An east-oriented network stack",
 	"keywords": [ "Network", "TCP", "UDP", "Socket", "East" ],
 	"homepage": "http://github.com/estvoyage/net",
-	"license": "BSD",
+	"license": "BSD-2-Clause",
 	"authors": [
 		{
 			"name": "Frédéric Hardy",
@@ -29,8 +29,12 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"estvoyage\\net\\tests\\units\\": "tests/units",
 			"estvoyage\\net\\": "classes"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"estvoyage\\net\\tests\\units\\": "tests/units"
 		}
 	}
 }
