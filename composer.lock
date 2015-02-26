@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "06d73d7bcbe6da3ca67d74b2cd909146",
+    "hash": "3cf01470792f5f19a7401080932e72a0",
     "packages": [
         {
             "name": "estvoyage/data",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/estvoyage/data.git",
-                "reference": "46e75bdc1a40a27365385b16cf536fccd277fe55"
+                "reference": "7ab407768f17f8acf6232d59e26f76f630963eb3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/estvoyage/data/zipball/46e75bdc1a40a27365385b16cf536fccd277fe55",
-                "reference": "46e75bdc1a40a27365385b16cf536fccd277fe55",
+                "url": "https://api.github.com/repos/estvoyage/data/zipball/7ab407768f17f8acf6232d59e26f76f630963eb3",
+                "reference": "7ab407768f17f8acf6232d59e26f76f630963eb3",
                 "shasum": ""
             },
             "require": {
@@ -35,7 +35,7 @@
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "BSD"
+                "BSD-2-Clause"
             ],
             "authors": [
                 {
@@ -50,15 +50,21 @@
                 "East",
                 "data"
             ],
-            "time": "2015-02-25 21:10:52"
+            "time": "2015-02-26 12:07:09"
         },
         {
             "name": "estvoyage/value",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "/Users/fch/Estvoyage/Value",
-                "reference": "6263897e14159a9d719d66059824402d348dbd88"
+                "url": "https://github.com/estvoyage/value.git",
+                "reference": "cb88b1423eb143ef60bce69a3cd1bacd8f60c8c6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/estvoyage/value/zipball/cb88b1423eb143ef60bce69a3cd1bacd8f60c8c6",
+                "reference": "cb88b1423eb143ef60bce69a3cd1bacd8f60c8c6",
+                "shasum": ""
             },
             "require": {
                 "php": ">=5.4.0"
@@ -69,12 +75,12 @@
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "estvoyage\\value\\tests\\units\\": "tests/units",
                     "estvoyage\\value\\": "classes"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "BSD"
+                "BSD-2-Clause"
             ],
             "authors": [
                 {
@@ -87,11 +93,11 @@
             "homepage": "http://github.com/estvoyage/value",
             "keywords": [
                 "East",
-                "Value",
-                "Value object",
-                "Whole value"
+                "Value Object",
+                "Whole value",
+                "value"
             ],
-            "time": "2015-02-17 19:57:19"
+            "time": "2015-02-26 12:04:10"
         }
     ],
     "packages-dev": [
@@ -100,8 +106,8 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "/Users/fch/atoum/repository",
-                "reference": "6551465a870584e6fbdc5646160762179254cc4a"
+                "url": "https://github.com/mageekguy/atoum.git",
+                "reference": "da4a6926c7e721834bea45e6be081bbe4b9c8d76"
             },
             "require": {
                 "ext-hash": "*",
@@ -129,7 +135,7 @@
                 ]
             },
             "license": [
-                "BSD"
+                "BSD-2-Clause"
             ],
             "authors": [
                 {
@@ -162,7 +168,7 @@
                 "test",
                 "unit testing"
             ],
-            "time": "2015-02-17 20:15:58"
+            "time": "2015-02-26 12:08:02"
         }
     ],
     "aliases": [],
