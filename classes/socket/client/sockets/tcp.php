@@ -5,14 +5,15 @@ namespace estvoyage\net\socket\client\sockets;
 use
 	estvoyage\net,
 	estvoyage\net\host,
-	estvoyage\net\port
+	estvoyage\net\port,
+	estvoyage\data
 ;
 
 final class tcp extends socket
 {
-	function __construct(host $host, port $port)
+	function __construct(host $host, port $port, data\consumer\controller $controller = null)
 	{
-		parent::__construct($host, $port, AF_INET, SOCK_STREAM, SOL_TCP);
+		parent::__construct($host, $port, AF_INET, SOCK_STREAM, SOL_TCP, $controller);
 	}
 
 	protected function newInstanceForHostAndPort(host $host, port $port)

@@ -78,6 +78,7 @@ class udp extends units\test
 				$host = new net\host,
 				$port = new net\port,
 				$data = new data\data(uniqid()),
+				$controller = new mockedData\consumer\controller,
 				$this->newTestedInstance($host, $port),
 				$this->function->fclose->doesNothing
 			)
@@ -128,6 +129,13 @@ class udp extends units\test
 					->isInstanceOf('estvoyage\net\socket\exception')
 					->hasCode($errorCode)
 					->hasMessage($errorMessage)
+
+			->if(
+				$this->function->fwrite = 0,
+				$this->newTestedInstance($host, $port, $controller)->newData($data)
+			)
+			->then
+				->mock($controller)->receive('dataNotWriteByDataConsumerIs')->withArguments($this->testedInstance, $data)->once
 		;
 	}
 }

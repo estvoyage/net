@@ -80,6 +80,7 @@ class tcp extends units\test
 				$host = new net\host,
 				$port = new net\port,
 				$data = new data\data(uniqid()),
+				$controller = new mockedData\consumer\controller,
 				$this->function->socket_last_error = $errorCode = rand(1, PHP_INT_MAX),
 				$this->function->socket_strerror = $errorMessage = uniqid(),
 				$this->function->socket_close->doesNothing,
@@ -119,12 +120,6 @@ class tcp extends units\test
 				->function('socket_create')->wasCalled()->thrice
 
 			->if(
-				$this->function->socket_send = 0
-			)
-			->then
-				->object($this->testedInstance->newData($data))->isTestedInstance
-
-			->if(
 				$this->function->socket_send = false
 			)
 			->then
@@ -132,6 +127,18 @@ class tcp extends units\test
 					->isInstanceOf('estvoyage\net\socket\exception')
 					->hasCode($errorCode)
 					->hasMessage($errorMessage)
+
+			->if(
+				$this->function->socket_send = 0
+			)
+			->then
+				->object($this->testedInstance->newData($data))->isTestedInstance
+
+			->if(
+				$this->newTestedInstance($host, $port, $controller)->newData($data)
+			)
+			->then
+				->mock($controller)->receive('dataNotWriteByDataConsumerIs')->withArguments($this->testedInstance, $data)->once
 		;
 	}
 }

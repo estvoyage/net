@@ -6,14 +6,14 @@ use
 	estvoyage\net,
 	estvoyage\net\host,
 	estvoyage\net\port,
-	estvoyage\net\socket\error
+	estvoyage\data
 ;
 
 final class udp extends socket
 {
-	function __construct(host $host, port $port)
+	function __construct(host $host, port $port, data\consumer\controller $controller = null)
 	{
-		parent::__construct($host, $port, AF_INET, SOCK_DGRAM, SOL_UDP);
+		parent::__construct($host, $port, AF_INET, SOCK_DGRAM, SOL_UDP, $controller);
 	}
 
 	protected function newInstanceForHostAndPort(host $host, port $port)

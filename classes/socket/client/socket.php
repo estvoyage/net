@@ -17,10 +17,11 @@ abstract class socket implements data\consumer
 		$controller
 	;
 
-	function __construct(host $host, port $port)
+	function __construct(host $host, port $port, data\consumer\controller $controller = null)
 	{
 		$this->host = $host;
 		$this->port = $port;
+		$this->controller = $controller;
 	}
 
 	function __destruct()
@@ -36,11 +37,11 @@ abstract class socket implements data\consumer
 		return $this;
 	}
 
-	final protected function lengthOfDataWrittenIs(data\data\length $length)
+	final protected function dataNotWriteIs(data\data $data)
 	{
 		if ($this->controller)
 		{
-			$this->controller->lengthOfDataWrittenIs($length);
+			$this->controller->dataNotWriteByDataConsumerIs($this, $data);
 		}
 
 		return $this;

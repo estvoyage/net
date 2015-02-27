@@ -16,9 +16,9 @@ abstract class socket extends net\socket\client\socket
 		$protocol
 	;
 
-	function __construct(host $host, port $port, $protocol)
+	function __construct(host $host, port $port, $protocol, data\consumer\controller $controller = null)
 	{
-		parent::__construct($host, $port);
+		parent::__construct($host, $port, $controller);
 
 		$this->protocol = $protocol;
 	}
@@ -40,14 +40,6 @@ abstract class socket extends net\socket\client\socket
 			}
 
 			$this->resource = $resource;
-		}
-	}
-
-	protected function disconnect()
-	{
-		if ($this->resource)
-		{
-			@fclose($this->resource);
 		}
 	}
 
@@ -74,6 +66,14 @@ abstract class socket extends net\socket\client\socket
 			throw new net\socket\exception($exceptionMessage, $exceptionCode);
 		}
 
-		$this->lengthOfDataWrittenIs(new data\data\length($bytesWritten));
+		$this->dataNotWriteIs(new data\data(substr($data, $bytesWritten) ?: ''));
+	}
+
+	final protected function disconnect()
+	{
+		if ($this->resource)
+		{
+			@fclose($this->resource);
+		}
 	}
 }

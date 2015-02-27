@@ -18,9 +18,9 @@ abstract class socket extends net\socket\client\socket
 		$resource
 	;
 
-	function __construct(host $host, port $port, $domain, $type, $protocol)
+	function __construct(host $host, port $port, $domain, $type, $protocol, data\consumer\controller $controller = null)
 	{
-		parent::__construct($host, $port);
+		parent::__construct($host, $port, $controller);
 
 		$this->domain = $domain;
 		$this->type = $type;
@@ -64,7 +64,7 @@ abstract class socket extends net\socket\client\socket
 			throw $this->exception();
 		}
 
-		$this->lengthOfDataWrittenIs(new data\data\length($bytesWritten));
+		$this->dataNotWriteIs(new data\data(substr($data, $bytesWritten) ?: ''));
 	}
 
 	private function exception()
