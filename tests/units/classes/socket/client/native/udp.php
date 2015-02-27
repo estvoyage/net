@@ -34,16 +34,16 @@ class udp extends units\test
 			->given(
 				$host = new net\host,
 				$port = new net\port,
-				$dataProvider = new mockedData\provider,
 				$this->function->fsockopen = $resource = uniqid(),
+				$this->function->fwrite = 0,
 				$this->function->fclose->doesNothing
 			)
 
-			->when(function() use ($host, $port) { (new testedClass($host, $port)); })
+			->when(function() use ($host, $port) { (new testedClass($host, $port))->__destruct(); })
 			->then
 				->function('fclose')->never
 
-			->when(function() use ($host, $port, $dataProvider) { (new testedClass($host, $port))->dataProviderIs($dataProvider); })
+			->when(function() use ($host, $port) { (new testedClass($host, $port))->newData(new data\data(''))->__destruct(); })
 			->then
 				->function('fclose')->wasCalledWithArguments($resource)->once
 		;
@@ -55,15 +55,15 @@ class udp extends units\test
 			->given(
 				$host = new net\host,
 				$port = new net\port,
-				$dataProvider = new mockedData\provider,
 				$this->function->fsockopen = uniqid(),
+				$this->function->fwrite = 0,
 				$this->function->fclose->doesNothing
 			)
 
-			->when(function() use ($host, $port, $dataProvider) {
-					$socket = (new testedClass($host, $port))->dataProviderIs($dataProvider);
+			->when(function() use ($host, $port) {
+					$socket = (new testedClass($host, $port))->newData(new data\data(''));
 					$clone = clone $socket;
-					$clone->dataProviderIs($dataProvider);
+					$clone->newData(new data\data(''));
 				}
 			)
 			->then
@@ -77,67 +77,57 @@ class udp extends units\test
 			->given(
 				$host = new net\host,
 				$port = new net\port,
-				$data = new data\data(uniqid())
-			)
-			->if(
-				$this->newTestedInstance($host, $port)
-			)
-			->then
-				->exception(function() use ($data) { $this->testedInstance->newData($data); })
-					->isInstanceOf('estvoyage\net\socket\client\exception\logic')
-					->hasMessage('Data provider is undefined')
-		;
-	}
-
-	function testDataProviderIs()
-	{
-		$this
-			->given(
-				$host = new net\host,
-				$port = new net\port,
 				$data = new data\data(uniqid()),
-				$dataProvider1 = new mockedData\provider,
-				$dataProvider2 = new mockedData\provider,
 				$this->newTestedInstance($host, $port),
-				$this->function->fsockopen = $resource = uniqid(),
 				$this->function->fclose->doesNothing
 			)
 
 			->if(
-				$this->function->fwrite = strlen($data),
-				$this->calling($dataProvider1)->useDataConsumer = function($dataConsumer) use ($data) {
-					$dataConsumer->newData($data);
-				}
+				$this->function->fsockopen = function($host, $port, & $errno, & $error)
+					use (& $errorCode, & $errorMessage) {
+						$errorCode = $errno = rand(1, PHP_INT_MAX);
+						$errorMessage = $error = uniqid();
+						return false;
+					}
+
 			)
 			->then
-				->object($this->testedInstance->dataProviderIs($dataProvider1))->isTestedInstance
-				->function('fsockopen')->wasCalled()->once
-				->function('fwrite')
-					->wasCalledWithArguments($resource, $data, strlen($data))
-						->once
-				->mock($dataProvider1)
-					->receive('lengthOfDataWrittenIs')->withArguments(new data\data\length(strlen($data)))
-						->once
 				->exception(function() use ($data) { $this->testedInstance->newData($data); })
-					->isInstanceOf('estvoyage\net\socket\client\exception\logic')
-					->hasMessage('Data provider is undefined')
-
-				->object($this->testedInstance->dataProviderIs($dataProvider1))->isTestedInstance
-				->function('fsockopen')->wasCalled()->once
+					->isInstanceOf('estvoyage\net\socket\exception')
+					->hasCode($errorCode)
+					->hasMessage($errorMessage)
 
 			->if(
-				$this->calling($dataProvider2)->useDataConsumer = function($dataConsumer) use ($data) {
-					$dataConsumer->newData($data);
-				},
-				$this->calling($dataProvider1)->useDataConsumer = function($dataConsumer) use ($data, $dataProvider2) {
-					$dataConsumer->dataProviderIs($dataProvider2);
-					$dataConsumer->newData($data);
-				}
+				$this->function->fsockopen = $resource = uniqid(),
+				$this->function->fwrite = strlen($data)
 			)
 			->then
-				->object($this->testedInstance->dataProviderIs($dataProvider1))->isTestedInstance
-				->function('fsockopen')->wasCalled()->once
-				->mock($dataProvider1)->receive('lengthOfDataWrittenIs')->withArguments(new data\data\length(strlen($data)))->thrice
+				->object($this->testedInstance->newData($data))->isTestedInstance
+				->function('fsockopen')->wasCalled()->twice
+				->function('fwrite')->wasCalledWithArguments($resource, $data, strlen($data))->once
+
+
+			->if($this->testedInstance->newData($data))
+			->then
+				->function('fsockopen')->wasCalled()->twice
+
+			->if(
+				$this->function->fwrite = 0
+			)
+			->then
+				->object($this->testedInstance->newData($data))->isTestedInstance
+
+			->if(
+				$this->function->fwrite = function()
+					use ($errorCode, & $errorMessage) {
+						trigger_error($errorMessage = uniqid() . ' errno=' . $errorCode . ' ' . uniqid());
+					}
+			)
+			->then
+				->exception(function() use ($data) { $this->testedInstance->newData($data); })
+					->isInstanceOf('estvoyage\net\socket\exception')
+					->hasCode($errorCode)
+					->hasMessage($errorMessage)
 		;
 	}
 }

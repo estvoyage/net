@@ -15,9 +15,4 @@ final class udp extends socket
 	{
 		parent::__construct($host, $port, 'udp');
 	}
-
-	protected function newInstanceForHostAndPort(host $host, port $port)
-	{
-		return new self($host, $port);
-	}
 }

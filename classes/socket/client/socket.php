@@ -14,7 +14,7 @@ abstract class socket implements data\consumer
 	private
 		$host,
 		$port,
-		$dataProvider
+		$controller
 	;
 
 	function __construct(host $host, port $port)
@@ -25,63 +25,28 @@ abstract class socket implements data\consumer
 
 	function __destruct()
 	{
-		if (! $this->dataProvider)
-		{
-			$this->disconnect();
-		}
+		$this->disconnect();
 	}
 
-	final function dataProviderIs(data\provider $dataProvider)
+	final function newData(data\data $data)
 	{
 		$this->connectToHostAndPort($this->host, $this->port);
-
-		$this
-			->newDataProviderForHostAndPort($this->host, $this->port)
-			->setDataProvider($dataProvider)
-		;
+		$this->writeData($data);
 
 		return $this;
 	}
 
-	function newData(data\data $data)
+	final protected function lengthOfDataWrittenIs(data\data\length $length)
 	{
-		return $this->ifDataProvider(function() use ($data) {
-				$this->writeData($data);
-			}
-		);
-	}
+		if ($this->controller)
+		{
+			$this->controller->lengthOfDataWrittenIs($length);
+		}
 
-	protected function lengthOfDataWrittenIs(data\data\length $length)
-	{
-		return $this->ifDataProvider(function() use ($length) {
-				$this->dataProvider->lengthOfDataWrittenIs($length);
-			}
-		);
+		return $this;
 	}
 
 	abstract protected function connectToHostAndPort(host $host, port $port);
-	abstract protected function disconnect();
-	abstract protected function newDataProviderForHostAndPort(host $host, port $port);
 	abstract protected function writeData(data\data $data);
-
-	private function setDataProvider(data\provider $dataProvider)
-	{
-		$this->dataProvider = $dataProvider;
-
-		$dataProvider->useDataConsumer($this);
-
-		return $this;
-	}
-
-	private function ifDataProvider(callable $callable)
-	{
-		if (! $this->dataProvider)
-		{
-			throw new exception\logic('Data provider is undefined');
-		}
-
-		$callable();
-
-		return $this;
-	}
+	abstract protected function disconnect();
 }

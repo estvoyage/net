@@ -36,16 +36,11 @@ abstract class socket extends net\socket\client\socket
 	{
 		if (! $this->resource)
 		{
-			$resource = socket_create($this->domain, $this->type, $this->protocol);
-
-			if (! $resource)
+			switch (true)
 			{
-				throw new exception;
-			}
-
-			if (! socket_connect($resource, $host, $port->asInteger))
-			{
-				throw new exception($resource);
+				case ! ($resource = socket_create($this->domain, $this->type, $this->protocol));
+				case ! socket_connect($resource, $host, $port->asInteger):
+					throw $this->exception();
 			}
 
 			$this->resource = $resource;
@@ -66,24 +61,16 @@ abstract class socket extends net\socket\client\socket
 
 		if ($bytesWritten === false)
 		{
-			throw new exception($this->resource);
+			throw $this->exception();
 		}
 
 		$this->lengthOfDataWrittenIs(new data\data\length($bytesWritten));
 	}
 
-	final protected function newDataProviderForHostAndPort(host $host, port $port)
+	private function exception()
 	{
-		return $this
-			->newInstanceForHostAndPort($host, $port)
-			->setResource($this->resource)
-		;
-	}
+		$errorCode = socket_last_error($this->resource);
 
-	private function setResource($resource)
-	{
-		$this->resource = $resource;
-
-		return $this;
+		return new net\socket\exception(socket_strerror($errorCode), $errorCode);
 	}
 }

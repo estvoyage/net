@@ -76,19 +76,4 @@ abstract class socket extends net\socket\client\socket
 
 		$this->lengthOfDataWrittenIs(new data\data\length($bytesWritten));
 	}
-
-	final protected function newDataProviderForHostAndPort(host $host, port $port)
-	{
-		return $this
-			->newInstanceForHostAndPort($host, $port)
-			->setResource($this->resource)
-		;
-	}
-
-	private function setResource($resource)
-	{
-		$this->resource = $resource;
-
-		return $this;
-	}
 }

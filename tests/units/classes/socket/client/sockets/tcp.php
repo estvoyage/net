@@ -34,9 +34,9 @@ class tcp extends units\test
 			->given(
 				$host = new net\host,
 				$port = new net\port,
-				$dataProvider = new mockedData\provider,
 				$this->function->socket_create = $resource = uniqid(),
 				$this->function->socket_connect = true,
+				$this->function->socket_send = 0,
 				$this->function->socket_close->doesNothing
 			)
 
@@ -44,7 +44,7 @@ class tcp extends units\test
 			->then
 				->function('socket_close')->never
 
-			->when(function() use ($host, $port, $dataProvider) { (new testedClass($host, $port))->dataProviderIs($dataProvider); })
+			->when(function() use ($host, $port) { (new testedClass($host, $port))->newData(new data\data('')); })
 			->then
 				->function('socket_close')->wasCalledWithArguments($resource)->once
 		;
@@ -56,16 +56,16 @@ class tcp extends units\test
 			->given(
 				$host = new net\host,
 				$port = new net\port,
-				$dataProvider = new mockedData\provider,
 				$this->function->socket_create = $resource = uniqid(),
 				$this->function->socket_connect = true,
+				$this->function->socket_send = 0,
 				$this->function->socket_close->doesNothing
 			)
 
-			->when(function() use ($host, $port, $dataProvider) {
-					$socket = (new testedClass($host, $port))->dataProviderIs($dataProvider);
+			->when(function() use ($host, $port) {
+					$socket = (new testedClass($host, $port))->newData(new data\data(''));
 					$clone = clone $socket;
-					$clone->dataProviderIs($dataProvider);
+					$clone->newData(new data\data(''));
 				}
 			)
 			->then
@@ -79,65 +79,59 @@ class tcp extends units\test
 			->given(
 				$host = new net\host,
 				$port = new net\port,
-				$data = new data\data(uniqid())
-			)
-			->if(
+				$data = new data\data(uniqid()),
+				$this->function->socket_last_error = $errorCode = rand(1, PHP_INT_MAX),
+				$this->function->socket_strerror = $errorMessage = uniqid(),
+				$this->function->socket_close->doesNothing,
 				$this->newTestedInstance($host, $port)
 			)
+
+			->if(
+				$this->function->socket_create = false
+			)
 			->then
 				->exception(function() use ($data) { $this->testedInstance->newData($data); })
-					->isInstanceOf('estvoyage\net\socket\client\exception\logic')
-					->hasMessage('Data provider is undefined')
-		;
-	}
+					->isInstanceOf('estvoyage\net\socket\exception')
+					->hasCode($errorCode)
+					->hasMessage($errorMessage)
 
-	function testDataProviderIs()
-	{
-		$this
-			->given(
-				$host = new net\host,
-				$port = new net\port,
-				$data = new data\data(uniqid()),
-				$dataProvider1 = new mockedData\provider,
-				$dataProvider2 = new mockedData\provider,
-				$this->newTestedInstance($host, $port),
+			->if(
 				$this->function->socket_create = $resource = uniqid(),
-				$this->function->socket_connect = true,
-				$this->function->socket_close->doesNothing
-			)
-
-			->if(
-				$this->function->socket_send = strlen($data),
-				$this->calling($dataProvider1)->useDataConsumer = function($dataConsumer) use ($data) {
-					$dataConsumer->newData($data);
-				}
+				$this->function->socket_connect = false
 			)
 			->then
-				->object($this->testedInstance->dataProviderIs($dataProvider1))->isTestedInstance
-				->function('socket_create')->wasCalled()->once
-				->function('socket_send')->wasCalledWithArguments($resource, $data, strlen($data), 0)->once
-				->mock($dataProvider1)->receive('lengthOfDataWrittenIs')->withArguments(new data\data\length(strlen($data)))->once
 				->exception(function() use ($data) { $this->testedInstance->newData($data); })
-					->isInstanceOf('estvoyage\net\socket\client\exception\logic')
-					->hasMessage('Data provider is undefined')
-
-				->object($this->testedInstance->dataProviderIs($dataProvider1))->isTestedInstance
-				->function('socket_create')->wasCalled()->once
-
+					->isInstanceOf('estvoyage\net\socket\exception')
+					->hasCode($errorCode)
+					->hasMessage($errorMessage)
 
 			->if(
-				$this->calling($dataProvider2)->useDataConsumer = function($dataConsumer) use ($data) {
-					$dataConsumer->newData($data);
-				},
-				$this->calling($dataProvider1)->useDataConsumer = function($dataConsumer) use ($data, $dataProvider2) {
-					$dataConsumer->dataProviderIs($dataProvider2);
-					$dataConsumer->newData($data);
-				}
+				$this->function->socket_connect = true,
+				$this->function->socket_send = strlen($data)
 			)
 			->then
-				->object($this->testedInstance->dataProviderIs($dataProvider1))->isTestedInstance
-				->function('socket_create')->wasCalled()->once
-				->mock($dataProvider1)->receive('lengthOfDataWrittenIs')->withArguments(new data\data\length(strlen($data)))->thrice
+				->object($this->testedInstance->newData($data))->isTestedInstance
+				->function('socket_create')->wasCalled()->thrice
+				->function('socket_send')->wasCalledWithArguments($resource, $data, strlen($data), 0)->once
+
+			->if($this->testedInstance->newData($data))
+			->then
+				->function('socket_create')->wasCalled()->thrice
+
+			->if(
+				$this->function->socket_send = 0
+			)
+			->then
+				->object($this->testedInstance->newData($data))->isTestedInstance
+
+			->if(
+				$this->function->socket_send = false
+			)
+			->then
+				->exception(function() use ($data) { $this->testedInstance->newData($data); })
+					->isInstanceOf('estvoyage\net\socket\exception')
+					->hasCode($errorCode)
+					->hasMessage($errorMessage)
 		;
 	}
 }
