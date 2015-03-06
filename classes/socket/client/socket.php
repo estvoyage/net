@@ -37,6 +37,13 @@ abstract class socket implements data\consumer
 		return $this;
 	}
 
+	final function dataProviderIs(data\provider $dataProvider)
+	{
+		$dataProvider->dataConsumerIs($this);
+
+		return $this;
+	}
+
 	final protected function dataNotWriteIs(data\data $data)
 	{
 		if ($this->controller)

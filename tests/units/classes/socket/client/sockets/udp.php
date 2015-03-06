@@ -9,7 +9,7 @@ use
 	estvoyage\net,
 	estvoyage\net\socket\client\sockets\udp as testedClass,
 	estvoyage\data,
-	mock\estvoyage\data as mockedData
+	mock\estvoyage\data as mockOfData
 ;
 
 class udp extends units\test
@@ -80,7 +80,7 @@ class udp extends units\test
 				$host = new net\host,
 				$port = new net\port,
 				$data = new data\data(uniqid()),
-				$controller = new mockedData\consumer\controller,
+				$controller = new mockOfData\consumer\controller,
 				$this->function->socket_last_error = $errorCode = rand(1, PHP_INT_MAX),
 				$this->function->socket_strerror = $errorMessage = uniqid(),
 				$this->function->socket_close->doesNothing,
@@ -139,6 +139,24 @@ class udp extends units\test
 			)
 			->then
 				->mock($controller)->receive('dataNotWriteByDataConsumerIs')->withArguments($this->testedInstance, $data)->once
+		;
+	}
+
+	function testDataProviderIs()
+	{
+		$this
+			->given(
+					$dataProvider = new mockOfData\provider
+			)
+			->if(
+				$this->newTestedInstance(new net\host, new net\port)
+			)
+			->then
+				->object($this->testedInstance->dataProviderIs($dataProvider))->isTestedInstance
+				->mock($dataProvider)
+					->receive('dataConsumerIs')
+						->withArguments($this->testedInstance)
+							->once
 		;
 	}
 }
