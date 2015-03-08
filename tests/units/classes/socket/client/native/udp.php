@@ -156,4 +156,29 @@ class udp extends units\test
 							->once
 		;
 	}
+
+	function testNoMoreData()
+	{
+		$this
+			->given(
+				$host = new net\host,
+				$port = new net\port,
+				$this->function->fsockopen = $resource = uniqid(),
+				$this->function->fwrite = 0,
+				$this->function->fclose->doesNothing
+			)
+
+			->if(
+				$this->newTestedInstance($host, $port)->noMoreData()
+			)
+			->then
+				->function('fclose')->never
+
+			->if(
+				$this->newTestedInstance($host, $port)->newData(new data\data)->noMoreData()
+			)
+			->then
+				->function('fclose')->wasCalledWithArguments($resource)->once
+		;
+	}
 }

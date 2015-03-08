@@ -29,6 +29,13 @@ abstract class socket implements data\consumer
 		$this->disconnect();
 	}
 
+	final function dataProviderIs(data\provider $dataProvider)
+	{
+		$dataProvider->dataConsumerIs($this);
+
+		return $this;
+	}
+
 	final function newData(data\data $data)
 	{
 		$this->connectToHostAndPort($this->host, $this->port);
@@ -37,9 +44,9 @@ abstract class socket implements data\consumer
 		return $this;
 	}
 
-	final function dataProviderIs(data\provider $dataProvider)
+	final function noMoreData()
 	{
-		$dataProvider->dataConsumerIs($this);
+		$this->disconnect();
 
 		return $this;
 	}

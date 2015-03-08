@@ -71,6 +71,24 @@ class tcp extends units\test
 		;
 	}
 
+	function testDataProviderIs()
+	{
+		$this
+			->given(
+					$dataProvider = new mockOfData\provider
+			)
+			->if(
+				$this->newTestedInstance(new net\host, new net\port)
+			)
+			->then
+				->object($this->testedInstance->dataProviderIs($dataProvider))->isTestedInstance
+				->mock($dataProvider)
+					->receive('dataConsumerIs')
+						->withArguments($this->testedInstance)
+							->once
+		;
+	}
+
 	function testNewData()
 	{
 		$this
@@ -139,21 +157,28 @@ class tcp extends units\test
 		;
 	}
 
-	function testDataProviderIs()
+	function testNoMoreData()
 	{
 		$this
 			->given(
-					$dataProvider = new mockOfData\provider
+				$host = new net\host,
+				$port = new net\port,
+				$this->function->fsockopen = $resource = uniqid(),
+				$this->function->fwrite = 0,
+				$this->function->fclose->doesNothing
 			)
+
 			->if(
-				$this->newTestedInstance(new net\host, new net\port)
+				$this->newTestedInstance($host, $port)->noMoreData()
 			)
 			->then
-				->object($this->testedInstance->dataProviderIs($dataProvider))->isTestedInstance
-				->mock($dataProvider)
-					->receive('dataConsumerIs')
-						->withArguments($this->testedInstance)
-							->once
+				->function('fclose')->never
+
+			->if(
+				$this->newTestedInstance($host, $port)->newData(new data\data)->noMoreData()
+			)
+			->then
+				->function('fclose')->wasCalledWithArguments($resource)->once
 		;
 	}
 }
