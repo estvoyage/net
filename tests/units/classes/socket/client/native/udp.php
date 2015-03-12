@@ -169,16 +169,28 @@ class udp extends units\test
 			)
 
 			->if(
-				$this->newTestedInstance($host, $port)->noMoreData()
+				$this->newTestedInstance($host, $port)
 			)
 			->then
+				->object($this->testedInstance->noMoreData())->isTestedInstance
 				->function('fclose')->never
 
 			->if(
-				$this->newTestedInstance($host, $port)->newData(new data\data)->noMoreData()
+				$this->newTestedInstance($host, $port)
+					->newData(new data\data)
+						->noMoreData()
 			)
 			->then
 				->function('fclose')->wasCalledWithArguments($resource)->once
+
+			->if(
+				$this->newTestedInstance($host, $port)
+					->newData(new data\data)
+						->noMoreData()
+							->noMoreData()
+			)
+			->then
+				->function('fclose')->wasCalledWithArguments($resource)->twice
 		;
 	}
 }

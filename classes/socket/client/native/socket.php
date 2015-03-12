@@ -74,6 +74,8 @@ abstract class socket extends net\socket\client\socket
 		if ($this->resource)
 		{
 			@fclose($this->resource);
+
+			$this->resource = null;
 		}
 	}
 }

@@ -173,16 +173,28 @@ class tcp extends units\test
 			)
 
 			->if(
-				$this->newTestedInstance($host, $port)->noMoreData()
+				$this->newTestedInstance($host, $port)
 			)
 			->then
+				->object($this->testedInstance->noMoreData())->isTestedInstance
 				->function('socket_close')->never
 
 			->if(
-				$this->newTestedInstance($host, $port)->newData(new data\data)->noMoreData()
+				$this->newTestedInstance($host, $port)
+					->newData(new data\data)
+						->noMoreData()
 			)
 			->then
 				->function('socket_close')->wasCalledWithArguments($resource)->once
+
+			->if(
+				$this->newTestedInstance($host, $port)
+					->newData(new data\data)
+						->noMoreData()
+							->noMoreData()
+			)
+			->then
+				->function('socket_close')->wasCalledWithArguments($resource)->twice
 		;
 	}
 }
