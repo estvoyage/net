@@ -4,15 +4,21 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "dab252c081335dbdd27db25b3544a932",
+    "hash": "3cf01470792f5f19a7401080932e72a0",
     "packages": [
         {
             "name": "estvoyage/data",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "/Users/fch/Estvoyage/Data",
-                "reference": "5ea1b9d6d88c642e8a6eed1a1a0adadbd1f4992c"
+                "url": "https://github.com/estvoyage/data.git",
+                "reference": "6a3dfdb81d889174cc5cbfc05e3376587590eda4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/estvoyage/data/zipball/6a3dfdb81d889174cc5cbfc05e3376587590eda4",
+                "reference": "6a3dfdb81d889174cc5cbfc05e3376587590eda4",
+                "shasum": ""
             },
             "require": {
                 "estvoyage/value": "@dev",
@@ -27,11 +33,7 @@
                     "estvoyage\\data\\": "classes"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "estvoyage\\data\\tests\\units\\": "tests/units"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-2-Clause"
             ],
@@ -48,7 +50,7 @@
                 "East",
                 "data"
             ],
-            "time": "2015-03-07 08:12:34"
+            "time": "2015-03-04 21:28:19"
         },
         {
             "name": "estvoyage/value",
