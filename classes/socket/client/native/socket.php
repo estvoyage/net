@@ -50,7 +50,7 @@ abstract class socket extends net\socket\client\socket
 			}
 		);
 
-		$bytesWritten = fwrite($this->resource, $data, strlen($data));
+		$bytesWritten = @fwrite($this->resource, $data, strlen($data));
 
 		set_error_handler($previousErrorHandler);
 
