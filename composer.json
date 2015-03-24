@@ -21,8 +21,9 @@
 	"require": {
 		"ext-sockets": "*",
 		"php": ">=5.5.0",
+		"estvoyage/data": "@dev",
 		"estvoyage/value": "@dev",
-		"estvoyage/data": "@dev"
+		"estvoyage/object": "@dev"
 	},
 	"require-dev": {
 		"mageekguy/atoum": "@dev"

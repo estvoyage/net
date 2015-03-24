@@ -135,7 +135,7 @@ class udp extends units\test
 				$this->newTestedInstance($host, $port, $controller)->newData($data)
 			)
 			->then
-				->mock($controller)->receive('dataNotWriteByDataConsumerIs')->withArguments($this->testedInstance, $data)->once
+				->mock($controller)->receive('numberOfBytesConsumedByDataConsumerIs')->withArguments($this->testedInstance, new data\data\numberOfBytes)->once
 		;
 	}
 

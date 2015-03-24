@@ -89,6 +89,24 @@ class tcp extends units\test
 		;
 	}
 
+	function testDataConsumerControllerIs()
+	{
+		$this
+			->given(
+				$host = new net\host,
+				$port = new net\port,
+				$dataConsumerController = new mockOfData\consumer\controller
+			)
+			->if(
+				$this->newTestedInstance($host, $port)
+			)
+			->then
+				->object($this->testedInstance->dataConsumerControllerIs($dataConsumerController))
+					->isNotTestedInstance
+					->isEqualTo($this->newTestedInstance($host, $port, $dataConsumerController))
+		;
+	}
+
 	function testNewData()
 	{
 		$this
@@ -153,7 +171,7 @@ class tcp extends units\test
 				$this->newTestedInstance($host, $port, $controller)->newData($data)
 			)
 			->then
-				->mock($controller)->receive('dataNotWriteByDataConsumerIs')->withArguments($this->testedInstance, $data)->once
+				->mock($controller)->receive('numberOfBytesConsumedByDataConsumerIs')->withArguments($this->testedInstance, new data\data\numberOfBytes)->once
 		;
 	}
 

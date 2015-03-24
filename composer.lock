@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "3cf01470792f5f19a7401080932e72a0",
+    "hash": "6c44558326cadac2583b980261158125",
     "packages": [
         {
             "name": "estvoyage/data",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/estvoyage/data.git",
-                "reference": "3c4fe39bb074627ed72ab37f900c42ac395c35d7"
+                "reference": "77793089ad08c33d075c2002e60fa8dc89bafe04"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/estvoyage/data/zipball/3c4fe39bb074627ed72ab37f900c42ac395c35d7",
-                "reference": "3c4fe39bb074627ed72ab37f900c42ac395c35d7",
+                "url": "https://api.github.com/repos/estvoyage/data/zipball/77793089ad08c33d075c2002e60fa8dc89bafe04",
+                "reference": "77793089ad08c33d075c2002e60fa8dc89bafe04",
                 "shasum": ""
             },
             "require": {
@@ -50,7 +50,53 @@
                 "East",
                 "data"
             ],
-            "time": "2015-03-13 20:20:05"
+            "time": "2015-03-24 19:40:03"
+        },
+        {
+            "name": "estvoyage/object",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/estvoyage/object.git",
+                "reference": "ec302be52f85cee1779c391d0eb63b6d6a8a845c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/estvoyage/object/zipball/ec302be52f85cee1779c391d0eb63b6d6a8a845c",
+                "reference": "ec302be52f85cee1779c391d0eb63b6d6a8a845c",
+                "shasum": ""
+            },
+            "require": {
+                "estvoyage/value": "@dev",
+                "php": ">=5.5.0"
+            },
+            "require-dev": {
+                "mageekguy/atoum": "@dev"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "estvoyage\\object\\": "classes"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Frédéric Hardy",
+                    "email": "frederic.hardy@mageekbox.net",
+                    "homepage": "http://blog.mageekbox.net"
+                }
+            ],
+            "description": "Interfaces and classes to manipulate class instance",
+            "homepage": "http://github.com/estvoyage/object",
+            "keywords": [
+                "East",
+                "object"
+            ],
+            "time": "2015-03-24 19:40:14"
         },
         {
             "name": "estvoyage/value",
@@ -58,12 +104,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/estvoyage/value.git",
-                "reference": "aa7fda2ea45f65c1997d06db8285c25a3f927704"
+                "reference": "5274328b2b959fec2df1899aed4fcff6d6f2c046"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/estvoyage/value/zipball/aa7fda2ea45f65c1997d06db8285c25a3f927704",
-                "reference": "aa7fda2ea45f65c1997d06db8285c25a3f927704",
+                "url": "https://api.github.com/repos/estvoyage/value/zipball/5274328b2b959fec2df1899aed4fcff6d6f2c046",
+                "reference": "5274328b2b959fec2df1899aed4fcff6d6f2c046",
                 "shasum": ""
             },
             "require": {
@@ -97,7 +143,7 @@
                 "Whole value",
                 "value"
             ],
-            "time": "2015-03-14 20:19:48"
+            "time": "2015-03-14 20:30:17"
         }
     ],
     "packages-dev": [
@@ -174,8 +220,9 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "estvoyage/value": 20,
         "estvoyage/data": 20,
+        "estvoyage/value": 20,
+        "estvoyage/object": 20,
         "mageekguy/atoum": 20
     },
     "prefer-stable": false,

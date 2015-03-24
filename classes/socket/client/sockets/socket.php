@@ -66,7 +66,7 @@ abstract class socket extends net\socket\client\socket
 			throw $this->exception();
 		}
 
-		$this->dataNotWriteIs(new data\data(substr($data, $bytesWritten) ?: ''));
+		$this->numberOfBytesConsumedIs(new data\data\numberOfBytes($bytesWritten));
 	}
 
 	private function exception()

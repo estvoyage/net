@@ -6,7 +6,8 @@ use
 	estvoyage\net,
 	estvoyage\net\host,
 	estvoyage\net\port,
-	estvoyage\data
+	estvoyage\data,
+	estvoyage\object
 ;
 
 abstract class socket implements data\consumer
@@ -21,12 +22,20 @@ abstract class socket implements data\consumer
 	{
 		$this->host = $host;
 		$this->port = $port;
-		$this->controller = $controller;
+		$this->controller = $controller ?: new object\blackhole;
 	}
 
 	function __destruct()
 	{
 		$this->disconnect();
+	}
+
+	final function dataConsumerControllerIs(data\consumer\controller $controller)
+	{
+		$socket = clone $this;
+		$socket->controller = $controller;
+
+		return $socket;
 	}
 
 	final function dataProviderIs(data\provider $dataProvider)
@@ -51,12 +60,9 @@ abstract class socket implements data\consumer
 		return $this;
 	}
 
-	final protected function dataNotWriteIs(data\data $data)
+	final protected function numberOfBytesConsumedIs(data\data\numberOfBytes $numberOfBytes)
 	{
-		if ($this->controller)
-		{
-			$this->controller->dataNotWriteByDataConsumerIs($this, $data);
-		}
+		$this->controller->numberOfBytesConsumedByDataConsumerIs($this, $numberOfBytes);
 
 		return $this;
 	}
