@@ -16,9 +16,4 @@ final class tcp extends socket
 	{
 		parent::__construct($host, $port, 'tcp', $controller);
 	}
-
-	protected function newInstanceForHostAndPort(host $host, port $port)
-	{
-		return new self($host, $port);
-	}
 }
