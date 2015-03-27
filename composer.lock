@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/estvoyage/data.git",
-                "reference": "77793089ad08c33d075c2002e60fa8dc89bafe04"
+                "reference": "e354127871f881caf937a697c7c8c570ae4c713b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/estvoyage/data/zipball/77793089ad08c33d075c2002e60fa8dc89bafe04",
-                "reference": "77793089ad08c33d075c2002e60fa8dc89bafe04",
+                "url": "https://api.github.com/repos/estvoyage/data/zipball/e354127871f881caf937a697c7c8c570ae4c713b",
+                "reference": "e354127871f881caf937a697c7c8c570ae4c713b",
                 "shasum": ""
             },
             "require": {
@@ -50,7 +50,7 @@
                 "East",
                 "data"
             ],
-            "time": "2015-03-24 19:40:03"
+            "time": "2015-03-24 20:53:08"
         },
         {
             "name": "estvoyage/object",
