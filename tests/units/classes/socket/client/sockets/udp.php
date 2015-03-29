@@ -7,7 +7,6 @@ require __DIR__ . '/../../../../runner.php';
 use
 	estvoyage\net\tests\units,
 	estvoyage\net,
-	estvoyage\net\socket\client\sockets\udp as testedClass,
 	estvoyage\data,
 	mock\estvoyage\data as mockOfData
 ;
@@ -25,51 +24,6 @@ class udp extends units\test
 		$this->testedClass
 			->isFinal
 			->extends('estvoyage\net\socket\client\socket')
-		;
-	}
-
-	function test__destruct()
-	{
-		$this
-			->given(
-				$host = new net\host,
-				$port = new net\port,
-				$this->function->socket_create = $resource = uniqid(),
-				$this->function->socket_connect = true,
-				$this->function->socket_send = 0,
-				$this->function->socket_close->doesNothing
-			)
-
-			->when(function() use ($host, $port) { (new testedClass($host, $port)); })
-			->then
-				->function('socket_close')->never
-
-			->when(function() use ($host, $port) { (new testedClass($host, $port))->newData(new data\data('')); })
-			->then
-				->function('socket_close')->wasCalledWithArguments($resource)->once
-		;
-	}
-
-	function test__clone()
-	{
-		$this
-			->given(
-				$host = new net\host,
-				$port = new net\port,
-				$this->function->socket_create = $resource = uniqid(),
-				$this->function->socket_connect = true,
-				$this->function->socket_send = 0,
-				$this->function->socket_close->doesNothing
-			)
-
-			->when(function() use ($host, $port) {
-					$socket = (new testedClass($host, $port))->newData(new data\data(''));
-					$clone = clone $socket;
-					$clone->newData(new data\data(''));
-				}
-			)
-			->then
-				->function('socket_create')->wasCalledWithArguments(AF_INET, SOCK_DGRAM, SOL_UDP)->twice
 		;
 	}
 
@@ -91,6 +45,24 @@ class udp extends units\test
 		;
 	}
 
+	function testDataConsumerControllerIs()
+	{
+		$this
+			->given(
+				$host = new net\host,
+				$port = new net\port,
+				$dataConsumerController = new mockOfData\consumer\controller
+			)
+			->if(
+				$this->newTestedInstance($host, $port)
+			)
+			->then
+				->object($this->testedInstance->dataConsumerControllerIs($dataConsumerController))
+					->isNotTestedInstance
+					->isEqualTo($this->newTestedInstance($host, $port, $dataConsumerController))
+		;
+	}
+
 	function testNewData()
 	{
 		$this
@@ -101,11 +73,11 @@ class udp extends units\test
 				$controller = new mockOfData\consumer\controller,
 				$this->function->socket_last_error = $errorCode = rand(1, PHP_INT_MAX),
 				$this->function->socket_strerror = $errorMessage = uniqid(),
-				$this->function->socket_close->doesNothing,
-				$this->newTestedInstance($host, $port)
+				$this->newTestedInstance($host, $port, $controller)
 			)
 
 			->if(
+				$this->calling($controller)->newData = $controllerWithData = new mockOfData\consumer\controller,
 				$this->function->socket_create = false
 			)
 			->then
@@ -132,6 +104,14 @@ class udp extends units\test
 				->object($this->testedInstance->newData($data))->isTestedInstance
 				->function('socket_create')->wasCalled()->thrice
 				->function('socket_send')->wasCalledWithArguments($resource, $data, strlen($data), 0)->once
+				->mock($controller)
+					->receive('newData')
+						->withArguments($data)
+							->once
+				->mock($controllerWithData)
+					->receive('numberOfBytesConsumedByDataConsumerIs')
+						->withArguments($this->testedInstance, new data\data\numberOfBytes(strlen($data)))
+							->once
 
 			->if($this->testedInstance->newData($data))
 			->then
@@ -147,16 +127,14 @@ class udp extends units\test
 					->hasMessage($errorMessage)
 
 			->if(
-				$this->function->socket_send = 0
+				$this->function->socket_send = 0,
+				$this->testedInstance->newData($data)
 			)
 			->then
-				->object($this->testedInstance->newData($data))->isTestedInstance
-
-			->if(
-				$this->newTestedInstance($host, $port, $controller)->newData($data)
-			)
-			->then
-				->mock($controller)->receive('numberOfBytesConsumedByDataConsumerIs')->withArguments($this->testedInstance, new data\data\numberOfBytes)->once
+				->mock($controllerWithData)
+					->receive('numberOfBytesConsumedByDataConsumerIs')
+						->withArguments($this->testedInstance, new data\data\numberOfBytes)
+							->once
 		;
 	}
 
@@ -165,11 +143,7 @@ class udp extends units\test
 		$this
 			->given(
 				$host = new net\host,
-				$port = new net\port,
-				$this->function->socket_create = $resource = uniqid(),
-				$this->function->socket_connect = true,
-				$this->function->socket_send = 0,
-				$this->function->socket_close->doesNothing
+				$port = new net\port
 			)
 
 			->if(
@@ -177,24 +151,6 @@ class udp extends units\test
 			)
 			->then
 				->object($this->testedInstance->noMoreData())->isTestedInstance
-				->function('socket_close')->never
-
-			->if(
-				$this->newTestedInstance($host, $port)
-					->newData(new data\data)
-						->noMoreData()
-			)
-			->then
-				->function('socket_close')->wasCalledWithArguments($resource)->once
-
-			->if(
-				$this->newTestedInstance($host, $port)
-					->newData(new data\data)
-						->noMoreData()
-							->noMoreData()
-			)
-			->then
-				->function('socket_close')->wasCalledWithArguments($resource)->twice
 		;
 	}
 }

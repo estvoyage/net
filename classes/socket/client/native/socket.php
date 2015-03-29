@@ -23,12 +23,7 @@ abstract class socket extends net\socket\client\socket
 		$this->protocol = $protocol;
 	}
 
-	function __clone()
-	{
-		$this->resource = null;
-	}
-
-	final protected function connectToHostAndPort(host $host, port $port)
+	final protected function hostAndPortAre(host $host, port $port)
 	{
 		if (! $this->resource)
 		{
@@ -41,9 +36,11 @@ abstract class socket extends net\socket\client\socket
 
 			$this->resource = $resource;
 		}
+
+		return $this;
 	}
 
-	final protected function writeData(data\data $data)
+	final protected function dataIs(data\data $data)
 	{
 		$previousErrorHandler = set_error_handler(function($errno, $errstr) use (& $exceptionMessage) {
 				$exceptionMessage = $errstr;
@@ -66,16 +63,6 @@ abstract class socket extends net\socket\client\socket
 			throw new net\socket\exception($exceptionMessage, $exceptionCode);
 		}
 
-		$this->numberOfBytesConsumedIs(new data\data\numberOfBytes($bytesWritten));
-	}
-
-	final protected function disconnect()
-	{
-		if ($this->resource)
-		{
-			@fclose($this->resource);
-
-			$this->resource = null;
-		}
+		return $this->numberOfBytesConsumedIs(new data\data\numberOfBytes($bytesWritten));
 	}
 }

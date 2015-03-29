@@ -22,12 +22,7 @@ abstract class socket implements data\consumer
 	{
 		$this->host = $host;
 		$this->port = $port;
-		$this->controller = $controller ?: new object\blackhole;
-	}
-
-	function __destruct()
-	{
-		$this->disconnect();
+		$this->controller = $controller ?: new data\consumer\controller\buffer;
 	}
 
 	final function dataConsumerControllerIs(data\consumer\controller $controller)
@@ -47,16 +42,17 @@ abstract class socket implements data\consumer
 
 	final function newData(data\data $data)
 	{
-		$this->connectToHostAndPort($this->host, $this->port);
-		$this->writeData($data);
+		$this
+			->hostAndPortAre($this->host, $this->port)
+			->dataConsumerControllerIs($this->controller->newData($data))
+			->dataIs($data)
+		;
 
 		return $this;
 	}
 
 	final function noMoreData()
 	{
-		$this->disconnect();
-
 		return $this;
 	}
 
@@ -67,7 +63,6 @@ abstract class socket implements data\consumer
 		return $this;
 	}
 
-	abstract protected function connectToHostAndPort(host $host, port $port);
-	abstract protected function writeData(data\data $data);
-	abstract protected function disconnect();
+	abstract protected function hostAndPortAre(host $host, port $port);
+	abstract protected function dataIs(data\data $data);
 }

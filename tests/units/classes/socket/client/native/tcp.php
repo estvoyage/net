@@ -7,7 +7,6 @@ require __DIR__ . '/../../../../runner.php';
 use
 	estvoyage\net\tests\units,
 	estvoyage\net,
-	estvoyage\net\socket\client\native\tcp as testedClass,
 	estvoyage\data,
 	mock\estvoyage\data as mockOfData
 ;
@@ -28,46 +27,18 @@ class tcp extends units\test
 		;
 	}
 
-	function test__destruct()
+	function testConstructor()
 	{
 		$this
 			->given(
 				$host = new net\host,
-				$port = new net\port,
-				$this->function->fsockopen = $resource = uniqid(),
-				$this->function->fwrite = 0,
-				$this->function->fclose->doesNothing
+				$port = new net\port
 			)
-
-			->when(function() use ($host, $port) { (new testedClass($host, $port))->__destruct(); })
-			->then
-				->function('fclose')->never
-
-			->when(function() use ($host, $port) { (new testedClass($host, $port))->newData(new data\data(''))->__destruct(); })
-			->then
-				->function('fclose')->wasCalledWithArguments($resource)->once
-		;
-	}
-
-	function test__clone()
-	{
-		$this
-			->given(
-				$host = new net\host,
-				$port = new net\port,
-				$this->function->fsockopen = uniqid(),
-				$this->function->fwrite = 0,
-				$this->function->fclose->doesNothing
-			)
-
-			->when(function() use ($host, $port) {
-					$socket = (new testedClass($host, $port))->newData(new data\data(''));
-					$clone = clone $socket;
-					$clone->newData(new data\data(''));
-				}
+			->if(
+				$this->newTestedInstance($host, $port)
 			)
 			->then
-				->function('fsockopen')->wasCalledWithArguments('tcp://' . $host, $port->asInteger)->twice
+				->object($this->testedInstance)->isEqualTo($this->newTestedInstance($host, $port, new data\consumer\controller\buffer))
 		;
 	}
 
@@ -115,24 +86,26 @@ class tcp extends units\test
 				$port = new net\port,
 				$data = new data\data(uniqid()),
 				$controller = new mockOfData\consumer\controller,
-				$this->newTestedInstance($host, $port),
-				$this->function->fclose->doesNothing
+				$this->newTestedInstance($host, $port, $controller)
 			)
 
 			->if(
+				$this->calling($controller)->newData = $controllerWithData = new mockOfData\consumer\controller,
 				$this->function->fsockopen = function($host, $port, & $errno, & $error)
 					use (& $errorCode, & $errorMessage) {
 						$errorCode = $errno = rand(1, PHP_INT_MAX);
 						$errorMessage = $error = uniqid();
 						return false;
 					}
-
 			)
 			->then
 				->exception(function() use ($data) { $this->testedInstance->newData($data); })
 					->isInstanceOf('estvoyage\net\socket\exception')
 					->hasCode($errorCode)
 					->hasMessage($errorMessage)
+				->function('fsockopen')
+					->wasCalledWithArguments('tcp://' . $host, $port->asInteger)
+						->once
 
 			->if(
 				$this->function->fsockopen = $resource = uniqid(),
@@ -140,19 +113,38 @@ class tcp extends units\test
 			)
 			->then
 				->object($this->testedInstance->newData($data))->isTestedInstance
-				->function('fsockopen')->wasCalled()->twice
-				->function('fwrite')->wasCalledWithArguments($resource, $data, strlen($data))->once
-
-
-			->if($this->testedInstance->newData($data))
-			->then
-				->function('fsockopen')->wasCalled()->twice
+				->function('fsockopen')
+					->wasCalledWithArguments('tcp://' . $host, $port->asInteger)
+						->twice
+				->function('fwrite')
+					->wasCalledWithArguments($resource, $data, strlen($data))
+						->once
+				->mock($controller)
+					->receive('newData')
+						->withArguments($data)
+							->once
+				->mock($controllerWithData)
+					->receive('numberOfBytesConsumedByDataConsumerIs')
+						->withArguments($this->testedInstance, new data\data\numberOfBytes(strlen($data)))
+							->once
 
 			->if(
-				$this->function->fwrite = 0
+				$this->testedInstance->newData($data)
 			)
 			->then
-				->object($this->testedInstance->newData($data))->isTestedInstance
+				->function('fsockopen')
+					->wasCalledWithArguments('tcp://' . $host, $port->asInteger)
+						->twice
+
+			->if(
+				$this->function->fwrite = 0,
+				$this->testedInstance->newData($data)
+			)
+			->then
+				->mock($controllerWithData)
+					->receive('numberOfBytesConsumedByDataConsumerIs')
+						->withArguments($this->testedInstance, new data\data\numberOfBytes)
+							->once
 
 			->if(
 				$this->function->fwrite = function()
@@ -165,13 +157,6 @@ class tcp extends units\test
 					->isInstanceOf('estvoyage\net\socket\exception')
 					->hasCode($errorCode)
 					->hasMessage($errorMessage)
-
-			->if(
-				$this->function->fwrite = 0,
-				$this->newTestedInstance($host, $port, $controller)->newData($data)
-			)
-			->then
-				->mock($controller)->receive('numberOfBytesConsumedByDataConsumerIs')->withArguments($this->testedInstance, new data\data\numberOfBytes)->once
 		;
 	}
 
@@ -180,10 +165,7 @@ class tcp extends units\test
 		$this
 			->given(
 				$host = new net\host,
-				$port = new net\port,
-				$this->function->fsockopen = $resource = uniqid(),
-				$this->function->fwrite = 0,
-				$this->function->fclose->doesNothing
+				$port = new net\port
 			)
 
 			->if(
@@ -191,24 +173,6 @@ class tcp extends units\test
 			)
 			->then
 				->object($this->testedInstance->noMoreData())->isTestedInstance
-				->function('fclose')->never
-
-			->if(
-				$this->newTestedInstance($host, $port)
-					->newData(new data\data)
-						->noMoreData()
-			)
-			->then
-				->function('fclose')->wasCalledWithArguments($resource)->once
-
-			->if(
-				$this->newTestedInstance($host, $port)
-					->newData(new data\data)
-						->noMoreData()
-							->noMoreData()
-			)
-			->then
-				->function('fclose')->wasCalledWithArguments($resource)->twice
 		;
 	}
 }
